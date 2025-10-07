@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <QApplication>
 #include "Login.h"
 
@@ -15,3 +16,17 @@ int main(int argc, char *argv[])
 
     return app.exec();
 }
+=======
+#include "condidat/mainwindow.h"
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    w.showMaximized();
+
+    return a.exec();
+}
+>>>>>>> e695879ad76debb070bc454bc4b9a8500213ef04
