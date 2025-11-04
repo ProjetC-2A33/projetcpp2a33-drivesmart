@@ -2,6 +2,12 @@
 #define PLANNING_H
 
 #include <QWidget>
+#include <QString>
+#include <QDate>
+#include <QTime>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QVariant>
 
 namespace Ui {
 class Planning;
@@ -14,10 +20,16 @@ class Planning : public QWidget
 public:
     explicit Planning(QWidget *parent = nullptr);
     ~Planning();
+    bool ajouter();
+    QSqlQueryModel* afficher();
+    bool supprimer(int id);
+    bool modifier(int id, QDate date_seance, QString condidat, QString type, QTime debut, QTime fin, QString circuit);
 
 private slots:
     void on_btn_ajout_3_clicked();
     void on_btn_reset_3_clicked();
+    void on_supp_clicked();
+    void on_edit_clicked();
     void navigateToCandidat();
     void navigateToPlanning();
     void navigateToEmployee();
@@ -26,6 +38,23 @@ private slots:
     void navigateToEquipement();
 
 private:
+    void refreshTable();
+    int selectedIdFromTable() const;
+    void setFormFromRow(int row);
+    QWidget* createActionsCell(int row, int id);
+    void setEditMode(bool enabled);
+    
+    int currentEditingId = -1;
+    bool isEditMode = false;
+    
+    // Planning data members
+    QDate date_seance;
+    QString condidat;
+    QString type_seance;
+    QTime heure_debut;
+    QTime heure_fin;
+    QString circuit;
+
     Ui::Planning *ui;
 };
 
