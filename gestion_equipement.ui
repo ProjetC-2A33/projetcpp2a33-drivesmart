@@ -635,12 +635,12 @@ border:2px solid #ffce00;
      </item>
      <item>
       <property name="text">
-       <string>age croissant</string>
+       <string>Qté Dispo croissant</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>age  décroissant</string>
+       <string>Qté Dispo décroissant</string>
       </property>
      </item>
     </widget>
@@ -706,12 +706,20 @@ border:2px solid #ffce00;
        <height>31</height>
       </rect>
      </property>
-     <property name="text">
-      <string/>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::EditDelete">
-       <normaloff>E:/daraj/downloads</normaloff>E:/daraj/downloads</iconset>
+     <property name="styleSheet">
+      <string notr="true">background-color:#ff4444;
+color:white;
+border-radius:5px;</string>
+     </property>
+     <property name="text">
+      <string>D</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_4">
@@ -723,12 +731,20 @@ border:2px solid #ffce00;
        <height>31</height>
       </rect>
      </property>
-     <property name="text">
-      <string/>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::MailMessageNew">
-       <normaloff>E:/daraj/downloads</normaloff>E:/daraj/downloads</iconset>
+     <property name="styleSheet">
+      <string notr="true">background-color:#4CAF50;
+color:white;
+border-radius:5px;</string>
+     </property>
+     <property name="text">
+      <string>M</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_17">
@@ -752,16 +768,6 @@ border-radius:10px;</string>
      </property>
      <property name="text">
       <string>Exporter</string>
-     </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::WindowNew">
-       <normaloff>E:/daraj/downloads</normaloff>E:/daraj/downloads</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
      </property>
     </widget>
     <widget class="QGroupBox" name="groupBox_3">
