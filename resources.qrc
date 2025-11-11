@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>images/logo.png</file>
-        <file>images/SMS.png</file>
-        <file>images/stat.png</file>
-        <file>images/msg.png</file>
-        <file>images/stat_vehicule.png</file>
-    </qresource>
-</RCC>
