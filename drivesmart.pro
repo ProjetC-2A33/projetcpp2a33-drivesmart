@@ -1,21 +1,22 @@
-QT += core gui widgets sql
+QT += core gui sql widgets
 
-CONFIG += console
+# CONFIG += console  # Retiré pour éviter le conflit WinMain avec les applications GUI
 
 TARGET = DriveSmart
 TEMPLATE = app
 
 HEADERS += \
     Login.h \
+    connection.h \
     mainwindow.h \
     condidat.h \
     vehicule.h \
     examen.h \
     planning.h \
-    gestion_equipement.h\
-    connection.h
+    gestion_equipement.h
 
 SOURCES += \
+    connection.cpp \
     main.cpp \
     Login.cpp \
     mainwindow.cpp \
@@ -23,8 +24,7 @@ SOURCES += \
     vehicule.cpp \
     examen.cpp \
     planning.cpp \
-    gestion_equipement.cpp\
-    connection.cpp
+    gestion_equipement.cpp
 
 FORMS += \
     Login.ui \
@@ -38,7 +38,15 @@ FORMS += \
 RESOURCES += \
     resources.qrc
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+# Configuration pour éviter les problèmes de répertoire de build
+CONFIG += c++17
+
+# Activer la console uniquement en mode debug pour voir les messages de connexion
+debug {
+    CONFIG += console
+}
+
+# Pour Oracle ODBC - ajustez ces chemins selon votre installation Oracle
+# Décommentez et ajustez si nécessaire
+# INCLUDEPATH += "C:/oracle/instantclient_XX_X/oci/include"
+# LIBS += -L"C:/oracle/instantclient_XX_X/oci/lib/msvc" -loci

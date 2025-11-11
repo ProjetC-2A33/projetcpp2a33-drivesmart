@@ -11,22 +11,23 @@ int main(int argc, char *argv[])
     app.setApplicationVersion("1.0");
     app.setOrganizationName("DriveSmart Inc.");
 
-    Login loginWindow;
-
-
+    // Initialisation de la connexion à la base de données Oracle
     Connection c;
-    bool test=c.createconnect();
-    if(test)
-    {loginWindow.show();
-        QMessageBox::information(nullptr, QObject::tr("database is open"),
-                                 QObject::tr("connection successful.\n"
-                                             "Click Cancel to exit."), QMessageBox::Cancel);
+    QString connectionStatus;
+    bool connected = c.createconnect();
+    
+    if (connected) {
+        // La connexion a réussi
+        connectionStatus = "Connexion réussie!\n";
+        QMessageBox::information(nullptr, "Connexion réussie", connectionStatus);
 
+    } else {
+        connectionStatus = "ERREUR : Impossible de se connecter à Oracle !\n";
+        QMessageBox::critical(nullptr, "Erreur de connexion", connectionStatus);
     }
-    else
-        QMessageBox::critical(nullptr, QObject::tr("database is not open"),
-                              QObject::tr("connection failed.\n"
-                                          "Click Cancel to exit."), QMessageBox::Cancel);
+
+    Login loginWindow;
+    loginWindow.show();
 
     return app.exec();
 }

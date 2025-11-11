@@ -291,10 +291,42 @@ border:2px solid #ffce00;
      <string>chercher</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="exporter">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>790</x>
+      <x>780</x>
+      <y>30</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset theme="QIcon::ThemeIcon::EditDelete"/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>30</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_16">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
       <y>20</y>
       <width>141</width>
       <height>41</height>
@@ -717,7 +749,7 @@ border-radius:10px;</string>
      <string>Annuler</string>
     </property>
    </widget>
-   <widget class="QDateEdit" name="date">
+   <widget class="QDateEdit" name="dateEdit_2">
     <property name="geometry">
      <rect>
       <x>250</x>

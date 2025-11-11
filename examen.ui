@@ -85,7 +85,6 @@
        <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-color:black;
 </string>
       </property>
       <item>
@@ -254,7 +253,6 @@ border-radius:10px;</string>
       </property>
       <property name="styleSheet">
        <string notr="true">color:bleu;
-background-color: rgb(255, 255, 255);
 </string>
       </property>
       <property name="showGrid">
@@ -304,7 +302,7 @@ background-color: rgb(255, 255, 255);
       <row/>
       <column>
        <property name="text">
-        <string>Id_examen</string>
+        <string>CIN</string>
        </property>
        <property name="font">
         <font>
@@ -314,7 +312,7 @@ background-color: rgb(255, 255, 255);
       </column>
       <column>
        <property name="text">
-        <string>type d'examen</string>
+        <string>Nom</string>
        </property>
        <property name="font">
         <font>
@@ -324,7 +322,7 @@ background-color: rgb(255, 255, 255);
       </column>
       <column>
        <property name="text">
-        <string>Date d'examen</string>
+        <string>type examen</string>
        </property>
        <property name="font">
         <font>
@@ -334,7 +332,7 @@ background-color: rgb(255, 255, 255);
       </column>
       <column>
        <property name="text">
-        <string>Type de permis</string>
+        <string>Date</string>
        </property>
        <property name="font">
         <font>
@@ -344,7 +342,17 @@ background-color: rgb(255, 255, 255);
       </column>
       <column>
        <property name="text">
-        <string>Actions</string>
+        <string>Tél</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>type de permis</string>
        </property>
        <property name="font">
         <font>
@@ -410,7 +418,28 @@ background-color:#e3e2de;</string>
        <string notr="true">color:#002157</string>
       </property>
       <property name="text">
-       <string>Id_examen :</string>
+       <string>ID examen:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>180</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#002157</string>
+      </property>
+      <property name="text">
+       <string>Nom :</string>
       </property>
      </widget>
      <widget class="QTextEdit" name="textEdit_6">
@@ -431,7 +460,6 @@ background-color:#e3e2de;</string>
        <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-color:black;
 
 
 </string>
@@ -450,8 +478,8 @@ color:black;
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>210</y>
-        <width>81</width>
+        <y>240</y>
+        <width>121</width>
         <height>31</height>
        </rect>
       </property>
@@ -471,7 +499,7 @@ color:black;
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>210</y>
+        <y>240</y>
         <width>121</width>
         <height>31</height>
        </rect>
@@ -492,7 +520,7 @@ color:black;
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>210</y>
+        <y>240</y>
         <width>171</width>
         <height>31</height>
        </rect>
@@ -534,7 +562,7 @@ color:black;
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>350</y>
+        <y>400</y>
         <width>181</width>
         <height>31</height>
        </rect>
@@ -574,11 +602,66 @@ border-radius:10px;</string>
        <string>Ajouter</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_5">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>480</y>
+        <width>171</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:#ffce00;
+color:#002157;
+border-radius:10px;</string>
+      </property>
+      <property name="text">
+       <string>Modifier</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="textEdit_11">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>180</y>
+        <width>211</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+
+
+</string>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+      </property>
+     </widget>
      <widget class="QPushButton" name="pushButton_7">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>480</y>
+        <x>120</x>
+        <y>580</y>
         <width>171</width>
         <height>61</height>
        </rect>
@@ -601,7 +684,7 @@ border-radius:10px;</string>
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>340</y>
+        <y>390</y>
         <width>211</width>
         <height>41</height>
        </rect>
@@ -615,7 +698,6 @@ border-radius:10px;</string>
        <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-color:black;
 
 
 </string>
@@ -628,6 +710,27 @@ color:black;
       </property>
       <property name="sizeAdjustPolicy">
        <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_19">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>350</y>
+        <width>171</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#002157</string>
+      </property>
+      <property name="text">
+       <string>Télephone :</string>
       </property>
      </widget>
      <widget class="QDateEdit" name="dateEdit_5">
@@ -646,6 +749,38 @@ color:black;
       </property>
       <property name="styleSheet">
        <string notr="true">color:#002157</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="textEdit_13">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>340</y>
+        <width>211</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+
+
+</string>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
       </property>
      </widget>
      <widget class="QLabel" name="label_13">
@@ -744,8 +879,8 @@ color:black;
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>470</x>
-       <y>510</y>
+       <x>460</x>
+       <y>450</y>
        <width>331</width>
        <height>301</height>
       </rect>
@@ -754,14 +889,14 @@ color:black;
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="resources.qrc">:/images/stat.png</pixmap>
+      <pixmap>:/new/prefix1/stat.png</pixmap>
      </property>
     </widget>
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>540</x>
-       <y>640</y>
+       <x>520</x>
+       <y>590</y>
        <width>63</width>
        <height>20</height>
       </rect>
@@ -779,7 +914,7 @@ color:#002157;
      <property name="geometry">
       <rect>
        <x>670</x>
-       <y>650</y>
+       <y>590</y>
        <width>63</width>
        <height>20</height>
       </rect>
@@ -828,8 +963,7 @@ border-radius:10px;</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;
-color:bleu;</string>
+          <string notr="true">background-color:#e3e2de;</string>
          </property>
          <property name="text">
           <string>Candidat</string>
@@ -845,8 +979,7 @@ color:bleu;</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;
-color:bleu;</string>
+          <string notr="true">background-color:#e3e2de;</string>
          </property>
          <property name="text">
           <string>planning</string>
@@ -862,8 +995,7 @@ color:bleu;</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;
-color:bleu;</string>
+          <string notr="true">background-color:#e3e2de;</string>
          </property>
          <property name="text">
           <string>Employee</string>
@@ -879,8 +1011,7 @@ color:bleu;</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;
-color:bleu;</string>
+          <string notr="true">background-color:#e3e2de;</string>
          </property>
          <property name="text">
           <string>vehicule</string>
@@ -896,8 +1027,7 @@ color:bleu;</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;
-color:bleu;</string>
+          <string notr="true">background-color:#e3e2de;</string>
          </property>
          <property name="text">
           <string>Examen</string>
@@ -913,8 +1043,7 @@ color:bleu;</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;
-color:bleu;</string>
+          <string notr="true">background-color:#e3e2de;</string>
          </property>
          <property name="text">
           <string>equipement</string>
@@ -943,32 +1072,6 @@ color:bleu;</string>
       </property>
      </widget>
     </widget>
-    <widget class="QLabel" name="label_6">
-     <property name="geometry">
-      <rect>
-       <x>-90</x>
-       <y>-70</y>
-       <width>1641</width>
-       <height>1081</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
-    <zorder>label_6</zorder>
-    <zorder>groupBox_2</zorder>
-    <zorder>groupBox</zorder>
-    <zorder>label</zorder>
-    <zorder>label_22</zorder>
-    <zorder>label_2</zorder>
-    <zorder>label_3</zorder>
-    <zorder>label_4</zorder>
-    <zorder>label_5</zorder>
-    <zorder>groupBox_3</zorder>
    </widget>
   </widget>
  </widget>

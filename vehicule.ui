@@ -146,7 +146,7 @@ border:2px solid #ffce00;
      <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_4">
+   <widget class="QRadioButton" name="libre">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -164,7 +164,7 @@ border:2px solid #ffce00;
      <string>Libre</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_5">
+   <widget class="QRadioButton" name="reserve">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -227,8 +227,8 @@ border:2px solid #ffce00;
    <widget class="QLabel" name="TypeEnergieLineEdit_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>460</y>
+      <x>20</x>
+      <y>530</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -245,11 +245,11 @@ border:2px solid #ffce00;
      <string>Type d'énergie :</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox_2">
+   <widget class="QComboBox" name="type_energie_comboBox">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>460</y>
+      <x>200</x>
+      <y>530</y>
       <width>211</width>
       <height>41</height>
      </rect>
@@ -267,6 +267,11 @@ border:2px solid #ffce00;
     </property>
     <item>
      <property name="text">
+      <string>--------------</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>Gaz</string>
      </property>
     </item>
@@ -281,11 +286,11 @@ border:2px solid #ffce00;
      </property>
     </item>
    </widget>
-   <widget class="QPushButton" name="AjouterButton_2">
+   <widget class="QPushButton" name="AjouterButton">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>557</y>
+      <x>20</x>
+      <y>600</y>
       <width>171</width>
       <height>61</height>
      </rect>
@@ -304,11 +309,11 @@ border-radius:10px;</string>
      <string>Ajouter</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="AnnulerButton_2">
+   <widget class="QPushButton" name="AnnulerButton">
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>557</y>
+      <y>600</y>
       <width>171</width>
       <height>61</height>
      </rect>
@@ -391,7 +396,7 @@ border:2px solid #ffce00;
      <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_6">
+   <widget class="QRadioButton" name="enservice">
     <property name="geometry">
      <rect>
       <x>270</x>
@@ -409,7 +414,7 @@ border:2px solid #ffce00;
      <string>En service</string>
     </property>
    </widget>
-   <widget class="QDateEdit" name="dateEdit_4">
+   <widget class="QDateEdit" name="dat_maintenance">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -422,6 +427,59 @@ border:2px solid #ffce00;
      <font>
       <pointsize>12</pointsize>
      </font>
+    </property>
+   </widget>
+   <widget class="QLabel" name="DateMLineEdit_3">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>460</y>
+      <width>221</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Etat de maintenance:</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="etatmaintLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>460</y>
+      <width>191</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+
+
+</string>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
     </property>
    </widget>
   </widget>
@@ -437,7 +495,7 @@ border:2px solid #ffce00;
    <property name="title">
     <string/>
    </property>
-   <widget class="QTableWidget" name="tab_4">
+   <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -556,7 +614,7 @@ border:2px solid #ffce00;
     </column>
     <column>
      <property name="text">
-      <string>date de maintenance</string>
+      <string>type d'energie</string>
      </property>
      <property name="font">
       <font>
@@ -566,7 +624,17 @@ border:2px solid #ffce00;
     </column>
     <column>
      <property name="text">
-      <string>type d'energie</string>
+      <string>Etat de maintenance</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>date de maintenance</string>
      </property>
      <property name="font">
       <font>
@@ -685,7 +753,7 @@ border:2px solid #ffce00;
      </property>
     </item>
    </widget>
-   <widget class="QPushButton" name="pushButton_12">
+   <widget class="QPushButton" name="supprimerButton">
     <property name="geometry">
      <rect>
       <x>780</x>
@@ -701,7 +769,7 @@ border:2px solid #ffce00;
      <iconset theme="QIcon::ThemeIcon::EditDelete"/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_13">
+   <widget class="QPushButton" name="modifierButton">
     <property name="geometry">
      <rect>
       <x>830</x>
@@ -909,17 +977,17 @@ border-radius:10px;</string>
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>350</x>
-      <y>60</y>
+      <x>740</x>
+      <y>180</y>
       <width>301</width>
-      <height>261</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>:/images/statistique.png</pixmap>
+     <pixmap resource="resources.qrc">:/images/msg.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -928,9 +996,9 @@ border-radius:10px;</string>
    <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>40</x>
       <y>20</y>
-      <width>241</width>
+      <width>161</width>
       <height>31</height>
      </rect>
     </property>
@@ -943,13 +1011,13 @@ border-radius:10px;</string>
      <string notr="true">color:#002157</string>
     </property>
     <property name="text">
-     <string>statiqtique par : </string>
+     <string>Statistique par :</string>
     </property>
    </widget>
    <widget class="QComboBox" name="tri_2">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>210</x>
       <y>10</y>
       <width>211</width>
       <height>41</height>
@@ -973,14 +1041,33 @@ border:2px solid #ffce00;
     </item>
     <item>
      <property name="text">
-      <string>age</string>
+      <string>Disponibilité</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>type de permis</string>
+      <string>type d'énergie</string>
      </property>
     </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>70</y>
+      <width>321</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/images/stat_vehicule.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
    </widget>
   </widget>
  </widget>
