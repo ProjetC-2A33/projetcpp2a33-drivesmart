@@ -379,8 +379,13 @@ border-radius:10px;</string>
   <widget class="QGroupBox" name="groupBox_6">
    <property name="geometry">
     <rect>
+<<<<<<< HEAD
      <x>10</x>
      <y>78</y>
+=======
+     <x>20</x>
+     <y>80</y>
+>>>>>>> 968ef59aaf1cad56730d7a2f9673636ba3a6d6e2
      <width>421</width>
      <height>761</height>
     </rect>
@@ -776,6 +781,62 @@ border:2px solid #ffce00;
      </font>
     </property>
    </widget>
+<<<<<<< HEAD
+=======
+   <widget class="QTextEdit" name="cin_5">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>90</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+
+
+</string>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_28">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>id_séance:</string>
+    </property>
+   </widget>
+>>>>>>> 968ef59aaf1cad56730d7a2f9673636ba3a6d6e2
   </widget>
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
