@@ -1,5 +1,6 @@
 #include "gestion_equipement.h"
 #include "ui_gestion_equipement.h"
+#include "navigation_constants.h"
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QStackedWidget>
@@ -52,7 +53,7 @@ void Gestion_Equipement::navigateToCandidat()
 {
     QMainWindow *mainWindow = qobject_cast<QMainWindow*>(parent()->parent());
     if (mainWindow) {
-        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(1);
+        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_CANDIDAT);
     }
 }
 
@@ -60,7 +61,7 @@ void Gestion_Equipement::navigateToPlanning()
 {
     QMainWindow *mainWindow = qobject_cast<QMainWindow*>(parent()->parent());
     if (mainWindow) {
-        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(4);
+        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_PLANNING);
     }
 }
 
@@ -68,7 +69,7 @@ void Gestion_Equipement::navigateToEmployee()
 {
     QMainWindow *mainWindow = qobject_cast<QMainWindow*>(parent()->parent());
     if (mainWindow) {
-        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(0);
+        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_EMPLOYEE);
     }
 }
 
@@ -76,7 +77,7 @@ void Gestion_Equipement::navigateToVehicule()
 {
     QMainWindow *mainWindow = qobject_cast<QMainWindow*>(parent()->parent());
     if (mainWindow) {
-        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(2);
+        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_VEHICULE);
     }
 }
 
@@ -84,7 +85,7 @@ void Gestion_Equipement::navigateToExamen()
 {
     QMainWindow *mainWindow = qobject_cast<QMainWindow*>(parent()->parent());
     if (mainWindow) {
-        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(3);
+        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_EXAMEN);
     }
 }
 
