@@ -1,0 +1,17 @@
+release/main.o
+release/Login.o
+release/mainwindow.o
+release/condidat.o
+release/vehicule.o
+release/examen.o
+release/planning.o
+release/gestion_equipement.o
+release/connection.o
+release/qrc_resources.o
+release/moc_Login.o
+release/moc_mainwindow.o
+release/moc_condidat.o
+release/moc_vehicule.o
+release/moc_examen.o
+release/moc_planning.o
+release/moc_gestion_equipement.o

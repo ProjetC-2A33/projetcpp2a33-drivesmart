@@ -1,0 +1,17 @@
+debug/main.o
+debug/Login.o
+debug/mainwindow.o
+debug/condidat.o
+debug/vehicule.o
+debug/examen.o
+debug/planning.o
+debug/gestion_equipement.o
+debug/connection.o
+debug/qrc_resources.o
+debug/moc_Login.o
+debug/moc_mainwindow.o
+debug/moc_condidat.o
+debug/moc_vehicule.o
+debug/moc_examen.o
+debug/moc_planning.o
+debug/moc_gestion_equipement.o
