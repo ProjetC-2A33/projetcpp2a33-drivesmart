@@ -20,13 +20,13 @@
 #include <QComboBox>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
-                                          ui(new Ui::MainWindow),
-                                          condidatView(nullptr),
-                                          vehiculeView(nullptr),
-                                          examenView(nullptr),
-                                          planningView(nullptr),
-                                          equipementView(nullptr),
-                                          employeeView(nullptr)
+    ui(new Ui::MainWindow),
+    condidatView(nullptr),
+    vehiculeView(nullptr),
+    examenView(nullptr),
+    planningView(nullptr),
+    equipementView(nullptr),
+    employeeView(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle("DriveSmart - Main Application");

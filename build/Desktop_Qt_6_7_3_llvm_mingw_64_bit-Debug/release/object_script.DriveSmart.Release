@@ -2,6 +2,7 @@ release/main.o
 release/Login.o
 release/mainwindow.o
 release/condidat.o
+release/employee.o
 release/vehicule.o
 release/examen.o
 release/planning.o
@@ -11,6 +12,7 @@ release/qrc_resources.o
 release/moc_Login.o
 release/moc_mainwindow.o
 release/moc_condidat.o
+release/moc_employee.o
 release/moc_vehicule.o
 release/moc_examen.o
 release/moc_planning.o

@@ -1,10 +1,7 @@
-QT += core gui widgets sql network printsupport
+QT += core gui widgets sql printsupport charts network
 
 CONFIG += c++17 console
-CONFIG -= c++1z
 CONFIG += qt
-
-QMAKE_CXXFLAGS += -std=c++17
 
 TARGET = DriveSmart
 TEMPLATE = app
@@ -19,7 +16,8 @@ HEADERS += \
     planning.h \
     gestion_equipement.h\
     connection.h \
-    navigation_constants.h
+    navigation_constants.h \
+    qrcodegen.h
 
 SOURCES += \
     main.cpp \
