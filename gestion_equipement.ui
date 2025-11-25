@@ -1,0 +1,2426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Gestion_Equipement</class>
+ <widget class="QWidget" name="Gestion_Equipement">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1557</width>
+    <height>876</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Gestion des Équipements</string>
+  </property>
+  <!-- TABLE AREA (Center) -->
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>78</y>
+     <width>690</width>
+     <height>782</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>93</y>
+      <width>660</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>true</bool>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::SingleSelection</enum>
+    </property>
+    <property name="showGrid">
+     <bool>true</bool>
+    </property>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+   </widget>
+   <widget class="QLabel" name="label_tri">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>25</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Tri par : </string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="tri">
+    <property name="geometry">
+     <rect>
+      <x>95</x>
+      <y>20</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>--------------</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Nom A à Z</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Nom Z à A</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Catégorie</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>État</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_recherche_title">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>20</y>
+      <width>95</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>chercher</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_recherche">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>20</y>
+      <width>240</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="exporter">
+    <property name="geometry">
+     <rect>
+      <x>535</x>
+      <y>60</y>
+      <width>125</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:#ffce00;
+color:#002157;
+border-radius:10px;</string>
+    </property>
+    <property name="text">
+     <string>Exporter</string>
+    </property>
+   </widget>
+  </widget>
+  
+  <!-- STATISTICS DASHBOARD (Right side) -->
+  <widget class="QGroupBox" name="groupBox_statistics">
+   <property name="geometry">
+    <rect>
+     <x>1150</x>
+     <y>78</y>
+     <width>390</width>
+     <height>782</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius:10px;
+background-color:#e3e2de;</string>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   
+   <!-- Title -->
+   <widget class="QLabel" name="label_stats_title">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>15</y>
+      <width>350</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157;
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ffce00, stop:1 #e3e2de);
+padding: 5px;
+border-radius: 6px;</string>
+    </property>
+    <property name="text">
+     <string>📊 Statistiques</string>
+    </property>
+   </widget>
+   
+   <!-- Total Equipment Card -->
+   <widget class="QFrame" name="frame_total_equipment">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>350</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #667eea, stop:1 #764ba2);
+border-radius:12px;
+box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    
+    <widget class="QLabel" name="label_total_equipment_icon">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>15</y>
+       <width>50</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:white;
+background-color: rgba(255,255,255,0.2);
+border-radius: 25px;</string>
+     </property>
+     <property name="text">
+      <string>📦</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_total_equipment_title">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>15</y>
+       <width>260</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:rgba(255,255,255,0.9)</string>
+     </property>
+     <property name="text">
+      <string>Total Equipements</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_total_equipment_value">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>35</y>
+       <width>260</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>24</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:white;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.3);</string>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+   </widget>
+   
+   <!-- Total Value Card -->
+   <widget class="QFrame" name="frame_total_value">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>350</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #11998e, stop:1 #38ef7d);
+border-radius:12px;
+box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    
+    <widget class="QLabel" name="label_total_value_icon">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>15</y>
+       <width>50</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:white;
+background-color: rgba(255,255,255,0.2);
+border-radius: 25px;</string>
+     </property>
+     <property name="text">
+      <string>💰</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_total_value_title">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>15</y>
+       <width>260</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:rgba(255,255,255,0.9)</string>
+     </property>
+     <property name="text">
+      <string>Valeur Totale</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_total_value_amount">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>35</y>
+       <width>260</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:white;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.3);</string>
+     </property>
+     <property name="text">
+      <string>0 TND</string>
+     </property>
+    </widget>
+   </widget>
+   
+   <!-- Category Breakdown -->
+   <widget class="QFrame" name="frame_category_breakdown">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>240</y>
+      <width>350</width>
+      <height>160</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #f8f9fa);
+border-radius:12px;
+border:2px solid #ffce00;
+box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    
+    <widget class="QLabel" name="label_category_icon">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>10</y>
+       <width>30</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>18</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>📊</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_category_title">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>12</y>
+       <width>285</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>Repartition par Categorie</string>
+     </property>
+    </widget>
+    
+    <widget class="QFrame" name="frame_category_divider">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>45</y>
+       <width>320</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color:#ffce00;</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_category_stats">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>55</y>
+       <width>320</width>
+       <height>95</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#333;
+line-height: 160%;</string>
+     </property>
+     <property name="text">
+      <string>Pedagogique: 0
+Informatique: 0
+Mobilier: 0
+Securite: 0
+Vehicule: 0</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  
+  <!-- FORM AREA (Left side) -->
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>78</y>
+     <width>421</width>
+     <height>782</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius:50px;
+background-color:#e3e2de;</string>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QLabel" name="label_title">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>10</y>
+      <width>361</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>24</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Ajouter Équipement</string>
+    </property>
+   </widget>
+   
+   <!-- ID Équipement -->
+   <widget class="QLabel" name="label_id">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>170</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>ID Équipement:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_id">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>80</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:#e0e0e0;
+border-radius:5px;
+border:2px solid #aaa;</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="placeholderText">
+     <string>Auto-généré</string>
+    </property>
+   </widget>
+   
+   <!-- Nom -->
+   <widget class="QLabel" name="label_nom">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Nom:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_nom">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>130</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+   </widget>
+   
+   <!-- Catégorie -->
+   <widget class="QLabel" name="label_categorie">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>180</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Catégorie:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_categorie">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>180</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+    <property name="editable">
+     <bool>true</bool>
+    </property>
+    <item>
+     <property name="text">
+      <string>Véhicule</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Équipement pédagogique</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Matériel de bureau</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Sécurité</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Informatique</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Autre</string>
+     </property>
+    </item>
+   </widget>
+   
+   <!-- Quantité Totale -->
+   <widget class="QLabel" name="label_quantite_totale">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>170</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Quantité Totale:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_quantite_totale">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>230</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+   </widget>
+   
+   <!-- Quantité Disponible -->
+   <widget class="QLabel" name="label_quantite_disponible">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>280</y>
+      <width>170</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Quantité Disponible:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_quantite_disponible">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>280</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+   </widget>
+   
+   <!-- État -->
+   <widget class="QLabel" name="label_etat">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>330</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>État:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_etat">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>330</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>Bon</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Moyen</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Mauvais</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>En réparation</string>
+     </property>
+    </item>
+   </widget>
+   
+   <!-- Fournisseur -->
+   <widget class="QLabel" name="label_fournisseur">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>380</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Fournisseur:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_fournisseur">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>380</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+   </widget>
+   
+   <!-- Date d'Acquisition -->
+   <widget class="QLabel" name="label_date_acquisition">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>430</y>
+      <width>170</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Date Acquisition:</string>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="dateEdit_acquisition">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>430</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+   </widget>
+   
+   <!-- CIN Employé -->
+   <widget class="QLabel" name="label_cin_employee">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>480</y>
+      <width>170</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>CIN Employé:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_cin_employee">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>480</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+    <property name="editable">
+     <bool>false</bool>
+    </property>
+   </widget>
+   
+   <!-- Buttons -->
+   <widget class="QPushButton" name="pushButton_ajouter">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>630</y>
+      <width>140</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:#ffce00;
+color:#002157;
+border-radius:10px;</string>
+    </property>
+    <property name="text">
+     <string>Ajouter</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_annuler">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>630</y>
+      <width>140</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:#ffce00;
+color:#002157;
+border-radius:10px;</string>
+    </property>
+    <property name="text">
+     <string>Annuler</string>
+    </property>
+   </widget>
+  </widget>
+  
+  <!-- WEATHER PREDICTION WIDGET -->
+  <widget class="QGroupBox" name="groupBox_weather">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>510</y>
+     <width>340</width>
+     <height>350</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius:10px;
+background-color:#e3e2de;</string>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QLabel" name="label_weather_title">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>5</y>
+      <width>320</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157;
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ffce00, stop:1 #e3e2de);
+padding: 8px;
+border-radius: 8px;</string>
+    </property>
+    <property name="text">
+     <string>Previsions Meteo</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_city_prompt">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>42</y>
+      <width>50</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Ville:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_city">
+    <property name="geometry">
+     <rect>
+      <x>65</x>
+      <y>42</y>
+      <width>160</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Ex: Tunis</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_get_weather">
+    <property name="geometry">
+     <rect>
+      <x>235</x>
+      <y>42</y>
+      <width>95</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:#ffce00;
+color:#002157;
+border-radius:5px;</string>
+    </property>
+    <property name="text">
+     <string>Rechercher</string>
+    </property>
+   </widget>
+   
+   <!-- Weather Display Frame -->
+   <widget class="QFrame" name="frame_weather_display">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>78</y>
+      <width>320</width>
+      <height>140</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:10px;
+border:2px solid #ffce00;
+QFrame {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <widget class="QLabel" name="label_current_temp">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>5</y>
+       <width>110</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>32</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.15);</string>
+     </property>
+     <property name="text">
+      <string>--°C</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_weather_desc">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>58</y>
+       <width>110</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#555;</string>
+     </property>
+     <property name="text">
+      <string>-</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_city_name">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>85</y>
+       <width>110</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;
+background-color:#ffce00;
+padding: 8px 15px;
+border-radius: 18px;
+font-weight: bold;</string>
+     </property>
+     <property name="text">
+      <string>-</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    
+    <!-- Weather Details -->
+    <widget class="QLabel" name="label_humidity_icon">
+     <property name="geometry">
+      <rect>
+       <x>135</x>
+       <y>10</y>
+       <width>80</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>Humidite:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_humidity_value">
+     <property name="geometry">
+      <rect>
+       <x>215</x>
+       <y>10</y>
+       <width>100</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>--%</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_wind_icon">
+     <property name="geometry">
+      <rect>
+       <x>135</x>
+       <y>35</y>
+       <width>80</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>Vent:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_wind_value">
+     <property name="geometry">
+      <rect>
+       <x>215</x>
+       <y>35</y>
+       <width>100</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>-- km/h</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_pressure_icon">
+     <property name="geometry">
+      <rect>
+       <x>135</x>
+       <y>60</y>
+       <width>80</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>Pression:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_pressure_value">
+     <property name="geometry">
+      <rect>
+       <x>215</x>
+       <y>60</y>
+       <width>100</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>-- hPa</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_feels_like_icon">
+     <property name="geometry">
+      <rect>
+       <x>135</x>
+       <y>85</y>
+       <width>80</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>Ressenti:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_feels_like_value">
+     <property name="geometry">
+      <rect>
+       <x>215</x>
+       <y>85</y>
+       <width>100</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157;</string>
+     </property>
+     <property name="text">
+      <string>--°C</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_update_time">
+     <property name="geometry">
+      <rect>
+       <x>135</x>
+       <y>115</y>
+       <width>180</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#999;</string>
+     </property>
+     <property name="text">
+      <string>Mise a jour: -</string>
+     </property>
+    </widget>
+   </widget>
+   
+   <!-- Weather Recommendation -->
+   <widget class="QFrame" name="frame_weather_recommendation">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>228</y>
+      <width>320</width>
+      <height>112</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #e7f5ea, stop:1 #d4edda);
+border-radius:8px;
+border:2px solid #28a745;
+padding: 5px;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    
+    <widget class="QLabel" name="label_weather_recommendation">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>300</width>
+       <height>92</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#155724</string>
+     </property>
+     <property name="text">
+      <string>Conditions ideales pour l'utilisation de tous les equipements</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  
+  <!-- EQUIPMENT LIFECYCLE & DEPRECIATION CALCULATOR -->
+  <widget class="QGroupBox" name="groupBox_lifecycle">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>510</y>
+     <width>740</width>
+     <height>350</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius:10px;
+background-color:#e3e2de;</string>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   
+   <!-- Title -->
+   <widget class="QLabel" name="label_lifecycle_title">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>15</y>
+      <width>480</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157;
+background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #ffce00, stop:1 #e3e2de);
+padding: 5px;
+border-radius: 6px;</string>
+    </property>
+    <property name="text">
+     <string>💰 Analyse du Cycle de Vie &amp; Dépréciation</string>
+    </property>
+   </widget>
+   
+   <!-- Equipment Selector -->
+   <widget class="QLabel" name="label_select_equipment">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>48</y>
+      <width>100</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Équipement:</string>
+    </property>
+   </widget>
+   
+   <widget class="QComboBox" name="comboBox_lifecycle_equipment">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>48</y>
+      <width>370</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+padding:5px;</string>
+    </property>
+   </widget>
+   
+   <!-- Main Display Frame -->
+   <widget class="QFrame" name="frame_lifecycle_display">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>82</y>
+      <width>700</width>
+      <height>270</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:10px;
+border:2px solid #002157;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    
+    <!-- Current Value Section -->
+    <widget class="QLabel" name="label_current_value_title">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>15</y>
+       <width>150</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>💵 Valeur Actuelle:</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_current_value">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>45</y>
+       <width>250</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>28</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#28a745;
+text-shadow: 1px 1px 3px rgba(0,0,0,0.15);</string>
+     </property>
+     <property name="text">
+      <string>0 TND</string>
+     </property>
+    </widget>
+    
+    <!-- Original Cost -->
+    <widget class="QLabel" name="label_original_cost_title">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>100</y>
+       <width>120</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#666</string>
+     </property>
+     <property name="text">
+      <string>Coût d'origine:</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_original_cost">
+     <property name="geometry">
+      <rect>
+       <x>145</x>
+       <y>100</y>
+       <width>120</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>0 TND</string>
+     </property>
+    </widget>
+    
+    <!-- Depreciation Amount -->
+    <widget class="QLabel" name="label_depreciation_title">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>130</y>
+       <width>120</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#666</string>
+     </property>
+     <property name="text">
+      <string>Dépréciation:</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_depreciation_amount">
+     <property name="geometry">
+      <rect>
+       <x>145</x>
+       <y>130</y>
+       <width>120</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#dc3545</string>
+     </property>
+     <property name="text">
+      <string>0 TND</string>
+     </property>
+    </widget>
+    
+    <!-- Lifecycle Stage -->
+    <widget class="QFrame" name="frame_lifecycle_stage">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>150</y>
+       <width>330</width>
+       <height>110</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #f8f9fa);
+border-radius:8px;
+border:2px solid #dee2e6;</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     
+     <widget class="QLabel" name="label_stage_title">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>5</y>
+        <width>420</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#002157</string>
+      </property>
+      <property name="text">
+       <string>📊 Stade du Cycle:</string>
+      </property>
+     </widget>
+     
+     <widget class="QLabel" name="label_lifecycle_stage">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>28</y>
+        <width>420</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#28a745</string>
+      </property>
+      <property name="text">
+       <string>🟢 Nouveau</string>
+      </property>
+     </widget>
+     
+     <widget class="QLabel" name="label_age_info">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>55</y>
+        <width>210</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#666</string>
+      </property>
+      <property name="text">
+       <string>Âge: 0 ans, 0 mois</string>
+      </property>
+     </widget>
+     
+     <widget class="QLabel" name="label_useful_life">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>55</y>
+        <width>200</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#666</string>
+      </property>
+      <property name="text">
+       <string>Vie utile: 0 / 5 ans (0%)</string>
+      </property>
+     </widget>
+    </widget>
+    
+    <!-- Replacement Info -->
+    <widget class="QFrame" name="frame_replacement">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>150</y>
+       <width>330</width>
+       <height>110</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fffef5, stop:1 #fff3cd);
+border-radius:8px;
+border:2px solid #ffc107;</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     
+     <widget class="QLabel" name="label_replacement_title">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>5</y>
+        <width>420</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#002157</string>
+      </property>
+      <property name="text">
+       <string>🔄 Remplacement:</string>
+      </property>
+     </widget>
+     
+     <widget class="QLabel" name="label_replacement_year">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>28</y>
+        <width>420</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#856404</string>
+      </property>
+      <property name="text">
+       <string>Estimé en: -</string>
+      </property>
+     </widget>
+     
+     <widget class="QLabel" name="label_replacement_recommendation">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>420</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#666</string>
+      </property>
+      <property name="text">
+       <string>Sélectionnez un équipement pour voir les recommandations</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    
+    <!-- Depreciation Progress Bar -->
+    <widget class="QLabel" name="label_depreciation_progress_title">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>170</y>
+       <width>200</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>📉 Progression Dépréciation:</string>
+     </property>
+    </widget>
+    
+    <widget class="QProgressBar" name="progressBar_depreciation">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>340</y>
+       <width>440</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QProgressBar {
+    border: 2px solid #002157;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #e9ecef;
+    font-size: 8pt;
+}
+
+QProgressBar::chunk {
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                      stop:0 #28a745, stop:0.5 #ffc107, stop:1 #dc3545);
+    border-radius: 3px;
+}</string>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="format">
+      <string>%p%</string>
+     </property>
+    </widget>
+    
+    <!-- Financial Summary - Hidden for compact layout -->
+    <widget class="QLabel" name="label_financial_summary_title">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>245</y>
+       <width>180</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>💼 Résumé Financier:</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_annual_depreciation_title">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>275</y>
+       <width>200</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#666</string>
+     </property>
+     <property name="text">
+      <string>• Dépréciation annuelle:</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_annual_depreciation">
+     <property name="geometry">
+      <rect>
+       <x>235</x>
+       <y>275</y>
+       <width>150</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>0 TND/an</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_monthly_depreciation_title">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>300</y>
+       <width>200</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#666</string>
+     </property>
+     <property name="text">
+      <string>• Dépréciation mensuelle:</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_monthly_depreciation">
+     <property name="geometry">
+      <rect>
+       <x>235</x>
+       <y>300</y>
+       <width>150</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>0 TND/mois</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_residual_value_title">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>275</y>
+       <width>200</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#666</string>
+     </property>
+     <property name="text">
+      <string>• Valeur résiduelle (fin vie):</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_residual_value">
+     <property name="geometry">
+      <rect>
+       <x>625</x>
+       <y>275</y>
+       <width>150</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#28a745</string>
+     </property>
+     <property name="text">
+      <string>0 TND</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_depreciation_method_title">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>300</y>
+       <width>200</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#666</string>
+     </property>
+     <property name="text">
+      <string>• Méthode de calcul:</string>
+     </property>
+    </widget>
+    
+    <widget class="QLabel" name="label_depreciation_method">
+     <property name="geometry">
+      <rect>
+       <x>625</x>
+       <y>300</y>
+       <width>200</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#666</string>
+     </property>
+     <property name="text">
+      <string>Linéaire</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  
+  <!-- NAVIGATION BAR (Top) -->
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>1471</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:#e3e2de;
+border-radius:10px;</string>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>0</y>
+      <width>931</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="candidat">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:#e3e2de;</string>
+       </property>
+       <property name="text">
+        <string>Candidat</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="planning">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:#e3e2de;</string>
+       </property>
+       <property name="text">
+        <string>Planning</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="employee">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:#e3e2de;</string>
+       </property>
+       <property name="text">
+        <string>Employés</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="vehicule">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:#e3e2de;</string>
+       </property>
+       <property name="text">
+        <string>Véhicules</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="examen">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:#e3e2de;</string>
+       </property>
+       <property name="text">
+        <string>Examens</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="equipement">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:#e3e2de;</string>
+       </property>
+       <property name="text">
+        <string>Équipements</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_logo">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>-10</y>
+      <width>91</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/images/logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
