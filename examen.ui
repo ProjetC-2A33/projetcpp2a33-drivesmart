@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1557</width>
-    <height>876</height>
+    <height>938</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,22 +95,12 @@ color:black;
       </item>
       <item>
        <property name="text">
-        <string>nom A à Z </string>
+        <string>date croissante</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>nom Z à A</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>age croissant</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>age  décroissant</string>
+        <string>date decroissante</string>
        </property>
       </item>
      </widget>
@@ -345,11 +335,6 @@ background-color: rgb(255, 255, 255);
       <column>
        <property name="text">
         <string>cin candidat</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>telephone</string>
        </property>
       </column>
       <column>
@@ -700,43 +685,49 @@ color:black;
        <string>CIN :</string>
       </property>
      </widget>
-    </widget>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>1400</x>
-       <y>740</y>
-       <width>71</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap>:/new/prefix1/SMS.png</pixmap>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_22">
-     <property name="geometry">
-      <rect>
-       <x>1290</x>
-       <y>760</y>
-       <width>111</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>14</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#002157</string>
-     </property>
-     <property name="text">
-      <string>Envoyer:</string>
-     </property>
+     <widget class="QComboBox" name="comboBox_5">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>410</y>
+        <width>211</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+color:black;
+</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_19">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>410</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#002157</string>
+      </property>
+      <property name="text">
+       <string>cin condidat :</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QLabel" name="label_2">
      <property name="geometry">
@@ -749,58 +740,6 @@ color:black;
      </property>
      <property name="text">
       <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>510</y>
-       <width>331</width>
-       <height>301</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources.qrc">:/images/stat.png</pixmap>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_4">
-     <property name="geometry">
-      <rect>
-       <x>540</x>
-       <y>640</y>
-       <width>63</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color:#ffce00;
-color:#002157;
-</string>
-     </property>
-     <property name="text">
-      <string>code</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>670</x>
-       <y>650</y>
-       <width>63</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color:rgb(85, 0, 255);
-color:#002157;
-</string>
-     </property>
-     <property name="text">
-      <string>conduit</string>
      </property>
     </widget>
     <widget class="QGroupBox" name="groupBox_3">
@@ -958,8 +897,8 @@ color:bleu;</string>
       <rect>
        <x>-90</x>
        <y>-70</y>
-       <width>1641</width>
-       <height>1081</height>
+       <width>1800</width>
+       <height>1150</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -969,16 +908,136 @@ color:bleu;</string>
       <string>TextLabel</string>
      </property>
     </widget>
+    <widget class="QComboBox" name="comboBox_6">
+     <property name="geometry">
+      <rect>
+       <x>630</x>
+       <y>500</y>
+       <width>211</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+color:black;
+</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>--------------</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>type d'examen</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_24">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>500</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>statistique par:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>550</y>
+       <width>421</width>
+       <height>251</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_25">
+     <property name="geometry">
+      <rect>
+       <x>990</x>
+       <y>510</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#002157</string>
+     </property>
+     <property name="text">
+      <string>HISTORIQUE:</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_7">
+     <property name="geometry">
+      <rect>
+       <x>940</x>
+       <y>550</y>
+       <width>481</width>
+       <height>261</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+color:black;
+
+
+</string>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+     </property>
+    </widget>
     <zorder>label_6</zorder>
     <zorder>groupBox_2</zorder>
     <zorder>groupBox</zorder>
-    <zorder>label</zorder>
-    <zorder>label_22</zorder>
     <zorder>label_2</zorder>
-    <zorder>label_3</zorder>
-    <zorder>label_4</zorder>
-    <zorder>label_5</zorder>
     <zorder>groupBox_3</zorder>
+    <zorder>comboBox_6</zorder>
+    <zorder>label_24</zorder>
+    <zorder>label_3</zorder>
+    <zorder>label_25</zorder>
+    <zorder>textEdit_7</zorder>
    </widget>
   </widget>
  </widget>
