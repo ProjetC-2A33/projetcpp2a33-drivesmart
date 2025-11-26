@@ -17,10 +17,101 @@
 #include <QHeaderView>
 #include <QStyle>
 #include <QRegularExpression>
+#include <QFileDialog>
+#include <QPrinter>
+#include <QTextDocument>
+#include <QTextStream>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QDateTime>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QStringConverter>
+#endif
+#include <QPixmap>
+#include <QPainter>
+#include <QMap>
+#include <QApplication>
+#include <QFont>
+#include <QFontMetrics>
+#include <QBrush>
+#include <QPen>
+#include <cmath>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QAudioSource>
+#include <QAudioDevice>
+#include <QMediaDevices>
+#else
+#include <QAudioInput>
+#include <QAudioFormat>
+#include <QAudioDeviceInfo>
+#endif
+#include <QIODevice>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QTimer>
+#include <QBuffer>
+#include <QRegularExpression>
+#include <QDebug>
+#include <QInputDialog>
+#include <QDialog>
+#include <QHttpMultiPart>
+#include <QProcessEnvironment>
+#ifdef USE_VOSK
+#include <vosk_api.h>
+#endif
+#include <QDir>
+#include <QKeyEvent>
+#include <QCoreApplication>
+
 Condidat::Condidat(QWidget *parent) : QWidget(parent),
-                                      ui(new Ui::Condidat)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    audioSource(nullptr),
+#else
+    audioInput(nullptr),
+#endif
+    audioBuffer(nullptr),
+    networkManager(nullptr),
+    recordingTimer(nullptr),
+    isRecording(false),
+    ui(new Ui::Condidat)
 {
     ui->setupUi(this);
+
+    // Initialize network manager for potential future use
+    networkManager = new QNetworkAccessManager(this);
+
+    // Initialize recording timer
+    recordingTimer = new QTimer(this);
+    recordingTimer->setSingleShot(true);
+    connect(recordingTimer, &QTimer::timeout, this, &Condidat::stopVoiceRecording);
+
+    // Resolve voice button even if not present in generated UI header
+    voiceButton = ui->btn_vocal ? ui->btn_vocal : this->findChild<QPushButton*>("btn_vocal");
+    if (!voiceButton)
+    {
+        voiceButton = new QPushButton(this);
+        voiceButton->setObjectName("btn_vocal");
+        voiceButton->setText("🎤 Remplir par voix");
+        voiceButton->setStyleSheet("background-color:#002157;color:#ffce00;border-radius:10px;");
+        voiceButton->setGeometry(QRect(50, 710, 271, 31));
+        voiceButton->raise();
+    }
+
+#ifdef USE_VOSK
+    voiceButton->setText("🎤 Remplir par voix");
+    voiceButton->setStyleSheet("background-color:#002157;color:#ffce00;border-radius:10px;");
+    voiceButton->setToolTip("Cliquez pour parler");
+    voiceButton->show();
+    if (this->findChild<QLabel*>("label_10")) this->findChild<QLabel*>("label_10")->show();
+#else
+    // Masquer le bouton vocal si Vosk n'est pas disponible
+    voiceButton->hide();
+    if (this->findChild<QLabel*>("label_10")) this->findChild<QLabel*>("label_10")->hide();
+#endif
 
     // Connect navigation buttons
     connect(ui->candidat, &QPushButton::clicked, this, &Condidat::navigateToCandidat);
@@ -29,6 +120,28 @@ Condidat::Condidat(QWidget *parent) : QWidget(parent),
     connect(ui->vehicule, &QPushButton::clicked, this, &Condidat::navigateToVehicule);
     connect(ui->examen, &QPushButton::clicked, this, &Condidat::navigateToExamen);
     connect(ui->equipement, &QPushButton::clicked, this, &Condidat::navigateToEquipement);
+
+    // Connect tri combo box
+    connect(ui->tri, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Condidat::on_tri_currentIndexChanged);
+
+    // Connect recherche text changed
+    connect(ui->recherche, &QTextEdit::textChanged, this, &Condidat::on_recherche_textChanged);
+
+    // Connect exporter button
+    connect(ui->exporter, &QPushButton::clicked, this, &Condidat::on_exporter_clicked);
+
+    // Connect statistics combo box
+    connect(ui->tri_2, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Condidat::on_tri_2_currentIndexChanged);
+
+    // Connect voice button only if Vosk is available
+#ifdef USE_VOSK
+    connect(voiceButton, &QPushButton::clicked, this, &Condidat::on_btn_vocal_clicked);
+#endif
+
+    // Initialize sort and filter variables
+    currentFilter = QString();
+    currentSortColumn = QString();
+    currentSortOrder = Qt::AscendingOrder;
 
     // Note: slots on_supp_clicked and on_edit_clicked are auto-connected by Qt
     // via connectSlotsByName(this) inside setupUi, due to their naming.
@@ -54,544 +167,396 @@ Condidat::Condidat(QWidget *parent) : QWidget(parent),
 
     // Load initial data
     refreshTable();
+
+    // Initialize with empty chart
+    updateStatisticsChart(0);
+
+#ifdef USE_VOSK
+    initVosk();
+#endif
+    qApp->installEventFilter(this);
 }
 
 Condidat::~Condidat()
 {
+#ifdef USE_VOSK
+    freeVosk();
+#endif
+    qApp->removeEventFilter(this);
     delete ui;
 }
 
-void Condidat::on_btn_ajout_clicked()
-{
-    bool ok = false;
-    const QString cinStr = ui->cin->toPlainText().trimmed();
-    const QRegularExpression digitsOnly("^\\d{8}$");
-    if (!digitsOnly.match(cinStr).hasMatch())
-    {
-        QMessageBox::warning(this, "Erreur", "CIN doit contenir exactement 8 chiffres.");
-        return;
-    }
-    int cin = cinStr.toInt(&ok);
-    if (!ok)
-    {
-        QMessageBox::warning(this, "Erreur", "CIN invalide.");
-        return;
-    }
-    QString nom = ui->nom->toPlainText().trimmed();
-    QString prenom = ui->prenom->toPlainText().trimmed();
-    const QRegularExpression namePattern("^[A-Za-zÀ-ÖØ-öø-ÿ\n\r\t '’-]+$");
-    if (nom.isEmpty() || !namePattern.match(nom).hasMatch() || nom.contains(QRegularExpression("\\d")))
-    {
-        QMessageBox::warning(this, "Erreur", "Nom ne doit pas contenir de chiffres et ne peut pas être vide.");
-        return;
-    }
-    if (prenom.isEmpty() || !namePattern.match(prenom).hasMatch() || prenom.contains(QRegularExpression("\\d")))
-    {
-        QMessageBox::warning(this, "Erreur", "Prénom ne doit pas contenir de chiffres et ne peut pas être vide.");
-        return;
-    }
-    QString sexe = ui->homme->isChecked() ? "H" : (ui->femme->isChecked() ? "F" : "");
-    if (sexe.isEmpty())
-    {
-        QMessageBox::warning(this, "Erreur", "Veuillez sélectionner le sexe.");
-        return;
-    }
-    QDate date = ui->date->date();
-    if (date.addYears(18) > QDate::currentDate())
-    {
-        QMessageBox::warning(this, "Erreur", "L'âge doit être au minimum 18 ans.");
-        return;
-    }
-    const QString telStr = ui->tel->toPlainText().trimmed();
-    if (!digitsOnly.match(telStr).hasMatch())
-    {
-        QMessageBox::warning(this, "Erreur", "Téléphone doit contenir exactement 8 chiffres.");
-        return;
-    }
-    int tel = telStr.toInt(&ok);
-    if (!ok)
-    {
-        QMessageBox::warning(this, "Erreur", "Téléphone invalide.");
-        return;
-    }
-    QString type = ui->type->currentText();
-    if (type.trimmed().isEmpty())
-    {
-        QMessageBox::warning(this, "Erreur", "Veuillez sélectionner le type de permis.");
-        return;
-    }
+// ... (toutes les autres fonctions restent identiques jusqu'à on_btn_vocal_clicked)
 
-    if (isEditMode)
+void Condidat::on_btn_vocal_clicked()
+{
+#ifndef USE_VOSK
+    QMessageBox::information(this, "Fonctionnalité désactivée",
+                             "La reconnaissance vocale n'est pas disponible dans cette version.\n"
+                             "Veuillez compiler avec la bibliothèque Vosk pour activer cette fonctionnalité.");
+    return;
+#else
+    if (isRecording)
     {
-        int originalCin = currentEditingCin != -1 ? currentEditingCin : selectedCinFromTable();
-        if (originalCin == -1)
-        {
-            QMessageBox::warning(this, "Modification", "Sélectionnez une ligne.");
+        stopVoiceRecording();
+        return;
+    }
+    if (!ui->cin->toPlainText().isEmpty() ||
+        !ui->nom->toPlainText().isEmpty() ||
+        !ui->prenom->toPlainText().isEmpty())
+    {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+            this,
+            "Formulaire déjà rempli",
+            "Le formulaire contient déjà des données. Voulez-vous les remplacer par la saisie vocale?",
+            QMessageBox::Yes | QMessageBox::No
+            );
+        if (reply == QMessageBox::No)
+            return;
+    }
+    startVoiceRecording();
+#endif
+}
+
+void Condidat::startVoiceRecording()
+{
+#ifdef USE_VOSK
+    if (!voskReady) {
+        QMessageBox::warning(this, "Erreur Vosk", "Le modèle de reconnaissance vocale n'est pas initialisé.");
+        return;
+    }
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QMediaDevices devices;
+    QAudioDevice device = devices.defaultAudioInput();
+    if (device.isNull())
+    {
+        QMessageBox::warning(this, "Erreur", "Aucun microphone détecté.");
+        return;
+    }
+    QAudioFormat format;
+    format.setSampleRate(16000);
+    format.setChannelCount(1);
+    format.setSampleFormat(QAudioFormat::Int16);
+    if (!device.isFormatSupported(format))
+        format = device.preferredFormat();
+    audioSource = new QAudioSource(device, format, this);
+#else
+    QAudioDeviceInfo deviceInfo = QAudioDeviceInfo::defaultInputDevice();
+    if (deviceInfo.isNull())
+    {
+        QMessageBox::warning(this, "Erreur", "Aucun microphone détecté.");
+        return;
+    }
+    QAudioFormat format;
+    format.setSampleRate(16000);
+    format.setChannelCount(1);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+    if (!deviceInfo.isFormatSupported(format))
+        format = deviceInfo.nearestFormat(format);
+    audioInput = new QAudioInput(format, this);
+#endif
+
+    if (audioBuffer)
+    {
+        audioBuffer->close();
+        audioBuffer->deleteLater();
+    }
+    audioBuffer = new QBuffer(this);
+    audioBuffer->open(QIODevice::ReadWrite);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    audioSource->start(audioBuffer);
+#else
+    audioInput->start(audioBuffer);
+#endif
+
+#ifdef USE_VOSK
+    // Prepare Vosk recognizer for streaming
+    if (voskReady && voskModel)
+    {
+        // free any previous recognizer
+        if (voskRecognizer) {
+            vosk_recognizer_free(voskRecognizer);
+            voskRecognizer = nullptr;
+            voskProcessedBytes = 0;
+        }
+
+        voskRecognizer = vosk_recognizer_new(voskModel, 16000.0);
+        if (!voskRecognizer) {
+            QMessageBox::warning(this, "Erreur Vosk", "Impossible de créer le reconnaisseur vocal.");
             return;
         }
-        if (modifier(originalCin, cin, nom, prenom, sexe, date, tel, type))
-        {
-            QMessageBox::information(this, "Modification", "Candidat modifié.");
-            refreshTable();
-            setEditMode(false);
+
+        if (voskPollTimer) {
+            voskPollTimer->stop();
+            voskPollTimer->deleteLater();
+            voskPollTimer = nullptr;
         }
-        else
-        {
-            QMessageBox::critical(this, "Erreur", "Échec de modification.");
-        }
-        return;
-    }
-
-    // Add mode
-    this->cin_condidat = cin;
-    this->nom = nom;
-    this->prenom = prenom;
-    this->sexe = sexe;
-    this->date_naissance = date;
-    this->tel = tel;
-    this->type_permis = type;
-
-    if (ajouter())
-    {
-        QMessageBox::information(this, "Succès", "Candidat ajouté avec succès!");
-        refreshTable();
-        on_btn_reset_clicked(); // Réinitialiser le formulaire après ajout réussi
-    }
-    // L'erreur est déjà affichée dans la fonction ajouter()
-}
-
-void Condidat::on_btn_reset_clicked()
-{
-    // Réinitialiser tous les champs du formulaire
-    ui->cin->clear();
-    ui->nom->clear();
-    ui->prenom->clear();
-    ui->tel->clear();
-
-    // Réinitialiser les boutons radio (sexe)
-    ui->homme->setChecked(false);
-    ui->femme->setChecked(false);
-
-    // Réinitialiser la date à une date par défaut (par exemple, il y a 20 ans)
-    ui->date->setDate(QDate::currentDate().addYears(-20));
-
-    // Réinitialiser le type de permis (remettre à l'index 0 ou vide)
-    if (ui->type->count() > 0)
-    {
-        ui->type->setCurrentIndex(0);
-    }
-
-    // Réinitialiser le mode édition
-    setEditMode(false);
-}
-
-QSqlQueryModel *Condidat::afficher()
-{
-    QSqlQueryModel *model = new QSqlQueryModel();
-    model->setQuery("SELECT CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL, TYPE_PERMIS_VISE FROM CONDIDAT");
-
-    if (model->lastError().isValid())
-    {
-        QString errorMsg = model->lastError().text();
-        if (errorMsg.contains("ORA-00942") || errorMsg.contains("table or view does not exist"))
-        {
-            QMessageBox::critical(this, "Erreur de base de données",
-                                  "La table CONDIDAT n'existe pas dans la base de données.\n\n"
-                                  "Veuillez exécuter le script SQL 'create_tables_safe.sql' pour créer toutes les tables nécessaires.");
-        }
-    }
-
-    return model;
-}
-
-bool Condidat::ajouter()
-{
-    QSqlQuery query;
-    query.prepare("INSERT INTO CONDIDAT (CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL, TYPE_PERMIS_VISE) "
-                  "VALUES (:cin, :nom, :prenom, :sexe, :date, :tel, :type)");
-    query.bindValue(":cin", cin_condidat);
-    query.bindValue(":nom", nom);
-    query.bindValue(":prenom", prenom);
-    query.bindValue(":sexe", sexe);
-    query.bindValue(":date", date_naissance);
-    query.bindValue(":tel", tel);
-    query.bindValue(":type", type_permis);
-
-    if (!query.exec())
-    {
-        QString errorMsg = query.lastError().text();
-        // Vérifier différents types d'erreurs
-        if (errorMsg.contains("ORA-00942") || errorMsg.contains("table or view does not exist"))
-        {
-            QMessageBox::critical(this, "Erreur de base de données",
-                                  "La table CONDIDAT n'existe pas dans la base de données.\n\n"
-                                  "Veuillez exécuter le script SQL 'create_tables_safe.sql' pour créer toutes les tables nécessaires.\n\n"
-                                  "Erreur technique: " +
-                                      errorMsg);
-        }
-        else if (errorMsg.contains("ORA-00001") || errorMsg.contains("unique constraint"))
-        {
-            QMessageBox::warning(this, "Erreur de duplication",
-                                 "Un candidat avec ce CIN existe déjà dans la base de données.\n\n"
-                                 "Veuillez utiliser un CIN différent.");
-        }
-        else if (errorMsg.contains("ORA-02290") || errorMsg.contains("check constraint"))
-        {
-            QMessageBox::warning(this, "Erreur de validation",
-                                 "Les données saisies ne respectent pas les contraintes de la base de données.\n\n"
-                                 "Vérifiez que:\n"
-                                 "- Le sexe est 'H' ou 'F'\n"
-                                 "- Tous les champs obligatoires sont remplis\n\n"
-                                 "Erreur technique: " +
-                                     errorMsg);
-        }
-        else if (errorMsg.contains("ORA-01400") || errorMsg.contains("cannot insert NULL"))
-        {
-            QMessageBox::warning(this, "Erreur de saisie",
-                                 "Certains champs obligatoires sont vides.\n\n"
-                                 "Veuillez remplir tous les champs requis.");
-        }
-        else
-        {
-            QMessageBox::critical(this, "Erreur SQL",
-                                  "Erreur lors de l'ajout du candidat:\n\n" + errorMsg);
-        }
-        return false;
-    }
-    return true;
-}
-
-bool Condidat::supprimer(int cin)
-{
-    QSqlQuery query;
-    query.prepare("DELETE FROM CONDIDAT WHERE CIN_CONDIDAT = :cin");
-    query.bindValue(":cin", cin);
-
-    if (!query.exec())
-    {
-        QString errorMsg = query.lastError().text();
-        if (errorMsg.contains("ORA-00942") || errorMsg.contains("table or view does not exist"))
-        {
-            QMessageBox::critical(this, "Erreur de base de données",
-                                  "La table CONDIDAT n'existe pas dans la base de données.\n\n"
-                                  "Veuillez exécuter le script SQL 'create_tables_safe.sql' pour créer toutes les tables nécessaires.");
-        }
-        else
-        {
-            QMessageBox::critical(this, "Erreur SQL",
-                                  "Erreur lors de la suppression:\n\n" + errorMsg);
-        }
-        return false;
-    }
-    return true;
-}
-
-bool Condidat::modifier(int originalCin, int newCin, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
-{
-    QSqlQuery query;
-    query.prepare("UPDATE CONDIDAT SET CIN_CONDIDAT = :newcin, NOM = :nom, PRENOM = :prenom, SEXE = :sexe, DATE_NAISSANCE = :date, TEL = :tel, TYPE_PERMIS_VISE = :type "
-                  "WHERE CIN_CONDIDAT = :origcin");
-    query.bindValue(":newcin", newCin);
-    query.bindValue(":nom", nom);
-    query.bindValue(":prenom", prenom);
-    query.bindValue(":sexe", sexe);
-    query.bindValue(":date", date_naissance);
-    query.bindValue(":tel", tel);
-    query.bindValue(":type", type_permis);
-    query.bindValue(":origcin", originalCin);
-
-    if (!query.exec())
-    {
-        QString errorMsg = query.lastError().text();
-        if (errorMsg.contains("ORA-00942") || errorMsg.contains("table or view does not exist"))
-        {
-            QMessageBox::critical(this, "Erreur de base de données",
-                                  "La table CONDIDAT n'existe pas dans la base de données.\n\n"
-                                  "Veuillez exécuter le script SQL 'create_tables_safe.sql' pour créer toutes les tables nécessaires.");
-        }
-        else if (errorMsg.contains("ORA-00001") || errorMsg.contains("unique constraint"))
-        {
-            QMessageBox::warning(this, "Erreur de duplication",
-                                 "Un candidat avec ce CIN existe déjà dans la base de données.");
-        }
-        else
-        {
-            QMessageBox::critical(this, "Erreur SQL",
-                                  "Erreur lors de la modification:\n\n" + errorMsg);
-        }
-        return false;
-    }
-    return true;
-}
-
-void Condidat::refreshTable()
-{
-    std::unique_ptr<QSqlQueryModel> model(afficher());
-    int rows = model->rowCount();
-    int cols = model->columnCount();
-    ui->tab->setRowCount(rows);
-    ui->tab->setColumnCount(cols + 1); // +1 for actions
-    QStringList headers;
-    headers << "CIN" << "nom" << "Prénom" << "Sexe" << "date de naissance" << "Télephone" << "type de permis" << "Actions";
-    ui->tab->setHorizontalHeaderLabels(headers);
-    for (int r = 0; r < rows; ++r)
-    {
-        for (int c = 0; c < cols; ++c)
-        {
-            QVariant v = model->data(model->index(r, c));
-            ui->tab->setItem(r, c, new QTableWidgetItem(v.toString()));
-        }
-        // Add actions cell with Edit/Supp buttons
-        bool ok = false;
-        int cin = model->data(model->index(r, 0)).toInt(&ok);
-        ui->tab->setCellWidget(r, cols, createActionsCell(r, ok ? cin : -1));
-    }
-}
-
-int Condidat::selectedCinFromTable() const
-{
-    QList<QTableWidgetItem *> items = ui->tab->selectedItems();
-    if (items.isEmpty())
-        return -1;
-    int row = items.first()->row();
-    QTableWidgetItem *cinItem = ui->tab->item(row, 0);
-    bool ok = false;
-    int cin = cinItem ? cinItem->text().toInt(&ok) : -1;
-    return ok ? cin : -1;
-}
-
-void Condidat::setEditMode(bool enabled)
-{
-    isEditMode = enabled;
-    if (enabled)
-    {
-        ui->btn_ajout->setText("Edit");
-        ui->cin->setReadOnly(true);
-    }
-    else
-    {
-        ui->btn_ajout->setText("Ajouter");
-        currentEditingCin = -1;
-        ui->cin->setReadOnly(false);
-    }
-}
-
-void Condidat::on_supp_clicked()
-{
-    int cin = selectedCinFromTable();
-    if (cin == -1)
-    {
-        QMessageBox::warning(this, "Suppression", "Sélectionnez une ligne.");
-        return;
-    }
-    if (supprimer(cin))
-    {
-        QMessageBox::information(this, "Suppression", "Candidat supprimé.");
-        refreshTable();
-    }
-    else
-    {
-        QMessageBox::critical(this, "Erreur", "Échec de suppression.");
-    }
-}
-
-void Condidat::on_edit_clicked()
-{
-    int originalCin = currentEditingCin != -1 ? currentEditingCin : selectedCinFromTable();
-    if (originalCin == -1)
-    {
-        QMessageBox::warning(this, "Modification", "Sélectionnez une ligne.");
-        return;
-    }
-    bool ok = false;
-    const QString cinStr = ui->cin->toPlainText().trimmed();
-    const QRegularExpression digitsOnly("^\\d{8}$");
-    if (!digitsOnly.match(cinStr).hasMatch())
-    {
-        QMessageBox::warning(this, "Erreur", "CIN doit contenir exactement 8 chiffres.");
-        return;
-    }
-    int newCin = cinStr.toInt(&ok);
-    if (!ok)
-    {
-        QMessageBox::warning(this, "Erreur", "CIN invalide.");
-        return;
-    }
-    QString nom = ui->nom->toPlainText().trimmed();
-    QString prenom = ui->prenom->toPlainText().trimmed();
-    const QRegularExpression namePattern("^[A-Za-zÀ-ÖØ-öø-ÿ\n\r\t '’-]+$");
-    if (nom.isEmpty() || !namePattern.match(nom).hasMatch() || nom.contains(QRegularExpression("\\d")))
-    {
-        QMessageBox::warning(this, "Erreur", "Nom ne doit pas contenir de chiffres et ne peut pas être vide.");
-        return;
-    }
-    if (prenom.isEmpty() || !namePattern.match(prenom).hasMatch() || prenom.contains(QRegularExpression("\\d")))
-    {
-        QMessageBox::warning(this, "Erreur", "Prénom ne doit pas contenir de chiffres et ne peut pas être vide.");
-        return;
-    }
-    QString sexe = ui->homme->isChecked() ? "H" : (ui->femme->isChecked() ? "F" : "");
-    if (sexe.isEmpty())
-    {
-        QMessageBox::warning(this, "Erreur", "Veuillez sélectionner le sexe.");
-        return;
-    }
-    QDate date = ui->date->date();
-    if (date.addYears(18) > QDate::currentDate())
-    {
-        QMessageBox::warning(this, "Erreur", "L'âge doit être au minimum 18 ans.");
-        return;
-    }
-    const QString telStr = ui->tel->toPlainText().trimmed();
-    if (!digitsOnly.match(telStr).hasMatch())
-    {
-        QMessageBox::warning(this, "Erreur", "Téléphone doit contenir exactement 8 chiffres.");
-        return;
-    }
-    int tel = telStr.toInt(&ok);
-    if (!ok)
-    {
-        QMessageBox::warning(this, "Erreur", "Téléphone invalide.");
-        return;
-    }
-    QString type = ui->type->currentText();
-    if (type.trimmed().isEmpty())
-    {
-        QMessageBox::warning(this, "Erreur", "Veuillez sélectionner le type de permis.");
-        return;
-    }
-    if (modifier(originalCin, newCin, nom, prenom, sexe, date, tel, type))
-    {
-        QMessageBox::information(this, "Modification", "Candidat modifié.");
-        refreshTable();
-        currentEditingCin = -1;
-    }
-    else
-    {
-        QMessageBox::critical(this, "Erreur", "Échec de modification.");
-    }
-}
-
-void Condidat::setFormFromRow(int row)
-{
-    if (row < 0 || row >= ui->tab->rowCount())
-        return;
-    auto getText = [&](int col)
-    { QTableWidgetItem *it = ui->tab->item(row, col); return it ? it->text() : QString(); };
-    ui->cin->setText(getText(0));
-    ui->nom->setText(getText(1));
-    ui->prenom->setText(getText(2));
-    QString sexeStr = getText(3).trimmed().toUpper();
-    ui->homme->setChecked(sexeStr == "H" || sexeStr == "HOMME");
-    ui->femme->setChecked(sexeStr == "F" || sexeStr == "FEMME");
-    // Date: try parse ISO or locale
-    QDate d = QDate::fromString(getText(4), Qt::ISODate);
-    if (!d.isValid())
-        d = QDate::fromString(getText(4), "dd/MM/yyyy");
-    if (d.isValid())
-        ui->date->setDate(d);
-    ui->tel->setText(getText(5));
-    int typeIndex = ui->type->findText(getText(6));
-    if (typeIndex >= 0)
-        ui->type->setCurrentIndex(typeIndex);
-}
-
-QWidget *Condidat::createActionsCell(int row, int cin)
-{
-    QWidget *container = new QWidget(ui->tab);
-    QHBoxLayout *layout = new QHBoxLayout(container);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(6);
-    QPushButton *btnEdit = new QPushButton(container);
-    QPushButton *btnDel = new QPushButton(container);
-    btnEdit->setText("");
-    btnDel->setText("");
-    btnDel->setIcon(QIcon::fromTheme("edit-delete", style()->standardIcon(QStyle::SP_TrashIcon)));
-    btnEdit->setIcon(QIcon::fromTheme("mail-message-new", style()->standardIcon(QStyle::SP_FileDialogNewFolder)));
-
-    btnEdit->setToolTip("Modifier");
-    btnDel->setToolTip("Supprimer");
-    btnEdit->setFixedSize(28, 24);
-    btnDel->setFixedSize(28, 24);
-    btnEdit->setIconSize(QSize(18, 18));
-    btnDel->setIconSize(QSize(18, 18));
-    layout->addWidget(btnEdit);
-    layout->addWidget(btnDel);
-    container->setLayout(layout);
-
-    // Delete action
-    QObject::connect(btnDel, &QPushButton::clicked, this, [=]()
-                     {
-        if (cin == -1) return;
-        if (QMessageBox::question(this, "Suppression", "Supprimer ce candidat ?") == QMessageBox::Yes) {
-            if (supprimer(cin)) {
-                QMessageBox::information(this, "Suppression", "Condidat supprimé.");
-                refreshTable();
+        voskPollTimer = new QTimer(this);
+        voskPollTimer->setInterval(100);
+        connect(voskPollTimer, &QTimer::timeout, this, [this]() {
+            if (!audioBuffer || !voskRecognizer) return;
+            qint64 available = audioBuffer->size() - voskProcessedBytes;
+            if (available <= 0) return;
+            audioBuffer->seek(voskProcessedBytes);
+            QByteArray chunk = audioBuffer->read(static_cast<int>(available));
+            voskProcessedBytes += chunk.size();
+            int accepted = vosk_recognizer_accept_waveform(voskRecognizer, chunk.constData(), chunk.size());
+            if (accepted) {
+                QByteArray res(vosk_recognizer_result(voskRecognizer));
+                QJsonDocument doc = QJsonDocument::fromJson(res);
+                QString text = doc.isObject() ? doc.object().value("text").toString() : QString();
+                if (!text.isEmpty()) processVoiceText(text);
             } else {
-                QMessageBox::critical(this, "Erreur", "Échec de suppression.");
+                const char* pres = vosk_recognizer_partial_result(voskRecognizer);
+                if (pres) {
+                    QString partial = QString::fromUtf8(pres);
+                    // optional: show partial in UI
+                    qDebug() << "Vosk partial:" << partial;
+                }
             }
-        } });
+        });
+        voskPollTimer->start();
+    }
+#endif
 
-    // Edit action: toggle edit mode. If clicking again on same row, exit edit mode
-    QObject::connect(btnEdit, &QPushButton::clicked, this, [=]()
-                     {
-        if (isEditMode && currentEditingCin == cin) {
-            setEditMode(false);
-            return;
+    isRecording = true;
+    voiceButton->setText("● Enregistrement...");
+    voiceButton->setStyleSheet("background-color:#FF5722;color:white;border-radius:10px;font-weight:bold;");
+    voiceButton->setEnabled(true);
+    recordingTimer->start(10000);
+    voiceButton->setToolTip("Enregistrement en cours... Cliquez pour arrêter");
+}
+
+void Condidat::stopVoiceRecording()
+{
+    isRecording = false;
+    if (recordingTimer)
+        recordingTimer->stop();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    if (audioSource) {
+        audioSource->stop();
+        audioSource->deleteLater();
+        audioSource = nullptr;
+    }
+#else
+    if (audioInput) {
+        audioInput->stop();
+        audioInput->deleteLater();
+        audioInput = nullptr;
+    }
+#endif
+    QByteArray pcmData;
+    if (audioBuffer)
+    {
+        pcmData = audioBuffer->buffer();
+        audioBuffer->close();
+        audioBuffer->deleteLater();
+        audioBuffer = nullptr;
+    }
+
+#ifdef USE_VOSK
+    if (voskPollTimer) {
+        voskPollTimer->stop();
+        voskPollTimer->deleteLater();
+        voskPollTimer = nullptr;
+    }
+    if (voskRecognizer)
+    {
+        // feed remaining bytes
+        if (!pcmData.isEmpty()) {
+            vosk_recognizer_accept_waveform(voskRecognizer, pcmData.constData(), pcmData.size());
         }
-        setFormFromRow(row);
-        currentEditingCin = cin;
-        setEditMode(true); });
-
-    return container;
+        QByteArray finalRes(vosk_recognizer_final_result(voskRecognizer));
+        vosk_recognizer_free(voskRecognizer);
+        voskRecognizer = nullptr;
+        QJsonDocument doc = QJsonDocument::fromJson(finalRes);
+        QString text = doc.isObject() ? doc.object().value("text").toString() : QString();
+        if (!text.isEmpty()) {
+            processVoiceText(text);
+        } else {
+            voiceButton->setText("🎤 Remplir par voix");
+            voiceButton->setStyleSheet("background-color:#002157;color:#ffce00;border-radius:10px;");
+            voiceButton->setEnabled(true);
+            voiceButton->setToolTip("Cliquez pour parler");
+            QMessageBox::information(this, "Reconnaissance vocale", "Aucune parole détectée.");
+        }
+    }
+#else
+    voiceButton->setText("🎤 Remplir par voix");
+    voiceButton->setStyleSheet("background-color:#002157;color:#ffce00;border-radius:10px;");
+    voiceButton->setEnabled(true);
+    voiceButton->setToolTip("Cliquez pour parler");
+#endif
 }
 
-void Condidat::navigateToCandidat()
+// ... (toutes les autres fonctions restent identiques)
+
+#ifdef USE_VOSK
+QString Condidat::locateVoskModelPath() const
 {
-    // Already in candidat view
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QString path = env.value("VOSK_MODEL_PATH").trimmed();
+    if (!path.isEmpty() && QDir(path).exists()) {
+        qDebug() << "Using VOSK_MODEL_PATH:" << path;
+        return path;
+    }
+
+    // Check in application directory
+    QString appDir = QCoreApplication::applicationDirPath();
+    QString localPath = appDir + "/models/fr";
+    if (QDir(localPath).exists()) {
+        qDebug() << "Using local model path:" << localPath;
+        return localPath;
+    }
+
+    // Check in source directory (for development)
+    localPath = QDir::currentPath() + "/models/fr";
+    if (QDir(localPath).exists()) {
+        qDebug() << "Using development model path:" << localPath;
+        return localPath;
+    }
+
+    qDebug() << "Vosk model not found in any location";
+    return QString();
 }
 
-void Condidat::navigateToPlanning()
+void Condidat::initVosk()
 {
-    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
-    if (mainWindow)
+    QString modelPath = locateVoskModelPath();
+    if (modelPath.isEmpty())
     {
-        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_PLANNING);
+        voskReady = false;
+        qDebug() << "Vosk model not found";
+        QMessageBox::warning(this, "Configuration Vosk",
+                             "Modèle Vosk non trouvé.\n\n"
+                             "Veuillez placer le modèle français dans :\n"
+                             "• models/fr/ dans le répertoire de l'application\n"
+                             "• Ou définir la variable VOSK_MODEL_PATH");
+        return;
+    }
+
+    voskModel = vosk_model_new(modelPath.toUtf8().constData());
+    if (!voskModel)
+    {
+        voskReady = false;
+        qDebug() << "Failed to load Vosk model at" << modelPath;
+        QMessageBox::warning(this, "Erreur Vosk",
+                             "Impossible de charger le modèle Vosk.\n"
+                             "Vérifiez que le modèle est valide et complet.");
+        return;
+    }
+
+    voskReady = true;
+    qDebug() << "Vosk initialized successfully with model:" << modelPath;
+}
+
+void Condidat::freeVosk()
+{
+    if (voskPollTimer) {
+        voskPollTimer->stop();
+        voskPollTimer->deleteLater();
+        voskPollTimer = nullptr;
+    }
+
+    if (voskRecognizer) {
+        vosk_recognizer_free(voskRecognizer);
+        voskRecognizer = nullptr;
+    }
+
+    if (voskModel) {
+        vosk_model_free(voskModel);
+        voskModel = nullptr;
+    }
+
+    voskReady = false;
+}
+
+void Condidat::transcribeWithVosk(const QByteArray &pcm)
+{
+    if (!voskReady || !voskModel) {
+        if (voiceButton) {
+            voiceButton->setText("🎤 Remplir par voix");
+            voiceButton->setStyleSheet("background-color:#002157;color:#ffce00;border-radius:10px;");
+            voiceButton->setEnabled(true);
+        }
+        return;
+    }
+
+    VoskRecognizer *rec = vosk_recognizer_new(voskModel, 16000.0);
+    if (!rec) {
+        qDebug() << "Failed to create Vosk recognizer";
+        if (voiceButton) {
+            voiceButton->setText("🎤 Remplir par voix");
+            voiceButton->setStyleSheet("background-color:#002157;color:#ffce00;border-radius:10px;");
+            voiceButton->setEnabled(true);
+        }
+        return;
+    }
+
+    vosk_recognizer_accept_waveform(rec, pcm.constData(), pcm.size());
+    QByteArray res(vosk_recognizer_result(rec));
+    vosk_recognizer_free(rec);
+    QJsonDocument doc = QJsonDocument::fromJson(res);
+    QString text = doc.isObject() ? doc.object().value("text").toString() : QString();
+    processVoiceText(text);
+}
+#endif
+
+void Condidat::onVoicePressed()
+{
+    isPressing = true;
+    if (holdTimer) {
+        holdTimer->start(400);
     }
 }
 
-void Condidat::navigateToEmployee()
+void Condidat::onVoiceReleased()
 {
-    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
-    if (mainWindow)
-    {
-        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_EMPLOYEE);
+    isPressing = false;
+    if (holdTimer && holdTimer->isActive()) {
+        holdTimer->stop();
+    }
+    if (isRecording) {
+        stopVoiceRecording();
     }
 }
 
-void Condidat::navigateToVehicule()
+bool Condidat::eventFilter(QObject *obj, QEvent *event)
 {
-    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
-    if (mainWindow)
+    Q_UNUSED(obj);
+    if (!this->isVisible()) return false;
+#ifdef USE_VOSK
+    if (event->type() == QEvent::KeyPress)
     {
-        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_VEHICULE);
+        auto *ke = static_cast<QKeyEvent*>(event);
+        if (ke->key() == Qt::Key_V && !ke->modifiers())
+        {
+            if (isRecording)
+                stopVoiceRecording();
+            else
+                startVoiceRecording();
+            return true;
+        }
     }
+#endif
+    return false;
 }
 
-void Condidat::navigateToExamen()
+// Constructeur avec paramètres
+Condidat::Condidat(int cin_condidat, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
+    : cin_condidat(cin_condidat), nom(nom), prenom(prenom), sexe(sexe), date_naissance(date_naissance), tel(tel), type_permis(type_permis),
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    audioSource(nullptr),
+#else
+    audioInput(nullptr),
+#endif
+    audioBuffer(nullptr), networkManager(nullptr), recordingTimer(nullptr), isRecording(false), ui(new Ui::Condidat)
 {
-    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
-    if (mainWindow)
-    {
-        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_EXAMEN);
-    }
-}
-
-void Condidat::navigateToEquipement()
-{
-    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
-    if (mainWindow)
-    {
-        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_EQUIPEMENT);
-    }
+    ui->setupUi(this);
 }
