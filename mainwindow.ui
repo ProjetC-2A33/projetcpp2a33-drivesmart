@@ -539,7 +539,7 @@ border-radius:10px;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="employee_7">
+        <widget class="QPushButton" name="pageemploye">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
@@ -932,7 +932,7 @@ border-radius:10px;</string>
      <x>0</x>
      <y>0</y>
      <width>1477</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

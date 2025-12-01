@@ -11,9 +11,12 @@ TEMPLATE = app
 
 HEADERS += \
     Login.h \
+    employes.h \
     mainwindow.h \
     condidat.h \
-    employee.h \
+    pageemploye.h \
+    randomstringgenerator.h \
+    smtp.h \
     vehicule.h \
     examen.h \
     planning.h \
@@ -22,11 +25,13 @@ HEADERS += \
     navigation_constants.h
 
 SOURCES += \
+    employes.cpp \
     main.cpp \
     Login.cpp \
     mainwindow.cpp\
     condidat.cpp \
-    employee.cpp \
+    pageemploye.cpp \
+    smtp.cpp \
     vehicule.cpp \
     examen.cpp \
     planning.cpp \
@@ -36,10 +41,10 @@ SOURCES += \
 FORMS += \
     Login.ui \
     condidat.ui \
-    employee.ui \
     examen.ui \
     gestion_equipement.ui \
     mainwindow.ui \
+    pageemploye.ui \
     planning.ui \
     vehicule.ui
 

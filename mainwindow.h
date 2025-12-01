@@ -2,14 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "pageemploye.h"
 namespace Ui
 {
     class MainWindow;
 }
 
 class Condidat;
-class Employee;
+class pageemploye;
 class Vehicule;
 class Examen;
 class Planning;
@@ -29,16 +29,18 @@ private slots:
     void showVehicule();
     void showExamen();
     void showPlanning();
-    void showEmployee();
+    void showemployes();
     void showEquipement();
     void on_btn_ajout_E_clicked();
     void on_btn_reset_E_clicked();
+
+
 
 private:
     Ui::MainWindow *ui;
     QStackedWidget *stackedWidget;
     Condidat *condidatView;
-    Employee *employeeView;
+    pageemploye *employesView;
     Vehicule *vehiculeView;
     Examen *examenView;
     Planning *planningView;

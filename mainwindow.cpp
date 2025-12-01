@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "condidat.h"
-#include "employee.h"
+#include "employes.h"
 #include "vehicule.h"
 #include "examen.h"
 #include "planning.h"
@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           examenView(nullptr),
                                           planningView(nullptr),
                                           equipementView(nullptr),
-                                          employeeView(nullptr)
+                                          employesView(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle("DriveSmart - Main Application");
@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     // Créer tous les widgets
     condidatView = new Condidat();
     planningView = new Planning();
-    employeeView = new Employee();
+    employesView = new pageemploye();
     vehiculeView = new Vehicule();
     examenView = new Examen();
     equipementView = new Gestion_Equipement();
@@ -48,8 +48,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     stackedWidget->addWidget(condidatView);
     // Index 1: Planning
     stackedWidget->addWidget(planningView);
-    // Index 2: Employee
-    stackedWidget->addWidget(employeeView);
+    // Index 2: employes
+    stackedWidget->addWidget(employesView);
     // Index 3: Véhicule
     stackedWidget->addWidget(vehiculeView);
     // Index 4: Examen
@@ -58,21 +58,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     stackedWidget->addWidget(equipementView);
 
     // Maintenant définir le stackedWidget comme central widget
-    // Cela retire automatiquement employeeView de son parent précédent
+    // Cela retire automatiquement employesView de son parent précédent
     setCentralWidget(stackedWidget);
 
     // Vérification de l'ordre
     qDebug() << "=== Ordre des pages dans QStackedWidget ===";
     qDebug() << "Index 0 (attendu: Candidat):" << (stackedWidget->widget(0) == condidatView ? "✓ Candidat" : QString("✗ ERREUR - widget: %1").arg(reinterpret_cast<quintptr>(stackedWidget->widget(0)), 0, 16));
     qDebug() << "Index 1 (attendu: Planning):" << (stackedWidget->widget(1) == planningView ? "✓ Planning" : QString("✗ ERREUR - widget: %1").arg(reinterpret_cast<quintptr>(stackedWidget->widget(1)), 0, 16));
-    qDebug() << "Index 2 (attendu: Employee):" << (stackedWidget->widget(2) == employeeView ? "✓ Employee" : QString("✗ ERREUR - widget: %1").arg(reinterpret_cast<quintptr>(stackedWidget->widget(2)), 0, 16));
+    qDebug() << "Index 2 (attendu: employes):" << (stackedWidget->widget(2) == employesView ? "✓ employes" : QString("✗ ERREUR - widget: %1").arg(reinterpret_cast<quintptr>(stackedWidget->widget(2)), 0, 16));
     qDebug() << "Index 3 (attendu: Véhicule):" << (stackedWidget->widget(3) == vehiculeView ? "✓ Véhicule" : QString("✗ ERREUR - widget: %1").arg(reinterpret_cast<quintptr>(stackedWidget->widget(3)), 0, 16));
     qDebug() << "Index 4 (attendu: Examen):" << (stackedWidget->widget(4) == examenView ? "✓ Examen" : QString("✗ ERREUR - widget: %1").arg(reinterpret_cast<quintptr>(stackedWidget->widget(4)), 0, 16));
     qDebug() << "Index 5 (attendu: Équipement):" << (stackedWidget->widget(5) == equipementView ? "✓ Équipement" : QString("✗ ERREUR - widget: %1").arg(reinterpret_cast<quintptr>(stackedWidget->widget(5)), 0, 16));
     qDebug() << "Total widgets:" << stackedWidget->count();
     qDebug() << "PAGE_CANDIDAT =" << Navigation::PAGE_CANDIDAT;
     qDebug() << "PAGE_PLANNING =" << Navigation::PAGE_PLANNING;
-    qDebug() << "PAGE_EMPLOYEE =" << Navigation::PAGE_EMPLOYEE;
+    qDebug() << "PAGE_employes =" << Navigation::PAGE_EMPLOYES;
     qDebug() << "PAGE_VEHICULE =" << Navigation::PAGE_VEHICULE;
     qDebug() << "PAGE_EXAMEN =" << Navigation::PAGE_EXAMEN;
     qDebug() << "PAGE_EQUIPEMENT =" << Navigation::PAGE_EQUIPEMENT;
@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     connect(ui->candidat_7, &QPushButton::clicked, this, &MainWindow::showCandidat);
     connect(ui->planning_7, &QPushButton::clicked, this, &MainWindow::showPlanning);
-    connect(ui->employee_7, &QPushButton::clicked, this, &MainWindow::showEmployee);
+    connect(ui->pageemploye, &QPushButton::clicked, this, &MainWindow::showemployes);
     connect(ui->vehicule_7, &QPushButton::clicked, this, &MainWindow::showVehicule);
     connect(ui->examen_7, &QPushButton::clicked, this, &MainWindow::showExamen);
 
@@ -98,14 +98,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         connect(equipementBtn, &QPushButton::clicked, this, &MainWindow::showEquipement);
     }
 
-    // Connecter les boutons Employee manuellement pour s'assurer qu'ils fonctionnent
-    QPushButton *btnAjoutE = employeeView->findChild<QPushButton *>("btn_ajout_E");
+    // Connecter les boutons employes manuellement pour s'assurer qu'ils fonctionnent
+    QPushButton *btnAjoutE = employesView->findChild<QPushButton *>("btn_ajout_E");
     if (btnAjoutE)
     {
         connect(btnAjoutE, &QPushButton::clicked, this, &MainWindow::on_btn_ajout_E_clicked);
     }
 
-    QPushButton *btnResetE = employeeView->findChild<QPushButton *>("btn_reset_E");
+    QPushButton *btnResetE = employesView->findChild<QPushButton *>("btn_reset_E");
     if (btnResetE)
     {
         connect(btnResetE, &QPushButton::clicked, this, &MainWindow::on_btn_reset_E_clicked);
@@ -161,16 +161,16 @@ void MainWindow::showPlanning()
     }
 }
 
-void MainWindow::showEmployee()
+void MainWindow::showemployes()
 {
-    if (stackedWidget && stackedWidget->count() > Navigation::PAGE_EMPLOYEE)
+    if (stackedWidget && stackedWidget->count() > Navigation::PAGE_EMPLOYES)
     {
-        int targetIndex = Navigation::PAGE_EMPLOYEE;
+        int targetIndex = Navigation::PAGE_EMPLOYES;
         QWidget *widgetAtTarget = stackedWidget->widget(targetIndex);
-        qDebug() << "showEmployee: Setting index to" << targetIndex;
+        qDebug() << "showemployes: Setting index to" << targetIndex;
         qDebug() << "Widget at index" << targetIndex << ":" << reinterpret_cast<void *>(widgetAtTarget);
-        qDebug() << "Expected employeeView:" << reinterpret_cast<void *>(employeeView);
-        qDebug() << "Match:" << (widgetAtTarget == employeeView ? "YES" : "NO");
+        qDebug() << "Expected employesView:" << reinterpret_cast<void *>(employesView);
+        qDebug() << "Match:" << (widgetAtTarget == employesView ? "YES" : "NO");
         stackedWidget->setCurrentIndex(targetIndex);
         qDebug() << "Current index after set:" << stackedWidget->currentIndex();
     }
@@ -248,8 +248,8 @@ void MainWindow::on_btn_ajout_E_clicked()
 
     QSqlQuery query;
 
-    // Vérifier si le CIN existe déjà (utiliser CIN_EMPLOYEE)
-    query.prepare("SELECT COUNT(*) FROM EMPLOYEE WHERE CIN_EMPLOYEE = :cin");
+    // Vérifier si le CIN existe déjà (utiliser CIN_employes)
+    query.prepare("SELECT COUNT(*) FROM employes WHERE CIN_employes = :cin");
     query.bindValue(":cin", cin);
     if (!query.exec())
     {
@@ -263,7 +263,7 @@ void MainWindow::on_btn_ajout_E_clicked()
     }
 
     // Insérer l'employé dans la base de données avec tous les champs obligatoires
-    query.prepare("INSERT INTO EMPLOYEE (CIN_EMPLOYEE, NOM, PRENOM, DISPONIBILITE, SALAIRE, TELEPHONE, EMAIL, POSTE, MDP) "
+    query.prepare("INSERT INTO employes (CIN_employes, NOM, PRENOM, DISPONIBILITE, SALAIRE, TELEPHONE, EMAIL, POSTE, MDP) "
                   "VALUES (:cin, :nom, :prenom, :disponibilite, :salaire, :telephone, :email, :poste, :mdp)");
     query.bindValue(":cin", cin);
     query.bindValue(":nom", nom);
@@ -289,7 +289,7 @@ void MainWindow::on_btn_ajout_E_clicked()
         }
         else if (errorMsg.contains("ORA-00942"))
         {
-            QMessageBox::critical(this, "Erreur", "La table EMPLOYEE n'existe pas. Veuillez exécuter le script create_tables_safe.sql.");
+            QMessageBox::critical(this, "Erreur", "La table employes n'existe pas. Veuillez exécuter le script create_tables_safe.sql.");
         }
         else
         {
@@ -313,3 +313,5 @@ void MainWindow::on_btn_reset_E_clicked()
     // Réinitialiser le champ disponibilité
     ui->dispo_E->setCurrentIndex(0);
 }
+
+

@@ -13,7 +13,7 @@
 namespace Navigation {
     const int PAGE_CANDIDAT = 0;
     const int PAGE_PLANNING = 1;
-    const int PAGE_EMPLOYEE = 2;
+    const int PAGE_EMPLOYES = 2;
     const int PAGE_VEHICULE = 3;
     const int PAGE_EXAMEN = 4;
     const int PAGE_EQUIPEMENT = 5;

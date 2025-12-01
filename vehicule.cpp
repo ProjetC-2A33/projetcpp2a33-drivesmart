@@ -121,7 +121,7 @@ void Vehicule::navigateToEmployee()
 {
     QMainWindow *mainWindow = qobject_cast<QMainWindow*>(parent()->parent());
     if (mainWindow) {
-        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_EMPLOYEE);
+        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_EMPLOYES);
     }
 }
 
