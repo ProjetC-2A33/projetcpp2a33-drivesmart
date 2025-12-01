@@ -1399,11 +1399,11 @@ void Gestion_Equipement::createCategoryPieChart()
 
     // Create pie series
     QPieSeries *series = new QPieSeries();
-    series->setHoleSize(0.4);
-    series->setPieSize(0.9);
+    series->setHoleSize(0.35);
+    series->setPieSize(0.85);
     
-    // Define vibrant colors for categories
-    QStringList colors = {"#667eea", "#11998e", "#f093fb", "#feca57", "#ff6348", "#5f27cd"};
+    // Define professional colors aligned with app theme
+    QStringList colors = {"#002157", "#ffce00", "#004589", "#e6b800", "#0056b3", "#ffd633", "#003d7a", "#ccaa00"};
     int colorIndex = 0;
 
     // Calculate total for percentages
@@ -1418,23 +1418,20 @@ void Gestion_Equipement::createCategoryPieChart()
         QPieSlice *slice = series->append(it.key(), it.value());
         slice->setLabelVisible(true);
         
-        // Show percentage and count
+        // Show percentage only
         double percentage = total > 0 ? (it.value() * 100.0 / total) : 0;
-        slice->setLabel(QString("%1: %2\n(%3%)").arg(it.key()).arg(it.value()).arg(QString::number(percentage, 'f', 0)));
+        slice->setLabel(QString("%1%").arg(QString::number(percentage, 'f', 1)));
         
         slice->setColor(QColor(colors[colorIndex % colors.size()]));
-        slice->setLabelFont(QFont("Arial", 8, QFont::Bold));
-        slice->setLabelColor(QColor("#000000"));
-        slice->setLabelPosition(QPieSlice::LabelOutside);
-        slice->setLabelArmLengthFactor(0.15);
-        slice->setBorderColor(QColor("white"));
-        slice->setBorderWidth(3);
+        slice->setLabelFont(QFont("Segoe UI", 9, QFont::Bold));
+        slice->setLabelColor(QColor("#212529"));
+        slice->setLabelPosition(QPieSlice::LabelInsideHorizontal);
+        slice->setBorderColor(QColor("#ffffff"));
+        slice->setBorderWidth(2);
         
-        // Subtle explode for visual separation
-        if (percentage > 15) {
-            slice->setExploded(true);
-            slice->setExplodeDistanceFactor(0.05);
-        }
+        // Subtle hover effect
+        slice->setExploded(false);
+        
         colorIndex++;
     }
 
@@ -1443,28 +1440,32 @@ void Gestion_Equipement::createCategoryPieChart()
     chart->addSeries(series);
     chart->setTitle("");
     chart->setAnimationOptions(QChart::SeriesAnimations);
+    chart->setAnimationDuration(800);
     chart->setBackgroundBrush(QBrush(Qt::transparent));
     chart->setBackgroundRoundness(0);
     
     // Optimize margins
-    chart->setMargins(QMargins(0, 0, 0, 0));
+    chart->setMargins(QMargins(5, 5, 5, 5));
     chart->setContentsMargins(0, 0, 0, 0);
 
-    // Legend customization
+    // Legend customization - professional style
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
-    chart->legend()->setFont(QFont("Arial", 8, QFont::Bold));
-    chart->legend()->setMarkerShape(QLegend::MarkerShapeCircle);
-    chart->legend()->setLabelColor(QColor("#002157"));
-    chart->legend()->setBackgroundVisible(false);
-    chart->legend()->setMaximumHeight(60);
+    chart->legend()->setFont(QFont("Segoe UI", 9));
+    chart->legend()->setMarkerShape(QLegend::MarkerShapeRectangle);
+    chart->legend()->setLabelColor(QColor("#495057"));
+    chart->legend()->setBackgroundVisible(true);
+    chart->legend()->setBrush(QBrush(QColor(255, 255, 255, 240)));
+    chart->legend()->setPen(QPen(QColor("#dee2e6")));
+    chart->legend()->setMaximumHeight(65);
 
     // Create or update chart view
     if (!categoryChartView)
     {
         categoryChartView = new QChartView(chart, ui->frame_category_breakdown);
         categoryChartView->setRenderHint(QPainter::Antialiasing);
-        categoryChartView->setGeometry(5, 50, 360, 275);
+        categoryChartView->setRenderHint(QPainter::TextAntialiasing);
+        categoryChartView->setGeometry(10, 55, 350, 260);
         categoryChartView->setStyleSheet("background: transparent; border: none;");
         categoryChartView->show();
     }
