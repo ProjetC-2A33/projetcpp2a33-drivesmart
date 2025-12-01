@@ -92,7 +92,7 @@ void Planning::on_btn_ajout_3_clicked()
                 condidat = text;
             }
         }
-        
+
         // Extraire le nom du candidat depuis le texte affiché (format: "CIN - Nom Prénom")
         QString text = ui->cin_6->currentText();
         int spaceIndex = text.indexOf(" - ");
@@ -613,12 +613,12 @@ void Planning::refreshTable()
     std::unique_ptr<QSqlQueryModel> model(afficher());
     int rows = model->rowCount();
     int cols = model->columnCount(); // This will be 10 (includes hidden CIN columns)
-    
+
     // Set table to have visible columns + Actions column
     // Columns: ID, Date, Nom Candidat, Type, Debut, Fin, Circuit, Matricule, CIN_CONDIDAT(hidden), CIN_EMPLOYEE(hidden), Actions
     ui->tab_3->setRowCount(rows);
     ui->tab_3->setColumnCount(cols + 1); // +1 for Actions
-    
+
     QStringList headers;
     headers << "ID" << "Date séance" << "condidat" << "type" << "debut" << "fin" << "circuit" << "véhicule" << "CIN_CAND" << "CIN_EMP" << "Actions";
     ui->tab_3->setHorizontalHeaderLabels(headers);
@@ -665,10 +665,10 @@ void Planning::refreshTable()
         int id = model->data(model->index(r, 0)).toInt(&ok);
         ui->tab_3->setCellWidget(r, cols, createActionsCell(r, ok ? id : -1));
     }
-    
+
     // Hide the CIN columns (they're only for preselection during edit)
-    ui->tab_3->setColumnHidden(8, true);  // CIN_CONDIDAT
-    ui->tab_3->setColumnHidden(9, true);  // CIN_EMPLOYEE
+    ui->tab_3->setColumnHidden(8, true); // CIN_CONDIDAT
+    ui->tab_3->setColumnHidden(9, true); // CIN_EMPLOYEE
 }
 
 int Planning::selectedIdFromTable() const

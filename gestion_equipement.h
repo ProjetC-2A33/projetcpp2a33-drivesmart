@@ -9,6 +9,12 @@
 #include <QPainter>
 #include <QPagedPaintDevice>
 #include <QTextDocument>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QValueAxis>
 
 QT_BEGIN_NAMESPACE
 class QTableWidgetItem;
@@ -43,12 +49,10 @@ private slots:
     void on_tri_currentIndexChanged(int index);
     void on_exporter_clicked();
     void exportToPDF();
-    
-    // Weather slots
-    void on_pushButton_get_weather_clicked();
-    void handleWeatherResponse(QNetworkReply *reply);
-    void handleForecastResponse(QNetworkReply *reply);
-    
+
+    // Maintenance Prediction slots
+    void on_pushButton_predict_maintenance_clicked();
+
     // Lifecycle & Depreciation slots
     void on_comboBox_lifecycle_equipment_currentIndexChanged(int index);
 
@@ -58,17 +62,20 @@ private:
     int selectedRow;
     bool isEditMode;
     int currentEditingId;
-    
-    // Weather API
-    QNetworkAccessManager *weatherManager;
-    QString weatherApiKey;
-    void fetchWeather(const QString &city);
-    void fetchForecast(const QString &city);
-    void updateWeatherDisplay(const QJsonObject &weatherData);
-    void updateForecastDisplay(const QJsonArray &forecastList);
-    
+
+    // Charts
+    QChartView *categoryChartView;
+    QChartView *valueChartView;
+
+    // Maintenance Prediction
+    QNetworkAccessManager *networkManager;
+    void loadEquipmentForMaintenance();
+    void updateMaintenancePrediction(int equipmentId);
+    int getMaintenanceInterval(const QString &category);
+
     // Equipment Lifecycle & Depreciation
-    struct LifecycleData {
+    struct LifecycleData
+    {
         double originalCost;
         double currentValue;
         double depreciationAmount;
@@ -113,9 +120,12 @@ private:
     QWidget *createActionsCell(int row, int id);
     void setEditMode(bool enabled);
     void setFormFromRow(int row);
-    
-    // Statistics methods
+
+    // Statistics and Charts methods
     void updateStatistics();
+    void updateCharts();
+    void createCategoryPieChart();
+    void createValueBarChart();
     void calculateTotalValue();
     void updateCategoryBreakdown();
 };

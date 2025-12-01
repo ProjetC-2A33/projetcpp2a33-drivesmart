@@ -4,6 +4,7 @@
 #include "navigation_constants.h"
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QVBoxLayout>
 #include <QStackedWidget>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -31,12 +32,22 @@
 #include <QTextTableFormat>
 #include <QTextCursor>
 #include <QAbstractTextDocumentLayout>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QValueAxis>
 
 Gestion_Equipement::Gestion_Equipement(QWidget *parent) : QWidget(parent),
                                                           ui(new Ui::Gestion_Equipement),
                                                           selectedRow(-1),
                                                           isEditMode(false),
-                                                          currentEditingId(-1)
+                                                          currentEditingId(-1),
+                                                          categoryChartView(nullptr),
+                                                          valueChartView(nullptr)
 {
     ui->setupUi(this);
 
@@ -47,11 +58,12 @@ Gestion_Equipement::Gestion_Equipement(QWidget *parent) : QWidget(parent),
         c.createconnect();
         db = QSqlDatabase::database();
     }
-    
-    // Initialize weather API
-    weatherManager = new QNetworkAccessManager(this);
-    weatherApiKey = "bd5e378503939ddaee76f12ad7a97608"; // Free OpenWeatherMap API key
-    ui->lineEdit_city->setText("Tunis"); // Default city
+
+    // Initialize network manager for future extensions
+    networkManager = new QNetworkAccessManager(this);
+
+    // Load equipment for maintenance prediction
+    loadEquipmentForMaintenance();
 
     // Connect navigation buttons
     connect(ui->candidat, &QPushButton::clicked, this, &Gestion_Equipement::navigateToCandidat);
@@ -90,10 +102,10 @@ Gestion_Equipement::Gestion_Equipement(QWidget *parent) : QWidget(parent),
     chargerEmployees();
     setEditMode(false);
     afficher();
-    
+
     // Load equipment for lifecycle analysis
     loadEquipmentForLifecycle();
-    
+
     // Initialize statistics dashboard
     updateStatistics();
 }
@@ -299,7 +311,7 @@ void Gestion_Equipement::on_exporter_clicked()
     QPushButton *pdfButton = msgBox.addButton("PDF", QMessageBox::ActionRole);
     msgBox.addButton("Annuler", QMessageBox::RejectRole);
     msgBox.exec();
-    
+
     if (msgBox.clickedButton() == csvButton)
     {
         // Export to CSV
@@ -350,9 +362,21 @@ void Gestion_Equipement::exportToPDF()
     if (fileName.isEmpty())
         return;
 
+    // Query database directly
+    QSqlQuery query;
+    query.prepare("SELECT ID_EQUIPEMENT, NOM, CATEGORIE, QUANTITE_TOTALE, QUANTITE_DISPONIBLE, "
+                  "ETAT, FOURNISSEUR, TO_CHAR(DATE_ACQUISITION, 'DD/MM/YYYY'), CIN_EMPLOYEE "
+                  "FROM EQUIPEMENT ORDER BY ID_EQUIPEMENT");
+    
+    if (!query.exec())
+    {
+        QMessageBox::critical(this, "Erreur", "Impossible de récupérer les données: " + query.lastError().text());
+        return;
+    }
+
     // Create a text document
     QTextDocument document;
-    
+
     // Build HTML table
     QString html = "<html><head><style>"
                    "body { font-family: Arial; }"
@@ -363,14 +387,14 @@ void Gestion_Equipement::exportToPDF()
                    "tr:nth-child(even) { background-color: #f8f9fa; }"
                    ".footer { margin-top: 20px; color: #666; font-size: 10px; }"
                    "</style></head><body>";
-    
+
     // Title
     html += "<h1>Liste des Équipements - DriveSmart</h1>";
     html += "<p style='color: #666;'>Généré le: " + QDateTime::currentDateTime().toString("dd/MM/yyyy HH:mm") + "</p>";
-    
+
     // Table
     html += "<table border='1'>";
-    
+
     // Headers
     html += "<tr>";
     html += "<th>ID</th>";
@@ -383,32 +407,37 @@ void Gestion_Equipement::exportToPDF()
     html += "<th>Date Acq.</th>";
     html += "<th>CIN Emp.</th>";
     html += "</tr>";
-    
-    // Data rows
-    for (int row = 0; row < ui->tableWidget->rowCount(); ++row)
+
+    // Data rows from database
+    int rowCount = 0;
+    while (query.next())
     {
         html += "<tr>";
-        for (int col = 0; col < 9; ++col)
-        {
-            QTableWidgetItem *item = ui->tableWidget->item(row, col);
-            QString text = item ? item->text() : "";
-            html += "<td>" + text + "</td>";
-        }
+        html += "<td>" + query.value(0).toString() + "</td>"; // ID
+        html += "<td>" + query.value(1).toString() + "</td>"; // Nom
+        html += "<td>" + query.value(2).toString() + "</td>"; // Catégorie
+        html += "<td>" + query.value(3).toString() + "</td>"; // Qté Totale
+        html += "<td>" + query.value(4).toString() + "</td>"; // Qté Disponible
+        html += "<td>" + query.value(5).toString() + "</td>"; // État
+        html += "<td>" + query.value(6).toString() + "</td>"; // Fournisseur
+        html += "<td>" + query.value(7).toString() + "</td>"; // Date Acquisition
+        html += "<td>" + query.value(8).toString() + "</td>"; // CIN Employee
         html += "</tr>";
+        rowCount++;
     }
-    
+
     html += "</table>";
-    
+
     // Footer
     html += "<div class='footer'>";
-    html += "<p>Total: " + QString::number(ui->tableWidget->rowCount()) + " équipement(s) | DriveSmart © 2025</p>";
+    html += "<p>Total: " + QString::number(rowCount) + " équipement(s) | DriveSmart © 2025</p>";
     html += "</div>";
-    
+
     html += "</body></html>";
-    
+
     // Set HTML to document
     document.setHtml(html);
-    
+
     // Setup printer
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
@@ -416,10 +445,10 @@ void Gestion_Equipement::exportToPDF()
     printer.setPageSize(QPageSize(QPageSize::A4));
     printer.setPageOrientation(QPageLayout::Landscape);
     printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout::Millimeter);
-    
+
     // Print document to PDF
     document.print(&printer);
-    
+
     QMessageBox::information(this, "Succès", "Export PDF réussi!");
 }
 
@@ -564,10 +593,10 @@ void Gestion_Equipement::afficher(QString orderBy)
 
         row++;
     }
-    
+
     // Update statistics dashboard
     updateStatistics();
-    
+
     // Reload lifecycle equipment list to sync with table
     loadEquipmentForLifecycle();
 }
@@ -785,181 +814,185 @@ void Gestion_Equipement::setFormFromRow(int row)
     }
 }
 
-// ===========================
-// WEATHER API IMPLEMENTATION
-// ===========================
+// ==========================================
+// MAINTENANCE PREDICTION API IMPLEMENTATION
+// ==========================================
 
-void Gestion_Equipement::on_pushButton_get_weather_clicked()
+void Gestion_Equipement::on_pushButton_predict_maintenance_clicked()
 {
-    QString city = ui->lineEdit_city->text().trimmed();
-    if (city.isEmpty())
+    int equipmentId = ui->comboBox_maintenance_equipment->currentData().toInt();
+    if (equipmentId <= 0)
     {
-        QMessageBox::warning(this, "Erreur", "Veuillez entrer le nom d'une ville.");
+        QMessageBox::warning(this, "Erreur", "Veuillez sélectionner un équipement.");
         return;
     }
-    
-    fetchWeather(city);
-    fetchForecast(city);
+
+    updateMaintenancePrediction(equipmentId);
 }
 
-void Gestion_Equipement::fetchWeather(const QString &city)
+int Gestion_Equipement::getMaintenanceInterval(const QString &category)
 {
-    QString url = QString("https://api.openweathermap.org/data/2.5/weather?q=%1&appid=%2&units=metric&lang=fr")
-                      .arg(city, weatherApiKey);
-    
-    QNetworkRequest request((QUrl(url)));
-    QNetworkReply *reply = weatherManager->get(request);
-    
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        handleWeatherResponse(reply);
-    });
-}
-
-void Gestion_Equipement::fetchForecast(const QString &city)
-{
-    QString url = QString("https://api.openweathermap.org/data/2.5/forecast?q=%1&appid=%2&units=metric&lang=fr")
-                      .arg(city, weatherApiKey);
-    
-    QNetworkRequest request((QUrl(url)));
-    QNetworkReply *reply = weatherManager->get(request);
-    
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        handleForecastResponse(reply);
-    });
-}
-
-void Gestion_Equipement::handleWeatherResponse(QNetworkReply *reply)
-{
-    if (reply->error() == QNetworkReply::NoError)
+    // Maintenance intervals in days based on category
+    static QMap<QString, int> intervals;
+    if (intervals.isEmpty())
     {
-        QByteArray response = reply->readAll();
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-        QJsonObject jsonObj = jsonDoc.object();
-        
-        if (jsonObj.contains("cod") && jsonObj["cod"].toInt() == 200)
-        {
-            updateWeatherDisplay(jsonObj);
-        }
-        else
-        {
-            QMessageBox::warning(this, "Erreur", "Ville introuvable. Veuillez vérifier le nom.");
-        }
+        intervals["Véhicule"] = 90;      // 3 months
+        intervals["Équipement lourd"] = 60; // 2 months
+        intervals["Outil"] = 180;        // 6 months
+        intervals["Matériel de sécurité"] = 30; // 1 month
+        intervals["Électronique"] = 120; // 4 months
+        intervals["Mobilier"] = 365;     // 1 year
     }
-    else
-    {
-        QMessageBox::critical(this, "Erreur réseau", "Impossible de récupérer les données météo:\n" + reply->errorString());
-    }
-    
-    reply->deleteLater();
+
+    return intervals.value(category, 120); // Default: 4 months
 }
 
-void Gestion_Equipement::handleForecastResponse(QNetworkReply *reply)
+void Gestion_Equipement::updateMaintenancePrediction(int equipmentId)
 {
-    if (reply->error() == QNetworkReply::NoError)
-    {
-        QByteArray response = reply->readAll();
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-        QJsonObject jsonObj = jsonDoc.object();
-        
-        if (jsonObj.contains("list"))
-        {
-            QJsonArray forecastList = jsonObj["list"].toArray();
-            updateForecastDisplay(forecastList);
-        }
-    }
-    
-    reply->deleteLater();
-}
+    QSqlQuery query(db);
+    query.prepare("SELECT NOM, CATEGORIE, ETAT, DATE_ACQUISITION FROM EQUIPEMENT WHERE ID_EQUIPEMENT = :id");
+    query.bindValue(":id", equipmentId);
 
-void Gestion_Equipement::updateWeatherDisplay(const QJsonObject &weatherData)
-{
-    // Extract main weather info
-    QJsonObject main = weatherData["main"].toObject();
-    QJsonArray weatherArray = weatherData["weather"].toArray();
-    QJsonObject wind = weatherData["wind"].toObject();
-    QString cityName = weatherData["name"].toString();
-    
-    double temp = main["temp"].toDouble();
-    double feelsLike = main["feels_like"].toDouble();
-    int humidity = main["humidity"].toInt();
-    int pressure = main["pressure"].toInt();
-    double windSpeed = wind["speed"].toDouble();
-    
-    QString description = "";
-    if (!weatherArray.isEmpty())
+    if (!query.exec() || !query.next())
     {
-        QJsonObject weather = weatherArray[0].toObject();
-        description = weather["description"].toString();
-        // Capitalize first letter
-        if (!description.isEmpty())
-        {
-            description[0] = description[0].toUpper();
-        }
+        QMessageBox::critical(this, "Erreur", "Impossible de récupérer les données de l'équipement.");
+        return;
     }
+
+    QString name = query.value(0).toString();
+    QString category = query.value(1).toString();
+    QString state = query.value(2).toString();
+    QDate acquisitionDate = query.value(3).toDate();
+
+    // Calculate equipment age
+    int daysSinceAcquisition = acquisitionDate.daysTo(QDate::currentDate());
+    int yearsSinceAcquisition = daysSinceAcquisition / 365;
+
+    // Get maintenance interval based on category
+    int baseInterval = getMaintenanceInterval(category);
+
+    // Adjust interval based on state
+    int adjustedInterval = baseInterval;
+    if (state == "Excellent") {
+        adjustedInterval = static_cast<int>(baseInterval * 1.2); // 20% longer
+    } else if (state == "Mauvais" || state == "En panne") {
+        adjustedInterval = static_cast<int>(baseInterval * 0.5); // 50% shorter - urgent
+    } else if (state == "Moyen") {
+        adjustedInterval = static_cast<int>(baseInterval * 0.8); // 20% shorter
+    }
+
+    // Calculate next maintenance date
+    QDate lastMaintenanceDate = acquisitionDate.addDays((daysSinceAcquisition / adjustedInterval) * adjustedInterval);
+    QDate nextMaintenanceDate = lastMaintenanceDate.addDays(adjustedInterval);
+    int daysUntilMaintenance = QDate::currentDate().daysTo(nextMaintenanceDate);
+
+    // Determine priority level
+    QString priority;
+    QString priorityColor;
+    int priorityLevel;
     
+    if (daysUntilMaintenance < 0) {
+        priority = "⛔ URGENT - Maintenance en retard";
+        priorityColor = "#dc3545"; // Red
+        priorityLevel = 100;
+    } else if (daysUntilMaintenance <= 7) {
+        priority = "🔴 HAUTE - Maintenance imminente";
+        priorityColor = "#fd7e14"; // Orange
+        priorityLevel = 80;
+    } else if (daysUntilMaintenance <= 30) {
+        priority = "🟡 MOYENNE - Planifier bientôt";
+        priorityColor = "#ffc107"; // Yellow
+        priorityLevel = 50;
+    } else {
+        priority = "🟢 BASSE - Maintenance dans les délais";
+        priorityColor = "#28a745"; // Green
+        priorityLevel = 20;
+    }
+
+    // Estimate maintenance cost based on category and age
+    double baseCost = 0;
+    if (category == "Véhicule") baseCost = 500;
+    else if (category == "Équipement lourd") baseCost = 300;
+    else if (category == "Outil") baseCost = 50;
+    else if (category == "Matériel de sécurité") baseCost = 100;
+    else if (category == "Électronique") baseCost = 150;
+    else baseCost = 75;
+
+    // Increase cost for older equipment
+    double ageFactor = 1.0 + (yearsSinceAcquisition * 0.1); // 10% per year
+    double estimatedCost = baseCost * ageFactor;
+
     // Update UI
-    ui->label_current_temp->setText(QString::number(qRound(temp)) + "°C");
-    ui->label_weather_desc->setText(description);
-    ui->label_city_name->setText(cityName);
-    ui->label_humidity_value->setText(QString::number(humidity) + "%");
-    ui->label_wind_value->setText(QString::number(qRound(windSpeed * 3.6)) + " km/h"); // Convert m/s to km/h
-    ui->label_pressure_value->setText(QString::number(pressure) + " hPa");
-    ui->label_feels_like_value->setText(QString::number(qRound(feelsLike)) + "°C");
-    
-    // Update weather recommendation based on conditions
+    ui->label_equipment_name->setText(name);
+    ui->label_equipment_category->setText(category);
+    ui->label_equipment_state->setText(state);
+    ui->label_last_maintenance->setText(lastMaintenanceDate.toString("dd/MM/yyyy"));
+    ui->label_next_maintenance->setText(nextMaintenanceDate.toString("dd/MM/yyyy"));
+    ui->label_days_until->setText(QString::number(qAbs(daysUntilMaintenance)) + (daysUntilMaintenance < 0 ? " jours de retard" : " jours"));
+    ui->label_priority->setText(priority);
+    ui->label_estimated_cost->setText(QString::number(estimatedCost, 'f', 2) + " TND");
+
+    // Update priority progress bar
+    ui->progressBar_priority->setValue(priorityLevel);
+    QString progressStyle = QString(
+        "QProgressBar {"
+        "   border: 2px solid #ccc;"
+        "   border-radius: 5px;"
+        "   text-align: center;"
+        "   background-color: #f0f0f0;"
+        "}"
+        "QProgressBar::chunk {"
+        "   background-color: %1;"
+        "   border-radius: 3px;"
+        "}"
+    ).arg(priorityColor);
+    ui->progressBar_priority->setStyleSheet(progressStyle);
+
+    // Update recommendation frame
     QString recommendation;
-    QString styleSheet;
+    QString frameStyle;
     
-    // Check for poor weather conditions
-    bool isRaining = description.contains("pluie", Qt::CaseInsensitive) || 
-                     description.contains("orage", Qt::CaseInsensitive) || 
-                     description.contains("bruine", Qt::CaseInsensitive);
-    bool isSnowing = description.contains("neige", Qt::CaseInsensitive);
-    bool isFoggy = description.contains("brouillard", Qt::CaseInsensitive) || 
-                   description.contains("brume", Qt::CaseInsensitive);
-    bool isStormy = description.contains("orage", Qt::CaseInsensitive);
-    bool extremeTemp = temp > 40 || temp < -5;
-    bool highWind = windSpeed > 15; // > 54 km/h
-    
-    if (isStormy)
-    {
-        recommendation = "⛔ Danger - Éviter toute utilisation de véhicules et équipements extérieurs";
-        styleSheet = "background-color:#f8d7da; border:2px solid #dc3545; color:#721c24; border-radius:8px;";
+    if (daysUntilMaintenance < 0) {
+        recommendation = "Action immédiate requise - Maintenance en retard de " + QString::number(qAbs(daysUntilMaintenance)) + " jours. Planifier la maintenance dès que possible.";
+        frameStyle = "background-color:#f8d7da; border:2px solid #dc3545; color:#721c24; border-radius:8px; padding:10px;";
+    } else if (daysUntilMaintenance <= 7) {
+        recommendation = "Maintenance imminente dans " + QString::number(daysUntilMaintenance) + " jours. Contacter le fournisseur et réserver un créneau.";
+        frameStyle = "background-color:#fff3cd; border:2px solid #fd7e14; color:#856404; border-radius:8px; padding:10px;";
+    } else if (daysUntilMaintenance <= 30) {
+        recommendation = "Maintenance planifiée dans " + QString::number(daysUntilMaintenance) + " jours. Commencer à préparer les ressources nécessaires.";
+        frameStyle = "background-color:#fff3cd; border:2px solid #ffc107; color:#856404; border-radius:8px; padding:10px;";
+    } else {
+        recommendation = "Équipement dans les délais de maintenance. Prochaine intervention prévue le " + nextMaintenanceDate.toString("dd/MM/yyyy") + ".";
+        frameStyle = "background-color:#d4edda; border:2px solid #28a745; color:#155724; border-radius:8px; padding:10px;";
     }
-    else if (isSnowing || extremeTemp)
-    {
-        recommendation = "⚠️ Conditions difficiles - Limiter l'utilisation aux situations urgentes";
-        styleSheet = "background-color:#fff3cd; border:2px solid #ffc107; color:#856404; border-radius:8px;";
-    }
-    else if (isRaining || isFoggy || highWind)
-    {
-        recommendation = "⚠️ Prudence requise - Adapter la conduite et l'utilisation des équipements";
-        styleSheet = "background-color:#fff3cd; border:2px solid #ffc107; color:#856404; border-radius:8px;";
-    }
-    else if (temp >= 15 && temp <= 30 && humidity < 80 && windSpeed < 10)
-    {
-        recommendation = "✅ Conditions idéales pour l'utilisation de tous les équipements";
-        styleSheet = "background-color:#d4edda; border:2px solid #28a745; color:#155724; border-radius:8px;";
-    }
-    else
-    {
-        recommendation = "✅ Conditions acceptables - Utilisation normale des équipements";
-        styleSheet = "background-color:#d1ecf1; border:2px solid #17a2b8; color:#0c5460; border-radius:8px;";
-    }
-    
-    ui->label_weather_recommendation->setText(recommendation);
-    ui->frame_weather_recommendation->setStyleSheet(styleSheet);
-    
+
+    ui->label_maintenance_recommendation->setText(recommendation);
+    ui->frame_maintenance_recommendation->setStyleSheet(frameStyle);
+
     // Update timestamp
     QDateTime now = QDateTime::currentDateTime();
-    ui->label_update_time->setText("Mise a jour: " + now.toString("dd/MM/yyyy hh:mm"));
+    ui->label_prediction_time->setText("Calculé le: " + now.toString("dd/MM/yyyy hh:mm"));
 }
 
-void Gestion_Equipement::updateForecastDisplay(const QJsonArray &forecastList)
+void Gestion_Equipement::loadEquipmentForMaintenance()
 {
-    // Forecast display removed from UI to save space
-    // Weather widget now shows only current conditions
-    Q_UNUSED(forecastList);
+    ui->comboBox_maintenance_equipment->clear();
+    ui->comboBox_maintenance_equipment->addItem("-- Sélectionnez un équipement --", -1);
+
+    QSqlQuery query(db);
+    query.prepare("SELECT ID_EQUIPEMENT, NOM, CATEGORIE FROM EQUIPEMENT ORDER BY NOM");
+
+    if (query.exec())
+    {
+        while (query.next())
+        {
+            int id = query.value(0).toInt();
+            QString name = query.value(1).toString();
+            QString category = query.value(2).toString();
+            QString displayText = name + " (" + category + ")";
+            ui->comboBox_maintenance_equipment->addItem(displayText, id);
+        }
+    }
 }
 
 // ==================== EQUIPMENT LIFECYCLE & DEPRECIATION ====================
@@ -968,10 +1001,10 @@ void Gestion_Equipement::loadEquipmentForLifecycle()
 {
     ui->comboBox_lifecycle_equipment->clear();
     ui->comboBox_lifecycle_equipment->addItem("-- Sélectionnez un équipement --", -1);
-    
+
     QSqlQuery query(db);
     query.prepare("SELECT ID_EQUIPEMENT, NOM, CATEGORIE FROM EQUIPEMENT ORDER BY NOM");
-    
+
     if (query.exec())
     {
         while (query.next())
@@ -1005,7 +1038,7 @@ void Gestion_Equipement::on_comboBox_lifecycle_equipment_currentIndexChanged(int
         ui->label_residual_value->setText("0 TND");
         return;
     }
-    
+
     int equipmentId = ui->comboBox_lifecycle_equipment->currentData().toInt();
     calculateLifecycle(equipmentId);
 }
@@ -1015,34 +1048,34 @@ void Gestion_Equipement::calculateLifecycle(int equipmentId)
     QSqlQuery query(db);
     query.prepare("SELECT NOM, CATEGORIE, DATE_ACQUISITION FROM EQUIPEMENT WHERE ID_EQUIPEMENT = :id");
     query.bindValue(":id", equipmentId);
-    
+
     if (!query.exec() || !query.next())
     {
         QMessageBox::warning(this, "Erreur", "Équipement introuvable");
         return;
     }
-    
+
     QString nom = query.value("NOM").toString();
     QString categorie = query.value("CATEGORIE").toString();
     QDate acquisitionDate = query.value("DATE_ACQUISITION").toDate();
-    
+
     if (!acquisitionDate.isValid())
     {
         QMessageBox::warning(this, "Erreur", "Date d'acquisition invalide pour cet équipement");
         return;
     }
-    
+
     // Estimate cost based on equipment type
     double estimatedCost = estimateEquipmentCost(nom, categorie);
-    
+
     // Calculate lifecycle data
     LifecycleData data = computeDepreciation(acquisitionDate, categorie, estimatedCost);
-    
+
     // Update UI
     ui->label_current_value->setText(QString::number(data.currentValue, 'f', 2) + " TND");
     ui->label_original_cost->setText(QString::number(data.originalCost, 'f', 2) + " TND");
     ui->label_depreciation_amount->setText(QString::number(data.depreciationAmount, 'f', 2) + " TND");
-    
+
     // Lifecycle stage with color
     ui->label_lifecycle_stage->setText(data.lifecycleStage);
     if (data.lifecycleStage.contains("Nouveau"))
@@ -1053,33 +1086,33 @@ void Gestion_Equipement::calculateLifecycle(int equipmentId)
         ui->label_lifecycle_stage->setStyleSheet("color:#ffc107");
     else
         ui->label_lifecycle_stage->setStyleSheet("color:#dc3545");
-    
+
     // Age info
     QString ageText = QString("Âge: %1 an%2, %3 mois")
                           .arg(data.ageYears)
                           .arg(data.ageYears > 1 ? "s" : "")
                           .arg(data.ageMonths);
     ui->label_age_info->setText(ageText);
-    
+
     // Useful life
     QString usefulLifeText = QString("Vie utile: %1 / %2 ans (%3%)")
                                  .arg(data.ageYears)
                                  .arg(data.usefulLifeYears)
                                  .arg(QString::number(data.usefulLifePercent, 'f', 0));
     ui->label_useful_life->setText(usefulLifeText);
-    
+
     // Replacement year
     if (data.replacementYear > 0)
         ui->label_replacement_year->setText("Estimé en: " + QString::number(data.replacementYear));
     else
         ui->label_replacement_year->setText("Remplacer maintenant");
-    
+
     // Recommendation
     ui->label_replacement_recommendation->setText(data.recommendation);
-    
+
     // Progress bar
     ui->progressBar_depreciation->setValue(static_cast<int>(data.depreciationPercent));
-    
+
     // Financial summary
     ui->label_annual_depreciation->setText(QString::number(data.annualDepreciation, 'f', 2) + " TND/an");
     ui->label_monthly_depreciation->setText(QString::number(data.monthlyDepreciation, 'f', 2) + " TND/mois");
@@ -1091,29 +1124,29 @@ Gestion_Equipement::LifecycleData Gestion_Equipement::computeDepreciation(
 {
     LifecycleData data;
     data.originalCost = estimatedCost;
-    
+
     QDate currentDate = QDate::currentDate();
     int totalDays = acquisitionDate.daysTo(currentDate);
-    
+
     // Calculate age
     data.ageYears = totalDays / 365;
     data.ageMonths = (totalDays % 365) / 30;
-    
+
     // Get useful life based on category
     data.usefulLifeYears = getUsefulLife(category);
-    
+
     // Calculate depreciation using straight-line method
     double totalMonths = data.ageYears * 12 + data.ageMonths;
     double usefulLifeMonths = data.usefulLifeYears * 12;
-    
+
     // Residual value is 10% of original cost
     data.residualValue = estimatedCost * 0.10;
     double depreciableAmount = estimatedCost - data.residualValue;
-    
+
     // Annual and monthly depreciation
     data.annualDepreciation = depreciableAmount / data.usefulLifeYears;
     data.monthlyDepreciation = depreciableAmount / usefulLifeMonths;
-    
+
     // Calculate current depreciation
     if (totalMonths >= usefulLifeMonths)
     {
@@ -1129,22 +1162,22 @@ Gestion_Equipement::LifecycleData Gestion_Equipement::computeDepreciation(
         data.currentValue = estimatedCost - data.depreciationAmount;
         data.depreciationPercent = (data.depreciationAmount / depreciableAmount) * 100.0;
     }
-    
+
     // Calculate useful life percentage
     data.usefulLifePercent = (static_cast<double>(data.ageYears) / data.usefulLifeYears) * 100.0;
     if (data.usefulLifePercent > 100.0)
         data.usefulLifePercent = 100.0;
-    
+
     // Determine lifecycle stage
     data.lifecycleStage = getLifecycleStage(data.usefulLifePercent);
-    
+
     // Calculate replacement year
     int yearsRemaining = data.usefulLifeYears - data.ageYears;
     if (yearsRemaining > 0)
         data.replacementYear = currentDate.year() + yearsRemaining;
     else
         data.replacementYear = 0; // Should replace now
-    
+
     // Generate recommendation
     if (data.usefulLifePercent >= 100.0)
     {
@@ -1152,29 +1185,29 @@ Gestion_Equipement::LifecycleData Gestion_Equipement::computeDepreciation(
     }
     else if (data.usefulLifePercent >= 75.0)
     {
-        data.recommendation = QString("📅 Planifier le remplacement dans les ") + 
-                             QString::number(yearsRemaining) + 
-                             QString(" année(s) à venir. Budgétiser environ ") +
-                             QString::number(estimatedCost, 'f', 0) + QString(" TND.");
+        data.recommendation = QString("📅 Planifier le remplacement dans les ") +
+                              QString::number(yearsRemaining) +
+                              QString(" année(s) à venir. Budgétiser environ ") +
+                              QString::number(estimatedCost, 'f', 0) + QString(" TND.");
     }
     else if (data.usefulLifePercent >= 50.0)
     {
         data.recommendation = QString("✅ Équipement en bon état. Continuer la maintenance régulière. ") +
-                             QString("Remplacement prévu en ") + QString::number(data.replacementYear) + QString(".");
+                              QString("Remplacement prévu en ") + QString::number(data.replacementYear) + QString(".");
     }
     else
     {
         data.recommendation = QString("🌟 Équipement récent en excellente condition. ") +
-                             QString("Valeur actuelle: ") + QString::number(data.currentValue, 'f', 0) + QString(" TND.");
+                              QString("Valeur actuelle: ") + QString::number(data.currentValue, 'f', 0) + QString(" TND.");
     }
-    
+
     return data;
 }
 
 int Gestion_Equipement::getUsefulLife(const QString &category)
 {
     // Define useful life years by equipment category
-    if (category.contains("Véhicule", Qt::CaseInsensitive) || 
+    if (category.contains("Véhicule", Qt::CaseInsensitive) ||
         category.contains("Voiture", Qt::CaseInsensitive))
     {
         return 8; // Vehicles: 8 years
@@ -1223,10 +1256,10 @@ double Gestion_Equipement::estimateEquipmentCost(const QString &nom, const QStri
 {
     // Estimate equipment cost based on name and category
     // This is a simplified estimation - in real scenarios, you'd store actual costs in database
-    
+
     QString lowerName = nom.toLower();
     QString lowerCategory = category.toLower();
-    
+
     // Vehicles
     if (lowerCategory.contains("véhicule") || lowerCategory.contains("voiture"))
     {
@@ -1235,7 +1268,7 @@ double Gestion_Equipement::estimateEquipmentCost(const QString &nom, const QStri
         else
             return 45000.0; // Standard vehicles
     }
-    
+
     // Electronics & IT
     if (lowerCategory.contains("informatique") || lowerCategory.contains("électronique"))
     {
@@ -1248,7 +1281,7 @@ double Gestion_Equipement::estimateEquipmentCost(const QString &nom, const QStri
         else
             return 1000.0;
     }
-    
+
     // Educational materials
     if (lowerCategory.contains("pédagogique") || lowerCategory.contains("formation"))
     {
@@ -1259,7 +1292,7 @@ double Gestion_Equipement::estimateEquipmentCost(const QString &nom, const QStri
         else
             return 1500.0;
     }
-    
+
     // Safety equipment
     if (lowerCategory.contains("sécurité"))
     {
@@ -1270,7 +1303,7 @@ double Gestion_Equipement::estimateEquipmentCost(const QString &nom, const QStri
         else
             return 800.0;
     }
-    
+
     // Furniture
     if (lowerCategory.contains("mobilier") || lowerCategory.contains("bureautique"))
     {
@@ -1283,7 +1316,7 @@ double Gestion_Equipement::estimateEquipmentCost(const QString &nom, const QStri
         else
             return 800.0;
     }
-    
+
     // Default estimation
     return 2000.0;
 }
@@ -1291,22 +1324,18 @@ double Gestion_Equipement::estimateEquipmentCost(const QString &nom, const QStri
 // Statistics Methods
 void Gestion_Equipement::updateStatistics()
 {
-    // Update total equipment count
-    int totalEquipment = ui->tableWidget->rowCount();
-    ui->label_total_equipment_value->setText(QString::number(totalEquipment));
-    
-    // Update total value and category breakdown
-    calculateTotalValue();
+    // Update charts only - no static cards
     updateCategoryBreakdown();
 }
 
 void Gestion_Equipement::calculateTotalValue()
 {
+    // This method is kept for potential future use but not displayed in static cards
     double totalValue = 0.0;
-    
+
     QSqlQuery query;
     query.prepare("SELECT NOM, CATEGORIE, DATE_ACQUISITION FROM EQUIPEMENT");
-    
+
     if (query.exec())
     {
         while (query.next())
@@ -1314,39 +1343,51 @@ void Gestion_Equipement::calculateTotalValue()
             QString nom = query.value(0).toString();
             QString categorie = query.value(1).toString();
             QDate dateAcquisition = query.value(2).toDate();
-            
+
             // Estimate cost and calculate current value
             double estimatedCost = estimateEquipmentCost(nom, categorie);
             int usefulLifeYears = getUsefulLife(categorie);
-            
+
             // Calculate age in months
             int ageMonths = dateAcquisition.daysTo(QDate::currentDate()) / 30;
             int usefulLifeMonths = usefulLifeYears * 12;
-            
+
             // Calculate depreciation
             double residualValue = estimatedCost * 0.10;
             double depreciableAmount = estimatedCost - residualValue;
             double monthlyDepreciation = depreciableAmount / usefulLifeMonths;
             double totalDepreciation = monthlyDepreciation * ageMonths;
-            
+
             if (totalDepreciation > depreciableAmount)
                 totalDepreciation = depreciableAmount;
-            
+
             double currentValue = estimatedCost - totalDepreciation;
             totalValue += currentValue;
         }
     }
     
-    ui->label_total_value_amount->setText(QString::number(totalValue, 'f', 0) + " TND");
+    // Total value calculated but not displayed in static card anymore
+    // Can be used for other purposes or reports
 }
 
 void Gestion_Equipement::updateCategoryBreakdown()
 {
+    createCategoryPieChart();
+}
+
+void Gestion_Equipement::updateCharts()
+{
+    createCategoryPieChart();
+    createValueBarChart();
+}
+
+void Gestion_Equipement::createCategoryPieChart()
+{
+    // Get category counts
     QMap<QString, int> categoryCount;
-    
     QSqlQuery query;
     query.prepare("SELECT CATEGORIE FROM EQUIPEMENT");
-    
+
     if (query.exec())
     {
         while (query.next())
@@ -1355,16 +1396,88 @@ void Gestion_Equipement::updateCategoryBreakdown()
             categoryCount[categorie]++;
         }
     }
+
+    // Create pie series
+    QPieSeries *series = new QPieSeries();
+    series->setHoleSize(0.4);
+    series->setPieSize(0.9);
     
-    // Build display string
-    QString statsText;
+    // Define vibrant colors for categories
+    QStringList colors = {"#667eea", "#11998e", "#f093fb", "#feca57", "#ff6348", "#5f27cd"};
+    int colorIndex = 0;
+
+    // Calculate total for percentages
+    int total = 0;
     for (auto it = categoryCount.begin(); it != categoryCount.end(); ++it)
     {
-        statsText += it.key() + ": " + QString::number(it.value()) + "\n";
+        total += it.value();
     }
+
+    for (auto it = categoryCount.begin(); it != categoryCount.end(); ++it)
+    {
+        QPieSlice *slice = series->append(it.key(), it.value());
+        slice->setLabelVisible(true);
+        
+        // Show percentage and count
+        double percentage = total > 0 ? (it.value() * 100.0 / total) : 0;
+        slice->setLabel(QString("%1: %2\n(%3%)").arg(it.key()).arg(it.value()).arg(QString::number(percentage, 'f', 0)));
+        
+        slice->setColor(QColor(colors[colorIndex % colors.size()]));
+        slice->setLabelFont(QFont("Arial", 8, QFont::Bold));
+        slice->setLabelColor(QColor("#000000"));
+        slice->setLabelPosition(QPieSlice::LabelOutside);
+        slice->setLabelArmLengthFactor(0.15);
+        slice->setBorderColor(QColor("white"));
+        slice->setBorderWidth(3);
+        
+        // Subtle explode for visual separation
+        if (percentage > 15) {
+            slice->setExploded(true);
+            slice->setExplodeDistanceFactor(0.05);
+        }
+        colorIndex++;
+    }
+
+    // Create chart
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+    chart->setBackgroundBrush(QBrush(Qt::transparent));
+    chart->setBackgroundRoundness(0);
     
-    if (statsText.isEmpty())
-        statsText = "Aucune donnée disponible";
-    
-    ui->label_category_stats->setText(statsText);
+    // Optimize margins
+    chart->setMargins(QMargins(0, 0, 0, 0));
+    chart->setContentsMargins(0, 0, 0, 0);
+
+    // Legend customization
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignBottom);
+    chart->legend()->setFont(QFont("Arial", 8, QFont::Bold));
+    chart->legend()->setMarkerShape(QLegend::MarkerShapeCircle);
+    chart->legend()->setLabelColor(QColor("#002157"));
+    chart->legend()->setBackgroundVisible(false);
+    chart->legend()->setMaximumHeight(60);
+
+    // Create or update chart view
+    if (!categoryChartView)
+    {
+        categoryChartView = new QChartView(chart, ui->frame_category_breakdown);
+        categoryChartView->setRenderHint(QPainter::Antialiasing);
+        categoryChartView->setGeometry(5, 50, 360, 275);
+        categoryChartView->setStyleSheet("background: transparent; border: none;");
+        categoryChartView->show();
+    }
+    else
+    {
+        QChart *oldChart = categoryChartView->chart();
+        categoryChartView->setChart(chart);
+        if (oldChart) delete oldChart;
+    }
+}
+
+void Gestion_Equipement::createValueBarChart()
+{
+    // This method can be used for other chart visualizations if needed
+    // Currently focusing on the pie chart for category breakdown
 }

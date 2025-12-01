@@ -10,8 +10,9 @@
 #include <QVariant>
 #include <QComboBox>
 
-namespace Ui {
-class Planning;
+namespace Ui
+{
+    class Planning;
 }
 
 class Planning : public QWidget
@@ -22,7 +23,7 @@ public:
     explicit Planning(QWidget *parent = nullptr);
     ~Planning();
     bool ajouter();
-    QSqlQueryModel* afficher();
+    QSqlQueryModel *afficher();
     bool supprimer(int id);
     bool modifier(int id, QDate date_seance, QString condidat, QString type, QTime debut, QTime fin, QString circuit, QString moniteur = "", QString vehicule = "");
 
@@ -42,16 +43,16 @@ private:
     void refreshTable();
     int selectedIdFromTable() const;
     void setFormFromRow(int row);
-    QWidget* createActionsCell(int row, int id);
+    QWidget *createActionsCell(int row, int id);
     void setEditMode(bool enabled);
     void loadMoniteurs();
     void loadVehicules();
     void loadCondidats();
-    QComboBox* getCondidatCombo(); // Fonction helper pour obtenir le champ condidat
-    
+    QComboBox *getCondidatCombo(); // Fonction helper pour obtenir le champ condidat
+
     int currentEditingId = -1;
     bool isEditMode = false;
-    
+
     // Planning data members
     QDate date_seance;
     QString condidat;
@@ -62,7 +63,7 @@ private:
     QTime heure_debut;
     QTime heure_fin;
     QString circuit;
-    
+
     Ui::Planning *ui;
 };
 
