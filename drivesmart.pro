@@ -10,11 +10,13 @@ TARGET = DriveSmart
 TEMPLATE = app
 
 HEADERS += \
+    ../push metier avancee/qrcodegen.h \
     employes.h \
     logindialog.h \
     mainwindow.h \
     condidat.h \
     pageemploye.h \
+    qrcodegen.h \
     randomstringgenerator.h \
     smtp.h \
     vehicule.h \
@@ -22,7 +24,8 @@ HEADERS += \
     planning.h \
     gestion_equipement.h\
     connection.h \
-    navigation_constants.h
+    navigation_constants.h \
+    vendor/qrcodegen.hpp
 
 SOURCES += \
     employes.cpp \
@@ -36,7 +39,8 @@ SOURCES += \
     examen.cpp \
     planning.cpp \
     gestion_equipement.cpp\
-    connection.cpp
+    connection.cpp \
+    vendor/qrcodegen.cpp
 
 FORMS += \
     Dialog.ui \

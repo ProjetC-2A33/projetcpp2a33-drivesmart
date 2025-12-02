@@ -13,11 +13,142 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>439</x>
+     <y>500</y>
+     <width>1041</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>180</y>
+      <width>301</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>:/images/msg.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>20</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Statistique par :</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="tri_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>--------------</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Disponibilité</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>type d'énergie</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>70</y>
+      <width>321</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>:/images/stat_vehicule.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="QR_CODE_2">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>20</y>
+      <width>131</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:#ffce00;
+color:#002157;
+border-radius:10px;</string>
+    </property>
+    <property name="text">
+     <string>QR CODE</string>
+    </property>
+   </widget>
+  </widget>
   <widget class="QGroupBox" name="groupBox_10">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>78</y>
+     <x>0</x>
+     <y>68</y>
      <width>421</width>
      <height>761</height>
     </rect>
@@ -450,12 +581,12 @@ border:2px solid #ffce00;
      <string>Etat de maintenance:</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="etatmaintLineEdit">
+   <widget class="QComboBox" name="etatmainComboBox">
     <property name="geometry">
      <rect>
       <x>220</x>
       <y>460</y>
-      <width>191</width>
+      <width>181</width>
       <height>41</height>
      </rect>
     </property>
@@ -468,26 +599,30 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-
-
 </string>
     </property>
-    <property name="verticalScrollBarPolicy">
-     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-    </property>
-    <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-    </property>
-    <property name="sizeAdjustPolicy">
-     <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
-    </property>
+    <item>
+     <property name="text">
+      <string>--------------</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>assuré</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>non assuré</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_7">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>78</y>
+     <x>440</x>
+     <y>68</y>
      <width>1041</width>
      <height>411</height>
     </rect>
@@ -817,12 +952,35 @@ border-radius:10px;</string>
      </size>
     </property>
    </widget>
+   <widget class="QPushButton" name="QR_CODE">
+    <property name="geometry">
+     <rect>
+      <x>1040</x>
+      <y>20</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:#ffce00;
+color:#002157;
+border-radius:10px;</string>
+    </property>
+    <property name="text">
+     <string>QR_CODE</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
+     <x>0</x>
+     <y>0</y>
      <width>1471</width>
      <height>61</height>
     </rect>
@@ -956,114 +1114,6 @@ border-radius:10px;</string>
     </property>
     <property name="pixmap">
      <pixmap resource="resources.qrc">:/images/logo.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_4">
-   <property name="geometry">
-    <rect>
-     <x>449</x>
-     <y>510</y>
-     <width>1041</width>
-     <height>331</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string/>
-   </property>
-   <widget class="QLabel" name="label_11">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>180</y>
-      <width>301</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="resources.qrc">:/images/msg.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_16">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>20</y>
-      <width>161</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color:#002157</string>
-    </property>
-    <property name="text">
-     <string>Statistique par :</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="tri_2">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>10</y>
-      <width>211</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color:white;
-border-radius:5px;
-border:2px solid #ffce00;
-</string>
-    </property>
-    <item>
-     <property name="text">
-      <string>--------------</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Disponibilité</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>type d'énergie</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>70</y>
-      <width>321</width>
-      <height>201</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="resources.qrc">:/images/stat_vehicule.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>

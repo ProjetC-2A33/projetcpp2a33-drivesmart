@@ -10,6 +10,7 @@ debug/examen.o
 debug/planning.o
 debug/gestion_equipement.o
 debug/connection.o
+debug/qrcodegen.o
 debug/qrc_resources.o
 debug/moc_logindialog.o
 debug/moc_mainwindow.o
