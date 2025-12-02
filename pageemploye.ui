@@ -18,7 +18,7 @@
     <rect>
      <x>-10</x>
      <y>-10</y>
-     <width>1501</width>
+     <width>1541</width>
      <height>871</height>
     </rect>
    </property>
@@ -475,7 +475,7 @@ border:2px solid #ffce00;
      <rect>
       <x>450</x>
       <y>10</y>
-      <width>1041</width>
+      <width>1101</width>
       <height>41</height>
      </rect>
     </property>
@@ -573,6 +573,22 @@ border-radius:10px;</string>
         </property>
         <property name="text">
          <string>Examen</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="equipement_7">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color:#e3e2de;</string>
+        </property>
+        <property name="text">
+         <string>equipement</string>
         </property>
        </widget>
       </item>

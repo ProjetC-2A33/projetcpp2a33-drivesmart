@@ -36,6 +36,15 @@ private:
     void lancerRecherche(const QString &texte);
     QNetworkAccessManager *networkManager;
     void sendToGeminiAPI(const QString &question);
+
+
+    void navigateToCandidat();
+    void navigateToPlanning();
+    void navigateToEmployee();
+    void navigateToVehicule();
+    void navigateToExamen();
+    void navigateToEquipement();
+
 private slots:
     void on_btn_reset_E_clicked();
     void on_btn_ajout_E_clicked();
@@ -51,6 +60,9 @@ private slots:
     void on_chatbot_clicked();
     void onChatbotResponseReceived(QNetworkReply *reply);
 
+    void on_candidat_7_clicked();
+    void on_planning_7_clicked();
+    void on_vehicule_7_clicked();
 };
 
 #endif // pageemploye_H

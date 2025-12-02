@@ -39,6 +39,8 @@ private slots:
     void navigateToExamen();
     void navigateToEquipement();
 
+
+
 private:
     void refreshTable();
     int selectedIdFromTable() const;

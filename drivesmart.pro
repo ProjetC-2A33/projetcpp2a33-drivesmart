@@ -10,8 +10,8 @@ TARGET = DriveSmart
 TEMPLATE = app
 
 HEADERS += \
-    Login.h \
     employes.h \
+    logindialog.h \
     mainwindow.h \
     condidat.h \
     pageemploye.h \
@@ -26,8 +26,8 @@ HEADERS += \
 
 SOURCES += \
     employes.cpp \
+    logindialog.cpp \
     main.cpp \
-    Login.cpp \
     mainwindow.cpp\
     condidat.cpp \
     pageemploye.cpp \
@@ -39,7 +39,7 @@ SOURCES += \
     connection.cpp
 
 FORMS += \
-    Login.ui \
+    Dialog.ui \
     condidat.ui \
     examen.ui \
     gestion_equipement.ui \

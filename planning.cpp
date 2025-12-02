@@ -1282,3 +1282,5 @@ void Planning::loadCondidats()
         ui->cin_6->addItem(displayText, cin);
     }
 }
+
+

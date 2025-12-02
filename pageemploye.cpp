@@ -46,6 +46,13 @@ pageemploye::pageemploye(QWidget *parent)
     connect(ui->recherche_c, &QLineEdit::textChanged, this, &pageemploye::on_recherche_c_textChanged);
 
     updateButtonStates();
+
+    connect(ui->candidat_7, &QPushButton::clicked, this, &pageemploye::navigateToCandidat);
+    connect(ui->planning_7, &QPushButton::clicked, this, &pageemploye::navigateToPlanning);
+    connect(ui->employee_7, &QPushButton::clicked, this, &pageemploye::navigateToEmployee);
+    connect(ui->vehicule_7, &QPushButton::clicked, this, &pageemploye::navigateToVehicule);
+    connect(ui->examen_7, &QPushButton::clicked, this, &pageemploye::navigateToExamen);
+    connect(ui->equipement_7, &QPushButton::clicked, this, &pageemploye::navigateToEquipement);
 }
 
 pageemploye::~pageemploye()
@@ -1073,4 +1080,73 @@ void pageemploye::onChatbotResponseReceived(QNetworkReply *reply)
     responseLabel->setTextCursor(cursor);
 
     reply->deleteLater();
+}
+
+void pageemploye::on_candidat_7_clicked()
+{
+
+}
+
+
+void pageemploye::on_planning_7_clicked()
+{
+
+}
+
+void pageemploye::on_vehicule_7_clicked()
+{
+
+}
+#include "navigation_constants.h"
+void pageemploye::navigateToCandidat()
+{
+    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
+    if (mainWindow)
+    {
+        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_CANDIDAT);
+    }
+}
+
+void pageemploye::navigateToPlanning()
+{
+    QMainWindow *mainWindow = qobject_cast<QMainWindow*>(parent()->parent());
+    if (mainWindow) {
+        mainWindow->findChild<QStackedWidget*>()->setCurrentIndex(Navigation::PAGE_PLANNING);
+    }
+}
+
+void pageemploye::navigateToEmployee()
+{
+    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
+    if (mainWindow)
+    {
+        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_EMPLOYES);
+    }
+}
+
+void pageemploye::navigateToVehicule()
+{
+    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
+    if (mainWindow)
+    {
+        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_VEHICULE);
+    }
+}
+
+void pageemploye::navigateToExamen()
+{
+    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
+    if (mainWindow)
+    {
+        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_EXAMEN);
+    }
+}
+
+void pageemploye::navigateToEquipement()
+{
+    QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent()->parent());
+    if (mainWindow)
+    {
+        mainWindow->findChild<QStackedWidget *>()->setCurrentIndex(Navigation::PAGE_EQUIPEMENT);
+    }
 }
