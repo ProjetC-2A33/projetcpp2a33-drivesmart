@@ -8,6 +8,7 @@
 #include <QSqlQueryModel>
 #include <QVariant>
 #include <QPair>
+#include <QComboBox>
 
 namespace Ui
 {
@@ -25,6 +26,12 @@ public:
     QSqlQueryModel *afficher();
     bool supprimer(QString id_examen);
     bool modifier(QString originalId, QString newId, QString type_examen, QString type_permis, QDate date_examen);
+    void rechercher(const QString &critere);
+    void tri(bool ascending);
+    void exportPDF();
+    void enregistrer_historique(const QString &action, const QString &details);
+    void afficher_historique();
+    void afficherStatistiques();
 
 private slots:
     void on_pushButton_4_clicked();
@@ -36,6 +43,7 @@ private slots:
     void navigateToVehicule();
     void navigateToExamen();
     void navigateToEquipement();
+    void onTriComboChanged(int index);
 
 private:
     void refreshTable();
