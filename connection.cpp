@@ -8,9 +8,9 @@ bool Connection::createconnect()
 {
     bool test = false;
     QSqlDatabase db = QSqlDatabase::addDatabase("QODBC");
-    db.setDatabaseName("dirvesmart");
-    db.setUserName("chichi");
-    db.setPassword("1234");
+    db.setDatabaseName("projet");
+    db.setUserName("projet");
+    db.setPassword("123");
 
     // Set connection options for proper character encoding
     db.setConnectOptions("SQL_ATTR_METADATA_ID=SQL_FALSE");

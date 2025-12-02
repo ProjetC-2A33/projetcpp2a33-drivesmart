@@ -36,9 +36,14 @@ namespace {
 struct qt_meta_stringdata_CLASSVehiculeENDCLASS_t {};
 constexpr auto qt_meta_stringdata_CLASSVehiculeENDCLASS = QtMocHelpers::stringData(
     "Vehicule",
-    "on_AjouterButton_2_clicked",
+    "on_AjouterButton_clicked",
     "",
-    "on_AnnulerButton_2_clicked",
+    "on_Annuler_Button_clicked",
+    "on_supprimerButton_clicked",
+    "on_modifierButton_clicked",
+    "on_tableWidget_itemClicked",
+    "QTableWidgetItem*",
+    "item",
     "navigateToCandidat",
     "navigateToPlanning",
     "navigateToEmployee",
@@ -57,7 +62,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSVehiculeENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -65,18 +70,24 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSVehiculeENDCLASS[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   62,    2, 0x08,    1 /* Private */,
-       3,    0,   63,    2, 0x08,    2 /* Private */,
-       4,    0,   64,    2, 0x08,    3 /* Private */,
-       5,    0,   65,    2, 0x08,    4 /* Private */,
-       6,    0,   66,    2, 0x08,    5 /* Private */,
-       7,    0,   67,    2, 0x08,    6 /* Private */,
-       8,    0,   68,    2, 0x08,    7 /* Private */,
-       9,    0,   69,    2, 0x08,    8 /* Private */,
+       1,    0,   80,    2, 0x08,    1 /* Private */,
+       3,    0,   81,    2, 0x08,    2 /* Private */,
+       4,    0,   82,    2, 0x08,    3 /* Private */,
+       5,    0,   83,    2, 0x08,    4 /* Private */,
+       6,    1,   84,    2, 0x08,    5 /* Private */,
+       9,    0,   87,    2, 0x08,    7 /* Private */,
+      10,    0,   88,    2, 0x08,    8 /* Private */,
+      11,    0,   89,    2, 0x08,    9 /* Private */,
+      12,    0,   90,    2, 0x08,   10 /* Private */,
+      13,    0,   91,    2, 0x08,   11 /* Private */,
+      14,    0,   92,    2, 0x08,   12 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 7,    8,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -96,10 +107,17 @@ Q_CONSTINIT const QMetaObject Vehicule::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSVehiculeENDCLASS_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<Vehicule, std::true_type>,
-        // method 'on_AjouterButton_2_clicked'
+        // method 'on_AjouterButton_clicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'on_AnnulerButton_2_clicked'
+        // method 'on_Annuler_Button_clicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'on_supprimerButton_clicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'on_modifierButton_clicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'on_tableWidget_itemClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QTableWidgetItem *, std::false_type>,
         // method 'navigateToCandidat'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'navigateToPlanning'
@@ -122,18 +140,20 @@ void Vehicule::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         auto *_t = static_cast<Vehicule *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->on_AjouterButton_2_clicked(); break;
-        case 1: _t->on_AnnulerButton_2_clicked(); break;
-        case 2: _t->navigateToCandidat(); break;
-        case 3: _t->navigateToPlanning(); break;
-        case 4: _t->navigateToEmployee(); break;
-        case 5: _t->navigateToVehicule(); break;
-        case 6: _t->navigateToExamen(); break;
-        case 7: _t->navigateToEquipement(); break;
+        case 0: _t->on_AjouterButton_clicked(); break;
+        case 1: _t->on_Annuler_Button_clicked(); break;
+        case 2: _t->on_supprimerButton_clicked(); break;
+        case 3: _t->on_modifierButton_clicked(); break;
+        case 4: _t->on_tableWidget_itemClicked((*reinterpret_cast< std::add_pointer_t<QTableWidgetItem*>>(_a[1]))); break;
+        case 5: _t->navigateToCandidat(); break;
+        case 6: _t->navigateToPlanning(); break;
+        case 7: _t->navigateToEmployee(); break;
+        case 8: _t->navigateToVehicule(); break;
+        case 9: _t->navigateToExamen(); break;
+        case 10: _t->navigateToEquipement(); break;
         default: ;
         }
     }
-    (void)_a;
 }
 
 const QMetaObject *Vehicule::metaObject() const
@@ -155,13 +175,13 @@ int Vehicule::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 11)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 8;
+        _id -= 11;
     }
     return _id;
 }

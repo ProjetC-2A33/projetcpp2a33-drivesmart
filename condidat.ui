@@ -677,7 +677,7 @@ border:2px solid #ffce00;
       <x>30</x>
       <y>540</y>
       <width>171</width>
-      <height>61</height>
+      <height>60</height>
      </rect>
     </property>
     <property name="font">
@@ -730,6 +730,46 @@ border-radius:10px;</string>
      <font>
       <pointsize>12</pointsize>
      </font>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>680</y>
+      <width>301</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>appuyer pour remplir le formulaire ...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_vocal">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>640</y>
+      <width>351</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:bleu;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset theme="QIcon::ThemeIcon::AudioInputMicrophone"/>
     </property>
    </widget>
   </widget>
@@ -874,6 +914,285 @@ border-radius:10px;</string>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>500</y>
+     <width>511</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>180</y>
+      <width>301</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>:/images/msg.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>20</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Statistique par :</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="tri_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>--------------</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>sexe</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>type de permis</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="statistique">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>70</y>
+      <width>441</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>:/images/stat_vehicule.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_5">
+   <property name="geometry">
+    <rect>
+     <x>971</x>
+     <y>500</y>
+     <width>521</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>180</y>
+      <width>301</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>:/images/msg.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_18">
+    <property name="geometry">
+     <rect>
+      <x>36</x>
+      <y>8</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>prédiction heures</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cin_condidat">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>10</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:white;
+border-radius:5px;
+border:2px solid #ffce00;
+</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>condidat</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>sexe</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>type de permis</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="prediction">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>130</y>
+      <width>441</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>:/images/stat_vehicule.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_19">
+    <property name="geometry">
+     <rect>
+      <x>38</x>
+      <y>28</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157</string>
+    </property>
+    <property name="text">
+     <string>Code - Conduite</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="codeLabel">
+    <property name="geometry">
+     <rect>
+      <x>38</x>
+      <y>60</y>
+      <width>441</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157;background-color:white;padding:5px;border-radius:5px;</string>
+    </property>
+    <property name="text">
+     <string>Code : Sélectionnez un candidat</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="conduiteLabel">
+    <property name="geometry">
+     <rect>
+      <x>38</x>
+      <y>95</y>
+      <width>441</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:#002157;background-color:white;padding:5px;border-radius:5px;</string>
+    </property>
+    <property name="text">
+     <string>Conduite : Sélectionnez un candidat</string>
     </property>
    </widget>
   </widget>
