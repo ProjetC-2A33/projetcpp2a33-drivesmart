@@ -58,6 +58,7 @@ public:
     QSqlQueryModel* afficher();
     static bool supprimer(const QString &cin_employee);
     bool modifier();
+    bool modifier(const QString &originalCIN);  // Overload to support CIN change
 
     // === Vérification d'unicité ===
     static bool cinExiste(const QString &cin, const QString &cinActuel = "");

@@ -1,4 +1,4 @@
-QT += core gui widgets sql network printsupport charts multimedia
+QT += core gui widgets sql network printsupport charts serialport
 
 CONFIG += c++17 console
 CONFIG -= c++1z
@@ -10,7 +10,6 @@ TARGET = DriveSmart
 TEMPLATE = app
 
 HEADERS += \
-    ../push metier avancee/qrcodegen.h \
     employes.h \
     logindialog.h \
     mainwindow.h \
@@ -25,7 +24,9 @@ HEADERS += \
     gestion_equipement.h\
     connection.h \
     navigation_constants.h \
-    vendor/qrcodegen.hpp
+    vendor/qrcodegen.hpp \
+    arduino.h \
+    cin_access_control.h
 
 SOURCES += \
     employes.cpp \
@@ -40,7 +41,9 @@ SOURCES += \
     planning.cpp \
     gestion_equipement.cpp\
     connection.cpp \
-    vendor/qrcodegen.cpp
+    vendor/qrcodegen.cpp \
+    arduino.cpp \
+    cin_access_control.cpp
 
 FORMS += \
     Dialog.ui \

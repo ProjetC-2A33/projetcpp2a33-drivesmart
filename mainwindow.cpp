@@ -26,10 +26,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           examenView(nullptr),
                                           planningView(nullptr),
                                           equipementView(nullptr),
-                                          employesView(nullptr)
+                                          employesView(nullptr),
+                                          accessControl(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle("DriveSmart - Main Application");
+    
+    // Initialize CIN Access Control System
+    accessControl = new CINAccessControl(this);
+    connect(accessControl, &CINAccessControl::accessGranted, 
+            this, &MainWindow::onAccessGranted);
+    connect(accessControl, &CINAccessControl::accessDenied, 
+            this, &MainWindow::onAccessDenied);
+    connect(accessControl, &CINAccessControl::systemStatusChanged, 
+            this, &MainWindow::onAccessSystemStatus);
+    
+    // Initialize and auto-start Python script
+    accessControl->initializeSystem();
+    qDebug() << "CIN Access Control System initialized - Python running in background";
 
     // Créer le QStackedWidget
     stackedWidget = new QStackedWidget(this);
@@ -114,6 +128,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 MainWindow::~MainWindow()
 {
+    if (accessControl) {
+        accessControl->stopPythonScript();
+    }
     delete ui;
 }
 
@@ -314,4 +331,53 @@ void MainWindow::on_btn_reset_E_clicked()
     ui->dispo_E->setCurrentIndex(0);
 }
 
+// CIN Access Control Implementation
+void MainWindow::startAccessControl()
+{
+    if (accessControl) {
+        accessControl->initializeSystem();
+        QMessageBox::information(this, "Access Control", 
+            "CIN Access Control System started - Python running!");
+    }
+}
+
+void MainWindow::stopAccessControl()
+{
+    if (accessControl) {
+        accessControl->stopPythonScript();
+        QMessageBox::information(this, "Access Control", 
+            "CIN Access Control System stopped");
+    }
+}
+
+void MainWindow::onAccessGranted(QString cin, QString nom, QString prenom)
+{
+    QString message = QString("Access GRANTED\n\nEmployee:\n%1 %2\nCIN: %3")
+                      .arg(nom).arg(prenom).arg(cin);
+    
+    // Show notification
+    QMessageBox::information(this, "Access Granted", message);
+    
+    // Update status in UI if you have a status label
+    qDebug() << "ACCESS GRANTED:" << nom << prenom << "CIN:" << cin;
+}
+
+void MainWindow::onAccessDenied(QString reason)
+{
+    QString message = QString("Access DENIED\n\nReason: %1").arg(reason);
+    
+    // Show notification
+    QMessageBox::warning(this, "Access Denied", message);
+    
+    qDebug() << "ACCESS DENIED:" << reason;
+}
+
+void MainWindow::onAccessSystemStatus(QString status)
+{
+    // Update status in UI if you have a status label
+    qDebug() << "Access Control Status:" << status;
+    
+    // You can add a QLabel in your UI to show this status
+    // For example: ui->statusLabel->setText(status);
+}
 

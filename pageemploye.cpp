@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QPrinter>
 #include <QPainter>
 #include <QFileDialog>
@@ -24,12 +26,17 @@ pageemploye::pageemploye(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::pageemploye)
     , networkManager(new QNetworkAccessManager(this))
+    , originalCIN("")  // Initialize originalCIN as empty
 {
     ui->setupUi(this);
     qDebug() << "pageemploye ouvert";
 
-    // CIN désactivé par défaut (mode modification)
-    ui->cin_E->setEnabled(false);
+    // Configure CIN input: 8 digits only
+    ui->cin_E->setMaxLength(8);
+    ui->cin_E->setPlaceholderText("8 chiffres");
+    QRegularExpression cinRegex("[0-9]{0,8}");
+    QRegularExpressionValidator *cinValidator = new QRegularExpressionValidator(cinRegex, this);
+    ui->cin_E->setValidator(cinValidator);
 
     afficherEmployes();
 
@@ -66,20 +73,29 @@ void pageemploye::afficherEmployes()
     QSqlQueryModel *model = emp.afficher();
 
     if (!model) {
-        QMessageBox::critical(this, "Erreur", "Impossible de charger les données.");
+        QMessageBox::critical(this, "Erreur", "Impossible de charger les données depuis la base de données.\nVérifiez que la table EMPLOYEE existe.");
         ui->tab_em->setRowCount(0);
         return;
     }
+    
+    qDebug() << "Modèle chargé, nombre de lignes:" << model->rowCount();
+    qDebug() << "Modèle colonnes:" << model->columnCount();
 
     ui->tab_em->setRowCount(0);
     ui->tab_em->setColumnCount(8);
     QStringList headers = {"CIN", "Nom", "Prénom", "Disponibilité", "Salaire", "Téléphone", "Email", "Poste"};
     ui->tab_em->setHorizontalHeaderLabels(headers);
 
-    for (int row = 0; row < model->rowCount(); ++row) {
+    int totalRows = model->rowCount();
+    if (totalRows == 0) {
+        qDebug() << "Aucune donnée d'employé trouvée dans la base de données.";
+    }
+    
+    for (int row = 0; row < totalRows; ++row) {
         ui->tab_em->insertRow(row);
         for (int col = 0; col < 8; ++col) {
-            QString text = model->data(model->index(row, col)).toString();
+            QVariant data = model->data(model->index(row, col));
+            QString text = data.toString();
             QTableWidgetItem *item = new QTableWidgetItem(text);
             item->setFlags(item->flags() & ~Qt::ItemIsEditable);
             ui->tab_em->setItem(row, col, item);
@@ -87,7 +103,7 @@ void pageemploye::afficherEmployes()
     }
 
     ui->tab_em->resizeColumnsToContents();
-    qDebug() << "Affiché :" << model->rowCount() << "employés";
+    qDebug() << "Affiché :" << totalRows << "employés";
 
     delete model;
 }
@@ -114,7 +130,10 @@ bool pageemploye::validerCin(const QString &cin)
         QMessageBox::warning(this, "CIN", "Le CIN doit contenir uniquement des chiffres.");
         return false;
     }
-    if (Employes::cinExiste(cin)) {
+    
+    // Use originalCIN for modification context
+    QString cinToExclude = originalCIN.isEmpty() ? "" : originalCIN;
+    if (Employes::cinExiste(cin, cinToExclude)) {
         QMessageBox::warning(this, "CIN", "Ce CIN est déjà utilisé.");
         return false;
     }
@@ -173,29 +192,20 @@ bool pageemploye::validerEmail(const QString &email)
         return false;
     }
 
-    QString cinActuel = ui->cin_E->text().trimmed();
-    if (Employes::emailExiste(email, cinActuel)) {
+    // Use originalCIN if modifying, otherwise use current CIN
+    QString cinToExclude = originalCIN.isEmpty() ? ui->cin_E->text().trimmed() : originalCIN;
+    if (Employes::emailExiste(email, cinToExclude)) {
         QMessageBox::warning(this, "Email", "Cet email est déjà utilisé par un autre employé.");
         return false;
     }
     return true;
 }
 
-// === Vérifie mot de passe : maj, min, chiffre, spécial, min 8 caractères ===
+// === Vérifie mot de passe : min 8 caractères ===
 bool pageemploye::validerMdp(const QString &mdp)
 {
     if (mdp.length() < 8) {
         QMessageBox::warning(this, "Mot de passe", "Le mot de passe doit contenir au moins 8 caractères.");
-        return false;
-    }
-    QRegularExpression regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
-    if (!regex.match(mdp).hasMatch()) {
-        QMessageBox::warning(this, "Mot de passe",
-                             "Le mot de passe doit contenir :\n"
-                             "• Au moins 1 majuscule\n"
-                             "• Au moins 1 minuscule\n"
-                             "• Au moins 1 chiffre\n"
-                             "• Au moins 1 caractère spécial (@$!%*?&)");
         return false;
     }
     return true;
@@ -209,28 +219,35 @@ bool pageemploye::validerMdp(const QString &mdp)
 // === Fonction pour vider tous les champs du formulaire ===
 void pageemploye::clearForm()
 {
-    ui->cin_E->clear();
-    ui->nom_E->clear();
-    ui->prenom_E_2->clear();
-    ui->salaire_E->clear();
-    ui->tel_E->clear();
-    ui->email_E->clear();
-    ui->mdp_E->clear();
-    ui->dispo_E->setCurrentIndex(0);
-    ui->poste_E->setCurrentIndex(0);
+    qDebug() << "Clearing form...";
+    
+    if (ui->cin_E) ui->cin_E->clear();
+    if (ui->nom_E) ui->nom_E->clear();
+    if (ui->prenom_E_2) ui->prenom_E_2->clear();
+    if (ui->salaire_E) ui->salaire_E->clear();
+    if (ui->tel_E) ui->tel_E->clear();
+    if (ui->email_E) ui->email_E->clear();
+    if (ui->mdp_E) ui->mdp_E->clear();
+    if (ui->dispo_E) ui->dispo_E->setCurrentIndex(0);
+    if (ui->poste_E) ui->poste_E->setCurrentIndex(0);
 
     updateButtonStates();
-    ui->tab_em->blockSignals(false);
+    if (ui->tab_em) ui->tab_em->blockSignals(false);
+    
+    qDebug() << "Form cleared successfully";
 }
 // pageemploye.cpp
 void pageemploye::on_btn_reset_E_clicked()
 {
     ui->cin_E->setEnabled(true);
+    originalCIN.clear();  // Clear stored CIN
     clearForm();
 }
 
 void pageemploye::on_btn_ajout_E_clicked()
 {
+    qDebug() << "=== Add button clicked ===";
+    
     QString cin = ui->cin_E->text().trimmed();
     QString nom = ui->nom_E->text().trimmed();
     QString prenom = ui->prenom_E_2->text().trimmed();
@@ -240,6 +257,15 @@ void pageemploye::on_btn_ajout_E_clicked()
     QString mdp = ui->mdp_E->text();
     QString dispoText = ui->dispo_E->currentText();
     QString poste = ui->poste_E->currentText();
+    
+    qDebug() << "CIN:" << cin << "Nom:" << nom << "Email:" << email;
+    
+    // Early validation - check if fields are empty
+    if (cin.isEmpty() || nom.isEmpty() || email.isEmpty()) {
+        qDebug() << "Empty fields detected - aborting add";
+        QMessageBox::warning(this, "Validation", "Veuillez remplir tous les champs obligatoires.");
+        return;
+    }
 
     // === TOUTES LES VALIDATIONS ===
     if (!validerCin(cin)) return;
@@ -251,6 +277,14 @@ void pageemploye::on_btn_ajout_E_clicked()
     if (!validerMdp(mdp)) return;
     if (poste.isEmpty()) {
         QMessageBox::warning(this, "Poste", "Veuillez sélectionner un poste.");
+        return;
+    }
+
+    qDebug() << "All validations passed";
+    
+    // Safety checks to prevent crash
+    if (dispoText.isEmpty()) {
+        QMessageBox::warning(this, "Disponibilité", "Veuillez sélectionner une disponibilité.");
         return;
     }
 
@@ -269,12 +303,23 @@ void pageemploye::on_btn_ajout_E_clicked()
     emp.setPoste(poste);
     emp.setMdp(mdp);
 
+    qDebug() << "Calling emp.ajouter()...";
+    
     if (emp.ajouter()) {
+        qDebug() << "Employee added successfully";
         QMessageBox::information(this, "Succès", "Employé ajouté avec succès !");
-        ui->cin_E->setEnabled(false);   // Bloque le CIN après ajout
-        clearForm();                    // Vide les champs sauf CIN
-        afficherEmployes();             // Rafraîchit le tableau
+        clearForm();                    // Vide les champs
+        
+        qDebug() << "Refreshing table...";
+        try {
+            afficherEmployes();             // Rafraîchit le tableau
+            qDebug() << "Table refreshed successfully";
+        } catch (...) {
+            qDebug() << "ERROR: Exception during afficherEmployes()";
+            QMessageBox::critical(this, "Erreur", "Erreur lors du rafraîchissement du tableau.");
+        }
     } else {
+        qDebug() << "Failed to add employee";
         QMessageBox::critical(this, "Erreur", "Échec de l'ajout en base.");
     }
 }
@@ -299,7 +344,8 @@ void pageemploye::on_tab_em_cellClicked(int row, int column)
 
     // Remplir les champs
     ui->cin_E->setText(cin);
-    ui->cin_E->setEnabled(false);  // CIN bloqué en modification
+    ui->cin_E->setEnabled(true);  // CIN modifiable
+    originalCIN = cin;  // Save original CIN for UPDATE WHERE clause
 
     ui->nom_E->setText(nom);
     ui->prenom_E_2->setText(prenom);
@@ -323,13 +369,35 @@ void pageemploye::on_tab_em_cellClicked(int row, int column)
 
 void pageemploye::on_modif_E_clicked()
 {
+    qDebug() << "=== Modify button clicked ===";
+    
     QString cin = ui->cin_E->text().trimmed();
-    ui->cin_E->setEnabled(false);
 
     // Vérifier qu'un employé est sélectionné
-    if (cin.isEmpty()) {
-        QMessageBox::warning(this, "Sélection", "Veuillez sélectionner un employé à modifier.");
+    if (originalCIN.isEmpty()) {
+        QMessageBox::warning(this, "Sélection", "Veuillez sélectionner un employé à modifier depuis le tableau.");
         return;
+    }
+    
+    qDebug() << "Original CIN:" << originalCIN << "New CIN:" << cin;
+    
+    // Check if CIN is being changed and if equipment exists
+    if (!originalCIN.isEmpty() && originalCIN != cin) {
+        QSqlQuery checkEquipment;
+        checkEquipment.prepare("SELECT COUNT(*) FROM EQUIPEMENT WHERE CIN_EMPLOYEE = :cin");
+        checkEquipment.bindValue(":cin", originalCIN);
+        
+        if (checkEquipment.exec() && checkEquipment.next()) {
+            int equipmentCount = checkEquipment.value(0).toInt();
+            if (equipmentCount > 0) {
+                QMessageBox::warning(this, "Modification impossible",
+                    QString("Impossible de modifier le CIN car cet employé a %1 équipement(s) associé(s).\n\n"
+                            "Pour modifier le CIN, vous devez d'abord :\n"
+                            "1. Supprimer ou réassigner les équipements dans la table EQUIPEMENT\n"
+                            "2. Ou garder le CIN actuel (%2)").arg(equipmentCount).arg(originalCIN));
+                return;
+            }
+        }
     }
 
     // Récupérer les valeurs actuelles
@@ -343,16 +411,17 @@ void pageemploye::on_modif_E_clicked()
     QString poste      = ui->poste_E->currentText();
 
     // === VALIDATIONS ===
+    if (!validerCin(cin)) return;  // Validate CIN (uses originalCIN internally)
     if (!validerNomPrenom(nom, "Nom")) return;
     if (!validerNomPrenom(prenom, "Prénom")) return;
     if (!validerSalaire(salaireStr)) return;
     if (!validerTelephone(tel)) return;
 
-    // Vérification Email : seulement si modifié
+    // Vérification Email : use originalCIN for query
     QString ancienEmail;
     QSqlQuery queryEmail;
     queryEmail.prepare("SELECT EMAIL FROM EMPLOYEE WHERE CIN_EMPLOYEE = :cin");
-    queryEmail.bindValue(":cin", cin);
+    queryEmail.bindValue(":cin", originalCIN);  // Use original CIN
     if (queryEmail.exec() && queryEmail.next()) {
         ancienEmail = queryEmail.value(0).toString();
     }
@@ -366,7 +435,7 @@ void pageemploye::on_modif_E_clicked()
     } else {
         QSqlQuery queryMdp;
         queryMdp.prepare("SELECT MDP FROM EMPLOYEE WHERE CIN_EMPLOYEE = :cin");
-        queryMdp.bindValue(":cin", cin);
+        queryMdp.bindValue(":cin", originalCIN);  // Use original CIN
         if (queryMdp.exec() && queryMdp.next()) {
             mdp = queryMdp.value(0).toString();
         }
@@ -376,6 +445,9 @@ void pageemploye::on_modif_E_clicked()
     double salaire = salaireStr.toDouble();
     bool dispo = (dispoText == "Disponible");
 
+    // Check if CIN was modified
+    QString cinToUpdate = originalCIN.isEmpty() ? cin : originalCIN;
+    
     Employes emp;
     emp.setCinEmployee(cin);
     emp.setNom(nom);
@@ -388,13 +460,36 @@ void pageemploye::on_modif_E_clicked()
     emp.setMdp(mdp);
 
     // === Modification en base ===
-    if (emp.modifier()) {
+    bool success = false;
+    if (!originalCIN.isEmpty() && originalCIN != cin) {
+        // CIN was changed - use overloaded modifier with original CIN
+        qDebug() << "CIN changed, using modifier(originalCIN)";
+        success = emp.modifier(originalCIN);
+    } else {
+        // CIN not changed or new employee - use regular modifier
+        qDebug() << "CIN not changed, using modifier()";
+        success = emp.modifier();
+    }
+    
+    if (success) {
         QMessageBox::information(this, "Succès", "Employé modifié avec succès !");
+        originalCIN.clear();  // Clear the stored original CIN
         clearForm();
-        afficherEmployes();
+        
+        qDebug() << "Refreshing table after modification...";
+        try {
+            afficherEmployes();
+            qDebug() << "Table refreshed successfully after modification";
+        } catch (...) {
+            qDebug() << "ERROR: Exception during afficherEmployes() after modification";
+        }
         return;  // ✅ Empêche l'exécution du reste (et donc l'affichage du warning)
     } else {
-        QMessageBox::critical(this, "Erreur", "Échec de la modification.");
+        QMessageBox::critical(this, "Erreur", 
+            "Échec de la modification.\n\n"
+            "Si vous essayez de modifier le CIN, assurez-vous qu'aucun équipement "
+            "n'est associé à cet employé dans la table EQUIPEMENT.\n\n"
+            "Supprimez d'abord les équipements associés ou gardez le même CIN.");
     }
 }
 

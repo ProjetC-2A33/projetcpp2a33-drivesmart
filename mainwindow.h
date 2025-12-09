@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "pageemploye.h"
+#include "cin_access_control.h"
 namespace Ui
 {
     class MainWindow;
@@ -15,6 +16,7 @@ class Examen;
 class Planning;
 class Gestion_Equipement;
 class QStackedWidget;
+class CINAccessControl;
 
 class MainWindow : public QMainWindow
 {
@@ -33,6 +35,13 @@ private slots:
     void showEquipement();
     void on_btn_ajout_E_clicked();
     void on_btn_reset_E_clicked();
+    
+    // Access control slots
+    void startAccessControl();
+    void stopAccessControl();
+    void onAccessGranted(QString cin, QString nom, QString prenom);
+    void onAccessDenied(QString reason);
+    void onAccessSystemStatus(QString status);
 
 
 
@@ -45,6 +54,7 @@ private:
     Examen *examenView;
     Planning *planningView;
     Gestion_Equipement *equipementView;
+    CINAccessControl *accessControl;
 };
 
 #endif // MAINWINDOW_H
