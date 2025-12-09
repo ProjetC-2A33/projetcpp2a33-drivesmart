@@ -1,130 +1,165 @@
 #include "arduino.h"
+#include <QDebug>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QSerialPortInfo>
+#include <QRegularExpression>  // AJOUTEZ CETTE LIGNE
 
-// Constructor initializes members and sets up the serial port
-Arduino::Arduino()
-{
-    data = "";
-    arduino_port_name = "";
-    arduino_is_available = false;
+ArduinoReader::ArduinoReader(QObject *parent) : QObject(parent) {
     serial = new QSerialPort(this);
-    
-    // Connect signal for reading data automatically
-    connect(serial, &QSerialPort::readyRead, this, &Arduino::readSerialData);
+    if (!dbConn.opendb()) {
+        qDebug() << "AVERTISSEMENT: Impossible d'ouvrir la DB, les fonctionnalités RFID seront limitées";
+    } else {
+        qDebug() << "DB connectée avec succès pour ArduinoReader";
+    }
 }
 
-// Getter for the Arduino port name
-QString Arduino::getarduino_port_name()
-{
-    return arduino_port_name;
-}
+bool ArduinoReader::openArduino() {
+    // Log available ports for easier troubleshooting
+    const auto ports = QSerialPortInfo::availablePorts();
+    qDebug() << "Ports série détectés:";
+    for (const QSerialPortInfo &info : ports) {
+        qDebug() << " -" << info.portName()
+                 << "desc=" << info.description()
+                 << "manuf=" << info.manufacturer()
+                 << "loc=" << info.systemLocation();
+    }
 
-// Getter for the QSerialPort object
-QSerialPort *Arduino::getserial()
-{
-    return serial;
-}
+    const QString preferredPort = "COM3";
+    QList<QString> tryOrder;
+    QSet<QString> added;
 
-// Connect to the Arduino via the appropriate port
-int Arduino::connect_arduino()
-{
-    // Search for the port where Arduino is connected
-    foreach (const QSerialPortInfo &serial_port_info, QSerialPortInfo::availablePorts())
-    {
-        if (serial_port_info.hasVendorIdentifier() && serial_port_info.hasProductIdentifier())
-        {
-            if (serial_port_info.vendorIdentifier() == arduino_uno_vendor_id &&
-                serial_port_info.productIdentifier() == arduino_uno_product_id)
-            {
-                arduino_is_available = true;
-                arduino_port_name = serial_port_info.portName();
-                break;
+    auto addPort = [&](const QString &p) {
+        if (!added.contains(p)) {
+            tryOrder.append(p);
+            added.insert(p);
+        }
+    };
+
+    // 1) Preferred COM3
+    addPort(preferredPort);
+    // 2) Any port that looks like Arduino by description/manufacturer
+    for (const QSerialPortInfo &info : ports) {
+        const QString desc = info.description().toLower();
+        const QString manuf = info.manufacturer().toLower();
+        if (desc.contains("arduino") || manuf.contains("arduino")) {
+            addPort(info.portName());
+        }
+    }
+    // 3) All remaining ports
+    for (const QSerialPortInfo &info : ports) {
+        addPort(info.portName());
+    }
+
+    QList<QString> triedPorts;
+    bool opened = false;
+
+    auto tryOpen = [&](const QString &portName) -> bool {
+        serial->setPortName(portName);
+        serial->setBaudRate(QSerialPort::Baud9600);
+        serial->setDataBits(QSerialPort::Data8);
+        serial->setParity(QSerialPort::NoParity);
+        serial->setStopBits(QSerialPort::OneStop);
+        serial->setFlowControl(QSerialPort::NoFlowControl);
+        triedPorts.append(portName);
+        if (!serial->open(QIODevice::ReadWrite)) {
+            qDebug() << "Echec ouverture" << portName << ":" << serial->errorString();
+            return false;
+        }
+        return true;
+    };
+
+    for (const QString &portName : tryOrder) {
+        if (tryOpen(portName)) {
+            opened = true;
+            break;
+        }
+    }
+
+    if (!opened) {
+        qDebug() << "Arduino non détecté. Ports testés:" << triedPorts;
+        return false;
+    }
+
+    qDebug() << "Arduino connecté sur" << serial->portName();
+    connect(serial, &QSerialPort::readyRead, this, &ArduinoReader::readData);
+    return true;
+}
+void ArduinoReader::readData() {
+    buffer.append(serial->readAll());
+
+    while (true) {
+        int newlineIndex = buffer.indexOf('\n');
+        if (newlineIndex < 0) {
+            break;
+        }
+
+        QByteArray line = buffer.left(newlineIndex);
+        buffer.remove(0, newlineIndex + 1);
+        QString uid = QString::fromUtf8(line).trimmed();
+
+        if (uid == "READY") {
+            continue; // Juste ignorer, pas de log
+        }
+
+        // Validation simplifiée
+        if (uid.length() >= 8 && uid.length() <= 16) {
+            bool isHex = true;
+            for (const QChar &c : uid) {
+                if (!c.isDigit() && !(c >= 'A' && c <= 'F') && !(c >= 'a' && c <= 'f')) {
+                    isHex = false;
+                    break;
+                }
+            }
+
+            if (isHex) {
+                uid = uid.toUpper();
+
+                QSqlQuery query;
+                query.prepare("SELECT CIN_CONDIDAT, NOM, PRENOM FROM CONDIDAT WHERE \"UID\" = :uid");
+                query.bindValue(":uid", uid);
+
+                if (query.exec() && query.next()) {
+                    QString cin = query.value(0).toString();
+
+                    // RAPIDE: Pas de logs détaillés, juste le traitement
+                    int heures = dbConn.getSessionHoursToday(cin);
+
+                    // ENVOYER DIRECTEMENT LA COMMANDE
+                    sendLEDCommand(heures);
+
+                    // Optionnel: Émettre un signal silencieux
+                    emit uidDetected(uid);
+
+                } else {
+                    // Pas de candidat = LED rouge
+                    sendLEDCommand(0);
+                }
             }
         }
     }
-
-    qDebug() << "arduino_port_name is :" << arduino_port_name;
-
-    if (arduino_is_available) {
-        serial->setPortName(arduino_port_name);
-        if (serial->open(QSerialPort::ReadWrite)) {
-            serial->setBaudRate(QSerialPort::Baud9600); // Set baud rate to 9600
-            serial->setDataBits(QSerialPort::Data8);    // Set data bits to 8
-            serial->setParity(QSerialPort::NoParity);   // No parity
-            serial->setStopBits(QSerialPort::OneStop);  // 1 stop bit
-            serial->setFlowControl(QSerialPort::NoFlowControl); // No flow control
-            qDebug() << "Arduino connected successfully on" << arduino_port_name;
-            return 0; // Success
-        }
-        return 1; // Error in opening port
-    }
-    return -1; // Arduino not found
 }
 
-// Close the connection to the Arduino
-int Arduino::close_arduino()
-{
-    if (serial->isOpen()) {
-        serial->close();
-        qDebug() << "Arduino connection closed.";
-        return 0; // Success
+void ArduinoReader::sendLEDCommand(int hours) {
+    if (!serial || !serial->isOpen()) {
+        qDebug() << "Port série non ouvert";
+        return;
     }
-    return 1; // Failure to close
-}
 
-// Read data from the Arduino
-QByteArray Arduino::read_from_arduino()
-{
-    if (serial->isReadable()) {
-        data = serial->readAll(); // Retrieve data from serial port
-        return data;
-    }
-    return QByteArray(); // Return empty if no data
-}
+    QString command;
 
-// Write data to the Arduino
-void Arduino::write_to_arduino(QByteArray d)
-{
-    if (serial->isWritable()) {
-        serial->write(d); // Write the data to the serial port
-        qDebug() << "Sent to Arduino:" << d;
+    if (hours > 0) {
+        command = "1"; // carte acceptée: LED verte + bip court
+        qDebug() << "Commande: carte acceptée (LED verte + bip court)";
     } else {
-        qDebug() << "Couldn't write to serial!";
+        command = "0"; // pas de séance: LED rouge + bip long
+        qDebug() << "Commande: carte refusée (LED rouge + bip long)";
     }
-}
-
-// Slot to read incoming serial data
-void Arduino::readSerialData()
-{
-    QByteArray receivedData = serial->readAll();
-    QString dataString = QString::fromUtf8(receivedData).trimmed();
     
-    if (!dataString.isEmpty()) {
-        qDebug() << "Received from Arduino:" << dataString;
-        emit dataReceived(dataString);
-        
-        // If Arduino requests CIN verification
-        if (dataString == "REQUEST_CIN") {
-            qDebug() << "CIN capture requested by Arduino";
-            emit cinCaptureRequested();
-        }
-    }
-}
-
-// Send authorization signal to Arduino
-void Arduino::sendAuthorizationSignal(bool authorized)
-{
-    if (authorized) {
-        write_to_arduino("AUTHORIZED\n");
-        qDebug() << "Authorization GRANTED sent to Arduino";
-    } else {
-        write_to_arduino("DENIED\n");
-        qDebug() << "Authorization DENIED sent to Arduino";
-    }
-}
-
-// Request CIN capture from Python script
-void Arduino::requestCINCapture()
-{
-    qDebug() << "Requesting CIN capture...";
-    emit cinCaptureRequested();
+    // Envoyer à l'Arduino
+    command += "\n";
+    serial->write(command.toUtf8());
+    serial->waitForBytesWritten(1000);
+    
+    qDebug() << "Commande envoyée à l'Arduino:" << command.trimmed();
 }
