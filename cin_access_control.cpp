@@ -7,13 +7,19 @@ CINAccessControl::CINAccessControl(QObject *parent)
     : QObject(parent),
       pythonProcess(nullptr),
       capturedCIN(""),
-      responseFilePath("qt_response.txt")
+      responseFilePath("qt_response.txt"),
+      arduinoSerial(nullptr)
 {
     pythonProcess = new QProcess(this);
     
     // Connect Python process signals
     connect(pythonProcess, &QProcess::readyReadStandardOutput, this, &CINAccessControl::onPythonOutputReady);
     connect(pythonProcess, &QProcess::readyReadStandardError, this, &CINAccessControl::onPythonError);
+}
+
+void CINAccessControl::setArduinoSerial(QSerialPort *serial) {
+    arduinoSerial = serial;
+    qDebug() << "Arduino serial lié au système CIN";
 }
 
 CINAccessControl::~CINAccessControl()
@@ -190,10 +196,18 @@ bool CINAccessControl::verifyCINInDatabase(const QString &cin)
         if (disponibilite == "Disponible" || disponibilite == "disponible" || 
             disponibilite == "1" || disponibilite.toInt() == 1) {
             qDebug() << "Employee is available - Access GRANTED";
+            
+            // Ouvrir le servo
+            sendServoCommand(true);
+            
             emit accessGranted(cin, nom, prenom);
             return true;
         } else {
             qDebug() << "Employee found but not available (Disponibilite:" << disponibilite << ")";
+            
+            // Garder le servo fermé
+            sendServoCommand(false);
+            
             emit accessDenied("Employee not available");
             return false;
         }
@@ -201,6 +215,10 @@ bool CINAccessControl::verifyCINInDatabase(const QString &cin)
     
     qDebug() << "CIN" << cin << "not found in database";
     qDebug() << "Last query error:" << query.lastError().text();
+    
+    // CIN non trouvé, garder le servo fermé
+    sendServoCommand(false);
+    
     return false;
 }
 
@@ -217,4 +235,15 @@ void CINAccessControl::logAccess(const QString &cin, const QString &status)
     } else {
         qDebug() << "Access logged for CIN:" << cin << "Status:" << status;
     }
+}
+
+void CINAccessControl::sendServoCommand(bool open) {
+    if (!arduinoSerial || !arduinoSerial->isOpen()) {
+        qDebug() << "Arduino serial not available for servo control";
+        return;
+    }
+    
+    QString command = open ? "OPEN\n" : "CLOSE\n";
+    arduinoSerial->write(command.toUtf8());
+    qDebug() << "Servo command sent:" << command.trimmed();
 }

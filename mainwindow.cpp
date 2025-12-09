@@ -27,10 +27,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           planningView(nullptr),
                                           equipementView(nullptr),
                                           employesView(nullptr),
-                                          accessControl(nullptr)
+                                          accessControl(nullptr),
+                                          arduinoReader(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle("DriveSmart - Main Application");
+    
+    // Initialize Arduino RFID Reader
+    arduinoReader = new ArduinoReader(this);
+    if (arduinoReader->openArduino()) {
+        qDebug() << "✓ Arduino RFID System connected successfully";
+    } else {
+        qDebug() << "⚠ Arduino RFID not detected - RFID features disabled";
+    }
     
     // Initialize CIN Access Control System
     accessControl = new CINAccessControl(this);
@@ -43,7 +52,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     
     // Initialize and auto-start Python script
     accessControl->initializeSystem();
-    qDebug() << "CIN Access Control System initialized - Python running in background";
+    qDebug() << "✓ CIN Access Control System initialized - Python running in background";
+    
+    // === LIEN ENTRE LES DEUX SYSTÈMES ===
+    // Connecter Arduino au système CIN pour contrôle servo
+    if (arduinoReader && arduinoReader->openArduino()) {
+        // Partager le port série avec CIN Access Control
+        QSerialPort *serialPort = arduinoReader->findChild<QSerialPort*>();
+        if (serialPort) {
+            accessControl->setArduinoSerial(serialPort);
+            qDebug() << "✓ Arduino serial linked to CIN Access Control";
+        }
+    }
+    
+    // Connecter CIN au système Arduino
+    arduinoReader->setCINAccessControl(accessControl);
+    
+    // Quand RFID échoue, déclencher vérification CIN
+    connect(arduinoReader, &ArduinoReader::requestCINVerification,
+            accessControl, &CINAccessControl::startPythonScript);
+    
+    qDebug() << "✓ Integrated Access Control System ready!";
+    qDebug() << "  - RFID cards will be checked first";
+    qDebug() << "  - CIN camera verification as backup";
 
     // Créer le QStackedWidget
     stackedWidget = new QStackedWidget(this);

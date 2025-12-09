@@ -26,7 +26,6 @@ pageemploye::pageemploye(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::pageemploye)
     , networkManager(new QNetworkAccessManager(this))
-    , originalCIN("")  // Initialize originalCIN as empty
 {
     ui->setupUi(this);
     qDebug() << "pageemploye ouvert";

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "pageemploye.h"
 #include "cin_access_control.h"
+#include "arduino.h"
 namespace Ui
 {
     class MainWindow;
@@ -17,6 +18,7 @@ class Planning;
 class Gestion_Equipement;
 class QStackedWidget;
 class CINAccessControl;
+class ArduinoReader;
 
 class MainWindow : public QMainWindow
 {
@@ -55,6 +57,7 @@ private:
     Planning *planningView;
     Gestion_Equipement *equipementView;
     CINAccessControl *accessControl;
+    ArduinoReader *arduinoReader;
 };
 
 #endif // MAINWINDOW_H

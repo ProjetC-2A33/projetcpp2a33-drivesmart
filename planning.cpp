@@ -1244,7 +1244,7 @@ void Planning::loadCondidats()
 
     QSqlQuery query;
     // Charger les CINs avec les noms et prénoms pour affichage
-    query.prepare("SELECT cin_condidat, nom, prenom FROM CONDIDAT ORDER BY cin_condidat");
+    query.prepare("SELECT CIN_CONDIDAT, NOM, PRENOM FROM CONDIDAT ORDER BY CIN_CONDIDAT");
     if (!query.exec())
     {
         QString errorMsg = query.lastError().text();

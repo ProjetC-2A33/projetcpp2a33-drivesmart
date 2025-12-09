@@ -42,9 +42,7 @@ QSqlQueryModel* Employes::afficher()
 
     QSqlQuery query;
     query.prepare(
-        "SELECT CIN_EMPLOYEE, NOM, PRENOM, "
-        "DISPONIBILITE, "
-        "SALAIRE, TELEPHONE, EMAIL, POSTE "
+        "SELECT CIN_EMPLOYEE, NOM, PRENOM, DISPONIBILITE, SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE ORDER BY CIN_EMPLOYEE"
         );
     

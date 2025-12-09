@@ -11,6 +11,8 @@ release/planning.o
 release/gestion_equipement.o
 release/connection.o
 release/qrcodegen.o
+release/arduino.o
+release/cin_access_control.o
 release/qrc_resources.o
 release/moc_logindialog.o
 release/moc_mainwindow.o
@@ -21,3 +23,5 @@ release/moc_vehicule.o
 release/moc_examen.o
 release/moc_planning.o
 release/moc_gestion_equipement.o
+release/moc_arduino.o
+release/moc_cin_access_control.o

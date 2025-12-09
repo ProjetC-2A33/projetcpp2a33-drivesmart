@@ -1,4 +1,4 @@
-QT += core gui widgets sql network printsupport charts serialport
+QT += core gui widgets sql network printsupport charts serialport multimedia
 
 CONFIG += c++17 console
 CONFIG -= c++1z

@@ -1,17 +1,23 @@
 #include "arduino.h"
+#include "cin_access_control.h"
 #include <QDebug>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QSerialPortInfo>
-#include <QRegularExpression>  // AJOUTEZ CETTE LIGNE
+#include <QRegularExpression>
 
-ArduinoReader::ArduinoReader(QObject *parent) : QObject(parent) {
+ArduinoReader::ArduinoReader(QObject *parent) : QObject(parent), cinAccessControl(nullptr) {
     serial = new QSerialPort(this);
     if (!dbConn.opendb()) {
         qDebug() << "AVERTISSEMENT: Impossible d'ouvrir la DB, les fonctionnalités RFID seront limitées";
     } else {
         qDebug() << "DB connectée avec succès pour ArduinoReader";
     }
+}
+
+void ArduinoReader::setCINAccessControl(CINAccessControl *cinControl) {
+    cinAccessControl = cinControl;
+    qDebug() << "CIN Access Control lié au système RFID";
 }
 
 bool ArduinoReader::openArduino() {
@@ -132,8 +138,14 @@ void ArduinoReader::readData() {
                     emit uidDetected(uid);
 
                 } else {
-                    // Pas de candidat = LED rouge
+                    // Pas de candidat trouvé avec RFID
                     sendLEDCommand(0);
+                    
+                    // Demander vérification CIN si système disponible
+                    if (cinAccessControl) {
+                        qDebug() << "RFID non reconnu, déclenchement vérification CIN";
+                        emit requestCINVerification();
+                    }
                 }
             }
         }

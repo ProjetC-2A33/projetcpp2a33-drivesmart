@@ -1,4 +1,6 @@
 #include "connection.h"
+#include <QDateTime>
+#include <QDebug>
 
 Connection::Connection()
 {
@@ -26,4 +28,29 @@ bool Connection::createconnect()
     }
 
     return test;
+}
+
+bool Connection::opendb()
+{
+    return createconnect();
+}
+
+int Connection::getSessionHoursToday(const QString &cin)
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.isOpen()) {
+        qDebug() << "Database not open in getSessionHoursToday";
+        return 0;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT COUNT(*) FROM PLANNING WHERE CIN_CONDIDAT = :cin AND TRUNC(DATE_SEANCE) = TRUNC(SYSDATE)");
+    query.bindValue(":cin", cin);
+
+    if (query.exec() && query.next()) {
+        return query.value(0).toInt();
+    }
+
+    qDebug() << "Error getting session hours:" << query.lastError().text();
+    return 0;
 }

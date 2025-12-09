@@ -24,6 +24,7 @@ public:
 
 private:
     Ui::pageemploye *ui;
+    QString originalCIN;
     void afficherEmployes();
     void clearForm();
     bool validerCin(const QString &cin);
