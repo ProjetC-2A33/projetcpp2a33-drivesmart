@@ -27,13 +27,13 @@
 #include <QPushButton>
 #include <QKeyEvent>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QtMultimedia/QAudioSource>
-#include <QtMultimedia/QAudioDevice>
-#include <QtMultimedia/QMediaDevices>
+#include <QAudioSource>
+#include <QAudioDevice>
+#include <QMediaDevices>
 #else
-#include <QtMultimedia/QAudioInput>
-#include <QtMultimedia/QAudioFormat>
-#include <QtMultimedia/QAudioDeviceInfo>
+#include <QAudioInput>
+#include <QAudioFormat>
+#include <QAudioDeviceInfo>
 #endif
 #ifdef USE_VOSK
 #include <vosk_api.h>
@@ -50,11 +50,11 @@ class Condidat : public QWidget
 public:
     explicit Condidat(QWidget *parent = nullptr);
     ~Condidat();
-    Condidat(QString cin_condidat,QString nom,QString prenom,QString sexe,QDate date_naissance,int tel,QString type_permis);
+    Condidat(int cin_condidat,QString nom,QString prenom,QString sexe,QDate date_naissance,int tel,QString type_permis);
     bool ajouter();
     QSqlQueryModel* afficher();
-    bool supprimer(QString cin_condidat);
-    bool modifier(QString originalCin,QString newCin,QString nom,QString prenom,QString sexe,QDate date_naissance,int tel,QString type_permis);
+    bool supprimer(int cin_condidat);
+    bool modifier(int originalCin,int newCin,QString nom,QString prenom,QString sexe,QDate date_naissance,int tel,QString type_permis);
 
 private slots:
     void on_btn_ajout_clicked();
@@ -78,9 +78,9 @@ private:
     void refreshTable();
     void refreshTableWithFilter(const QString &filter = QString());
     void refreshTableWithSort(const QString &sortColumn = QString(), Qt::SortOrder order = Qt::AscendingOrder);
-    QString selectedCinFromTable() const;
+    int selectedCinFromTable() const;
     void setFormFromRow(int row);
-    QWidget* createActionsCell(int row, QString cin);
+    QWidget* createActionsCell(int row, int cin);
     void exportToPDF();
     void exportToExcel();
     int calculateAge(const QDate &birthDate) const;
@@ -101,11 +101,10 @@ private:
     QDate extractDate(const QString &text);
     void updatePrediction(int age, QString sexe, QString type_permis);
     void populateCandidateComboBox();
-    QString currentEditingCin = "";
+    int currentEditingCin = -1;
     bool isEditMode = false;
     void setEditMode(bool enabled);
-    QString cin_condidat;
-    int tel;
+    int cin_condidat,tel;
     QString nom,prenom,type_permis,sexe;
     QDate date_naissance;
     QString currentFilter;

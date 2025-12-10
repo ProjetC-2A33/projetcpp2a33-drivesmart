@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "condidat.h"
+#include "pageemploye.h"
 #include "employes.h"
 #include "vehicule.h"
 #include "examen.h"
@@ -18,65 +19,26 @@
 #include <QSqlError>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QSqlQuery>
+#include <QSqlError>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow),
+                                          stackedWidget(nullptr),
                                           condidatView(nullptr),
+                                          employesView(nullptr),
                                           vehiculeView(nullptr),
                                           examenView(nullptr),
                                           planningView(nullptr),
                                           equipementView(nullptr),
-                                          employesView(nullptr),
-                                          accessControl(nullptr),
-                                          arduinoReader(nullptr)
+                                          arduino(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle("DriveSmart - Main Application");
-    
-    // Initialize Arduino RFID Reader
-    arduinoReader = new ArduinoReader(this);
-    if (arduinoReader->openArduino()) {
-        qDebug() << "✓ Arduino RFID System connected successfully";
-    } else {
-        qDebug() << "⚠ Arduino RFID not detected - RFID features disabled";
-    }
-    
-    // Initialize CIN Access Control System
-    accessControl = new CINAccessControl(this);
-    connect(accessControl, &CINAccessControl::accessGranted, 
-            this, &MainWindow::onAccessGranted);
-    connect(accessControl, &CINAccessControl::accessDenied, 
-            this, &MainWindow::onAccessDenied);
-    connect(accessControl, &CINAccessControl::systemStatusChanged, 
-            this, &MainWindow::onAccessSystemStatus);
-    
-    // Initialize and auto-start Python script
-    accessControl->initializeSystem();
-    qDebug() << "✓ CIN Access Control System initialized - Python running in background";
-    
-    // === LIEN ENTRE LES DEUX SYSTÈMES ===
-    // Connecter Arduino au système CIN pour contrôle servo
-    if (arduinoReader && arduinoReader->openArduino()) {
-        // Partager le port série avec CIN Access Control
-        QSerialPort *serialPort = arduinoReader->findChild<QSerialPort*>();
-        if (serialPort) {
-            accessControl->setArduinoSerial(serialPort);
-            qDebug() << "✓ Arduino serial linked to CIN Access Control";
-        }
-    }
-    
-    // Connecter CIN au système Arduino
-    arduinoReader->setCINAccessControl(accessControl);
-    
-    // Quand RFID échoue, déclencher vérification CIN
-    connect(arduinoReader, &ArduinoReader::requestCINVerification,
-            accessControl, &CINAccessControl::startPythonScript);
-    
-    qDebug() << "✓ Integrated Access Control System ready!";
-    qDebug() << "  - RFID cards will be checked first";
-    qDebug() << "  - CIN camera verification as backup";
+    connectArduino();
 
-    // Créer le QStackedWidget
     stackedWidget = new QStackedWidget(this);
 
     // Créer tous les widgets
@@ -159,9 +121,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 MainWindow::~MainWindow()
 {
-    if (accessControl) {
-        accessControl->stopPythonScript();
-    }
     delete ui;
 }
 
@@ -262,7 +221,7 @@ void MainWindow::on_btn_ajout_E_clicked()
     {
         disponibiliteValue = 1;
     }
-    else if (disponibilite.toLower().contains("non") || disponibilite.toLower().contains("occupé") || disponibilite == "0")
+    else if (disponibilite.toLower().contains("non") || disponibilite.toLower().contains("RESERVER") || disponibilite == "0")
     {
         disponibiliteValue = 0;
     }
@@ -361,54 +320,179 @@ void MainWindow::on_btn_reset_E_clicked()
     // Réinitialiser le champ disponibilité
     ui->dispo_E->setCurrentIndex(0);
 }
-
-// CIN Access Control Implementation
-void MainWindow::startAccessControl()
+void MainWindow::connectArduino()
 {
-    if (accessControl) {
-        accessControl->initializeSystem();
-        QMessageBox::information(this, "Access Control", 
-            "CIN Access Control System started - Python running!");
+    arduino = new QSerialPort(this);
+    
+    // Forcer l'utilisation du port COM5
+    arduino->setPortName("COM5");
+    arduino->setBaudRate(QSerialPort::Baud9600);
+
+    if(arduino->open(QIODevice::ReadWrite)) {
+        qDebug() << "Arduino connecté";
+        connect(arduino, &QSerialPort::readyRead, this, &MainWindow::readArduino);
+    } else qDebug() << "Échec connexion Arduino";
+}
+
+void MainWindow::readArduino()
+{
+    static QString buffer; // Buffer pour accumuler les données
+
+    while (arduino->bytesAvailable()) {
+        QByteArray data = arduino->readAll();
+        buffer += QString::fromUtf8(data);
+
+        qDebug() << "Données reçues (brutes):" << data;
+        qDebug() << "Buffer actuel:" << buffer;
+    }
+
+    // Vérifier si on a une ligne complète
+    if (buffer.contains('\n')) {
+        QStringList lines = buffer.split('\n');
+
+        // Traiter toutes les lignes complètes sauf la dernière (peut être incomplète)
+        for (int i = 0; i < lines.size() - 1; i++) {
+            QString line = lines[i].trimmed();
+            qDebug() << "Ligne complète traitée:" << line;
+
+            if (line.startsWith("MAT:")) {
+                QString matricule = line.mid(4).trimmed();
+                qDebug() << "Matricule extrait:" << matricule;
+
+                if (!matricule.isEmpty()) {
+                    onMatriculeReceived(matricule);
+                }
+            }
+        }
+
+        // Garder la dernière partie (incomplète) dans le buffer
+        buffer = lines.last();
+    }
+}
+void MainWindow::onMatriculeReceived(const QString &matricule)
+{
+    qDebug() << "=== TRAITEMENT MATRICULE ===";
+    qDebug() << "Matricule:" << matricule;
+
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.isOpen()) {
+        qDebug() << "Base de données non ouverte";
+        QString message = QString("VEHICULE:Erreur DB|%1|ERREUR\n").arg(matricule);
+        arduino->write(message.toUtf8());
+        return;
+    }
+
+    QSqlQuery query;
+    query.prepare("SELECT MODELE, MATRICULE, DISPONIBILITE FROM VEHICULE WHERE MATRICULE = :matricule");
+    query.bindValue(":matricule", matricule);
+
+    if (!query.exec()) {
+        qDebug() << "Erreur SQL:" << query.lastError().text();
+        QString message = QString("VEHICULE:Erreur SQL|%1|ERREUR\n").arg(matricule);
+        arduino->write(message.toUtf8());
+        return;
+    }
+
+    if (query.next()) {
+        QString modele = query.value("MODELE").toString();
+        QString matriculeDB = query.value("MATRICULE").toString();
+        QString disponibilite = query.value("DISPONIBILITE").toString();
+
+        qDebug() << "Véhicule trouvé - Modèle:" << modele << "| Statut BD:" << disponibilite;
+
+        QString statusArduino;
+        QString statusPourArduino;
+
+        // NORMALISATION DES STATUTS
+        QString disponibiliteUpper = disponibilite.toUpper();
+        QString disponibiliteClean = disponibiliteUpper;
+        disponibiliteClean = disponibiliteClean.replace("É", "E")
+                                 .replace("È", "E")
+                                 .replace("Ê", "E")
+                                 .replace("Ë", "E")
+                                 .replace("À", "A")
+                                 .replace("Â", "A")
+                                 .replace("Ô", "O")
+                                 .replace("Ù", "U");
+
+        qDebug() << "Statut nettoyé:" << disponibiliteClean;
+
+        // LOGIQUE : AFFICHER D'ABORD LE STATUT ACTUEL
+        if (disponibiliteClean.contains("LIBRE") || disponibiliteClean.contains("DISPONIBLE")) {
+            // 1. D'ABORD envoyer "LIBRE" à Arduino pour affichage
+            statusPourArduino = "LIBRE";
+
+            qDebug() << "Envoi initial à Arduino (LIBRE):" << modele << "|" << matriculeDB << "|" << statusPourArduino;
+
+            // ENVOYER "LIBRE" À ARDUINO D'ABORD
+            QString message = QString("VEHICULE:%1|%2|%3\n").arg(modele).arg(matriculeDB).arg(statusPourArduino);
+            arduino->write(message.toUtf8());
+            arduino->flush();
+
+            // 2. PUIS mettre à jour la base en "RESERVE"
+            QSqlQuery update;
+            update.prepare("UPDATE VEHICULE SET DISPONIBILITE = 'RESERVE' WHERE MATRICULE = :matricule");
+            update.bindValue(":matricule", matricule);
+
+            if (update.exec()) {
+                qDebug() << "Base mise à jour: LIBRE -> RESERVE";
+            } else {
+                qDebug() << "Erreur UPDATE:" << update.lastError().text();
+            }
+        }
+        else if (disponibiliteClean.contains("RESERVE") || disponibiliteClean.contains("RESERVE")) {
+            // Véhicule déjà réservé
+            statusPourArduino = "RESERVE";
+
+            qDebug() << "Envoi à Arduino (déjà RESERVE):" << modele << "|" << matriculeDB << "|" << statusPourArduino;
+
+            QString message = QString("VEHICULE:%1|%2|%3\n").arg(modele).arg(matriculeDB).arg(statusPourArduino);
+            arduino->write(message.toUtf8());
+            arduino->flush();
+        }
+        else if (disponibiliteClean.contains("OCCUPE") || disponibiliteClean.contains("OCCUP")) {
+            // Véhicule occupé
+            statusPourArduino = "OCCUPE";
+
+            qDebug() << "Envoi à Arduino (OCCUPE):" << modele << "|" << matriculeDB << "|" << statusPourArduino;
+
+            QString message = QString("VEHICULE:%1|%2|%3\n").arg(modele).arg(matriculeDB).arg(statusPourArduino);
+            arduino->write(message.toUtf8());
+            arduino->flush();
+        }
+        else {
+            // Statut inconnu
+            statusPourArduino = "INDISPONIBLE";
+
+            qDebug() << "Envoi à Arduino (INDISPONIBLE):" << modele << "|" << matriculeDB << "|" << statusPourArduino;
+
+            QString message = QString("VEHICULE:%1|%2|%3\n").arg(modele).arg(matriculeDB).arg(statusPourArduino);
+            arduino->write(message.toUtf8());
+            arduino->flush();
+        }
+
+    } else {
+        qDebug() << "Matricule introuvable";
+        QString message = QString("VEHICULE:Introuvable|%1|INTROUVABLE\n").arg(matricule);
+        arduino->write(message.toUtf8());
     }
 }
 
-void MainWindow::stopAccessControl()
+void MainWindow::sendVehicleInfoToArduino(const QString &model, const QString &plate, const QString &status)
 {
-    if (accessControl) {
-        accessControl->stopPythonScript();
-        QMessageBox::information(this, "Access Control", 
-            "CIN Access Control System stopped");
+    if (!arduino || !arduino->isOpen()) {
+        qDebug() << "Arduino non connecté, impossible d'envoyer les données";
+        return;
     }
-}
 
-void MainWindow::onAccessGranted(QString cin, QString nom, QString prenom)
-{
-    QString message = QString("Access GRANTED\n\nEmployee:\n%1 %2\nCIN: %3")
-                      .arg(nom).arg(prenom).arg(cin);
-    
-    // Show notification
-    QMessageBox::information(this, "Access Granted", message);
-    
-    // Update status in UI if you have a status label
-    qDebug() << "ACCESS GRANTED:" << nom << prenom << "CIN:" << cin;
-}
+    // Format: VEHICULE:modele|matricule|disponibilite
+    QString message = QString("VEHICULE:%1|%2|%3\n").arg(model).arg(plate).arg(status);
 
-void MainWindow::onAccessDenied(QString reason)
-{
-    QString message = QString("Access DENIED\n\nReason: %1").arg(reason);
-    
-    // Show notification
-    QMessageBox::warning(this, "Access Denied", message);
-    
-    qDebug() << "ACCESS DENIED:" << reason;
-}
+    qDebug() << "Envoi à Arduino: " << message.trimmed();
 
-void MainWindow::onAccessSystemStatus(QString status)
-{
-    // Update status in UI if you have a status label
-    qDebug() << "Access Control Status:" << status;
-    
-    // You can add a QLabel in your UI to show this status
-    // For example: ui->statusLabel->setText(status);
-}
+    // Envoyer le message
+    arduino->write(message.toUtf8());
+    arduino->flush(); // Forcer l'envoi immédiat
 
+    qDebug() << "Message envoyé avec succès";
+}

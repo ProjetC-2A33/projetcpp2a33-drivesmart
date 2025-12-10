@@ -212,7 +212,7 @@
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <item>
      <property name="text">
@@ -258,7 +258,7 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
@@ -443,7 +443,7 @@ background-color:#e3e2de;</string>
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
@@ -472,7 +472,8 @@ border:2px solid #ffce00;
     <property name="styleSheet">
      <string notr="true">background-color:white;
 border-radius:5px;
-border:2px solid #ffce00;</string>
+border:2px solid #ffce00;
+color:black;</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="nom">
@@ -492,7 +493,8 @@ border:2px solid #ffce00;</string>
     <property name="styleSheet">
      <string notr="true">background-color:white;
 border-radius:5px;
-border:2px solid #ffce00;</string>
+border:2px solid #ffce00;
+color:black;</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="homme">
@@ -611,7 +613,8 @@ border:2px solid #ffce00;</string>
     <property name="styleSheet">
      <string notr="true">background-color:white;
 border-radius:5px;
-border:2px solid #ffce00;</string>
+border:2px solid #ffce00;
+color:black;</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
@@ -653,7 +656,7 @@ border:2px solid #ffce00;</string>
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <item>
      <property name="text">
@@ -987,6 +990,7 @@ border-radius:10px;</string>
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
+color:black;
 </string>
     </property>
     <item>
@@ -1095,7 +1099,7 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <item>
      <property name="text">

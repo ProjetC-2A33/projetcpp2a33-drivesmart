@@ -204,7 +204,7 @@ background-color:#e3e2de;</string>
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
      <item>
       <property name="text">
@@ -323,7 +323,7 @@ border-radius:10px;</string>
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
      <item>
       <property name="text">
@@ -370,6 +370,7 @@ border:2px solid #ffce00;
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
+color:black;
 </string>
      </property>
     </widget>
@@ -386,7 +387,7 @@ border:2px solid #ffce00;
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="prenom_E_2">
@@ -402,7 +403,7 @@ border:2px solid #ffce00;
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="salaire_E">
@@ -418,7 +419,7 @@ border:2px solid #ffce00;
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="tel_E">
@@ -434,7 +435,7 @@ border:2px solid #ffce00;
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="email_E">
@@ -450,7 +451,7 @@ border:2px solid #ffce00;
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="mdp_E">
@@ -466,7 +467,7 @@ border:2px solid #ffce00;
       <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
      </property>
     </widget>
    </widget>

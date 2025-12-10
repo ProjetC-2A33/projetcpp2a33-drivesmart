@@ -263,7 +263,7 @@ background-color:#e3e2de;</string>
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-
+color:black;
 
 </string>
     </property>
@@ -394,7 +394,7 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <item>
      <property name="text">
@@ -481,7 +481,7 @@ border-radius:10px;</string>
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-
+color:black;
 
 </string>
     </property>
@@ -513,7 +513,7 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-
+color:black;
 
 </string>
     </property>
@@ -599,7 +599,7 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <item>
      <property name="text">
@@ -616,6 +616,29 @@ border:2px solid #ffce00;
       <string>non assuré</string>
      </property>
     </item>
+   </widget>
+   <widget class="QLabel" name="label_msg">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>80</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>80</y>
+      <width>91</width>
+      <height>41</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_7">
@@ -817,7 +840,7 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-
+color:black;
 
 </string>
     </property>
@@ -870,7 +893,7 @@ border:2px solid #ffce00;
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-</string>
+color:black;</string>
     </property>
     <item>
      <property name="text">

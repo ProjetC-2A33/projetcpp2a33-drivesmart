@@ -2,12 +2,19 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "pageemploye.h"
-#include "cin_access_control.h"
-#include "arduino.h"
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QMessageBox>
+#include <QTimer>
+#include "arduino-integ.h"  // AJOUTEZ CE INCLUDE
+
+QT_BEGIN_NAMESPACE
 namespace Ui
 {
-    class MainWindow;
+class MainWindow;
 }
 
 class Condidat;
@@ -17,8 +24,7 @@ class Examen;
 class Planning;
 class Gestion_Equipement;
 class QStackedWidget;
-class CINAccessControl;
-class ArduinoReader;
+QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -37,15 +43,11 @@ private slots:
     void showEquipement();
     void on_btn_ajout_E_clicked();
     void on_btn_reset_E_clicked();
-    
-    // Access control slots
-    void startAccessControl();
-    void stopAccessControl();
-    void onAccessGranted(QString cin, QString nom, QString prenom);
-    void onAccessDenied(QString reason);
-    void onAccessSystemStatus(QString status);
 
-
+    // Ajoutez ces slots pour l'Arduino
+    void readArduino();  // Renommez readArduino en slot
+    void onMatriculeReceived(const QString &matricule);
+    void sendVehicleInfoToArduino(const QString &model, const QString &plate, const QString &status);
 
 private:
     Ui::MainWindow *ui;
@@ -56,8 +58,14 @@ private:
     Examen *examenView;
     Planning *planningView;
     Gestion_Equipement *equipementView;
-    CINAccessControl *accessControl;
-    ArduinoReader *arduinoReader;
+    QSerialPort *arduino;
+
+    // Méthodes privées
+    void connectArduino();
+    void setupDatabase();
+
+    // Variables pour la gestion Arduino
+    QString currentMatricule;
 };
 
 #endif // MAINWINDOW_H

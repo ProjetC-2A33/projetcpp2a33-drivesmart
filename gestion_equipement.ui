@@ -7,13 +7,12 @@
     <x>0</x>
     <y>0</y>
     <width>1557</width>
-    <height>876</height>
+    <height>979</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Gestion des Équipements</string>
   </property>
-  <!-- TABLE AREA (Center) -->
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
@@ -99,11 +98,11 @@ background: transparent;</string>
     <property name="alternatingRowColors">
      <bool>true</bool>
     </property>
-    <property name="selectionBehavior">
-     <enum>QAbstractItemView::SelectRows</enum>
-    </property>
     <property name="selectionMode">
-     <enum>QAbstractItemView::SingleSelection</enum>
+     <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
     </property>
     <property name="showGrid">
      <bool>true</bool>
@@ -161,7 +160,8 @@ QComboBox:hover {
 }
 QComboBox:focus {
   border: 2px solid #002157;
-}</string>
+}
+color:black;</string>
     </property>
     <item>
      <property name="text">
@@ -239,7 +239,8 @@ QLineEdit:hover {
 QLineEdit:focus {
   border: 2px solid #002157;
   background-color: #fffef8;
-}</string>
+}
+color:black;</string>
     </property>
     <property name="placeholderText">
      <string>Rechercher un équipement...</string>
@@ -258,6 +259,9 @@ QLineEdit:focus {
      <font>
       <pointsize>16</pointsize>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>Exporter (CSV/PDF)</string>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
@@ -279,18 +283,13 @@ QPushButton:pressed {
     <property name="text">
      <string>📥</string>
     </property>
-    <property name="toolTip">
-     <string>Exporter (CSV/PDF)</string>
-    </property>
    </widget>
   </widget>
-  
-  <!-- STATISTICS DASHBOARD (Right side) -->
   <widget class="QGroupBox" name="groupBox_statistics">
    <property name="geometry">
     <rect>
      <x>1150</x>
-     <y>78</y>
+     <y>70</y>
      <width>390</width>
      <height>420</height>
     </rect>
@@ -303,8 +302,6 @@ border:3px solid #ffce00;</string>
    <property name="title">
     <string/>
    </property>
-   
-   <!-- Title Header -->
    <widget class="QFrame" name="frame_stats_header">
     <property name="geometry">
      <rect>
@@ -319,7 +316,6 @@ border:3px solid #ffce00;</string>
 border-radius:10px;
 border:none;</string>
     </property>
-    
     <widget class="QLabel" name="label_stats_icon">
      <property name="geometry">
       <rect>
@@ -341,7 +337,6 @@ border:none;</string>
       <string>📊</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_stats_title">
      <property name="geometry">
       <rect>
@@ -366,8 +361,6 @@ text-shadow: 2px 2px 4px rgba(0,0,0,0.3);</string>
      </property>
     </widget>
    </widget>
-   
-   <!-- Chart Card -->
    <widget class="QFrame" name="frame_category_breakdown">
     <property name="geometry">
      <rect>
@@ -383,9 +376,8 @@ border-radius:12px;
 border:2px solid #e0e0e0;</string>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
-    
     <widget class="QLabel" name="label_category_title">
      <property name="geometry">
       <rect>
@@ -409,25 +401,37 @@ background: transparent;</string>
       <string>🎯 Distribution par Catégorie</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_category_icon">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>100</width>
+       <height>30</height>
+      </rect>
+     </property>
      <property name="visible">
       <bool>false</bool>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_category_stats">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>100</width>
+       <height>30</height>
+      </rect>
+     </property>
      <property name="visible">
       <bool>false</bool>
      </property>
     </widget>
    </widget>
   </widget>
-  
-  <!-- FORM AREA (Left side) -->
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
@@ -497,8 +501,6 @@ text-shadow: 2px 2px 4px rgba(0,0,0,0.3);</string>
      </property>
     </widget>
    </widget>
-   
-   <!-- ID Équipement -->
    <widget class="QLabel" name="label_id">
     <property name="geometry">
      <rect>
@@ -532,7 +534,7 @@ text-shadow: 2px 2px 4px rgba(0,0,0,0.3);</string>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -554,8 +556,6 @@ QLineEdit:read-only {
      <string>Auto-généré</string>
     </property>
    </widget>
-   
-   <!-- Nom -->
    <widget class="QLabel" name="label_nom">
     <property name="geometry">
      <rect>
@@ -589,7 +589,7 @@ QLineEdit:read-only {
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -614,8 +614,6 @@ QLineEdit:focus {
      <string>Entrez le nom de l'équipement</string>
     </property>
    </widget>
-   
-   <!-- Catégorie -->
    <widget class="QLabel" name="label_categorie">
     <property name="geometry">
      <rect>
@@ -649,7 +647,7 @@ QLineEdit:focus {
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -711,8 +709,6 @@ QComboBox::down-arrow {
      </property>
     </item>
    </widget>
-   
-   <!-- Quantité Fields (Side by Side) -->
    <widget class="QLabel" name="label_quantite_totale">
     <property name="geometry">
      <rect>
@@ -746,7 +742,7 @@ QComboBox::down-arrow {
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -769,8 +765,6 @@ QLineEdit:focus {
      <string>0</string>
     </property>
    </widget>
-   
-   <!-- Quantité Disponible -->
    <widget class="QLabel" name="label_quantite_disponible">
     <property name="geometry">
      <rect>
@@ -804,7 +798,7 @@ QLineEdit:focus {
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -827,8 +821,6 @@ QLineEdit:focus {
      <string>0</string>
     </property>
    </widget>
-   
-   <!-- État -->
    <widget class="QLabel" name="label_etat">
     <property name="geometry">
      <rect>
@@ -862,7 +854,7 @@ QLineEdit:focus {
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -900,8 +892,6 @@ QComboBox:focus {
      </property>
     </item>
    </widget>
-   
-   <!-- Fournisseur -->
    <widget class="QLabel" name="label_fournisseur">
     <property name="geometry">
      <rect>
@@ -935,7 +925,7 @@ QComboBox:focus {
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -957,8 +947,6 @@ QLineEdit:focus {
      <string>Nom du fournisseur</string>
     </property>
    </widget>
-   
-   <!-- Date d'Acquisition -->
    <widget class="QLabel" name="label_date_acquisition">
     <property name="geometry">
      <rect>
@@ -992,7 +980,7 @@ QLineEdit:focus {
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -1017,8 +1005,6 @@ QDateEdit::drop-down {
      <bool>true</bool>
     </property>
    </widget>
-   
-   <!-- CIN Employé -->
    <widget class="QLabel" name="label_cin_employee">
     <property name="geometry">
      <rect>
@@ -1052,7 +1038,7 @@ QDateEdit::drop-down {
     </property>
     <property name="font">
      <font>
-      <pointsize>11</pointsize>
+      <pointsize>-1</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -1073,13 +1059,11 @@ QComboBox:focus {
      <bool>false</bool>
     </property>
    </widget>
-   
-   <!-- Buttons -->
    <widget class="QPushButton" name="pushButton_ajouter">
     <property name="geometry">
      <rect>
-      <x>25</x>
-      <y>705</y>
+      <x>30</x>
+      <y>610</y>
       <width>375</width>
       <height>48</height>
      </rect>
@@ -1150,15 +1134,13 @@ QPushButton:pressed {
     </property>
    </widget>
   </widget>
-  
-  <!-- MAINTENANCE PREDICTION WIDGET -->
   <widget class="QGroupBox" name="groupBox_maintenance">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>510</y>
+     <x>460</x>
+     <y>490</y>
      <width>340</width>
-     <height>350</height>
+     <height>361</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -1231,7 +1213,8 @@ border-radius: 8px;</string>
     <property name="styleSheet">
      <string notr="true">background-color:white;
 border-radius:5px;
-border:2px solid #ffce00;</string>
+border:2px solid #ffce00;
+color:black;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_predict_maintenance">
@@ -1258,8 +1241,6 @@ border-radius:5px;</string>
      <string>Calculer</string>
     </property>
    </widget>
-   
-   <!-- Maintenance Display Frame -->
    <widget class="QFrame" name="frame_maintenance_display">
     <property name="geometry">
      <rect>
@@ -1275,10 +1256,8 @@ border-radius:10px;
 border:2px solid #ffce00;</string>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
-    
-    <!-- Equipment Info -->
     <widget class="QLabel" name="label_equipment_name_title">
      <property name="geometry">
       <rect>
@@ -1322,7 +1301,6 @@ border:2px solid #ffce00;</string>
       <string>-</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_equipment_category_title">
      <property name="geometry">
       <rect>
@@ -1366,7 +1344,6 @@ border:2px solid #ffce00;</string>
       <string>-</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_equipment_state_title">
      <property name="geometry">
       <rect>
@@ -1410,7 +1387,6 @@ border:2px solid #ffce00;</string>
       <string>-</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_last_maintenance_title">
      <property name="geometry">
       <rect>
@@ -1454,7 +1430,6 @@ border:2px solid #ffce00;</string>
       <string>-</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_next_maintenance_title">
      <property name="geometry">
       <rect>
@@ -1499,7 +1474,6 @@ border:2px solid #ffce00;</string>
       <string>-</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_days_until_title">
      <property name="geometry">
       <rect>
@@ -1543,7 +1517,6 @@ border:2px solid #ffce00;</string>
       <string>- jours</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_estimated_cost_title">
      <property name="geometry">
       <rect>
@@ -1588,8 +1561,6 @@ border:2px solid #ffce00;</string>
      </property>
     </widget>
    </widget>
-   
-   <!-- Priority Display -->
    <widget class="QLabel" name="label_priority_title">
     <property name="geometry">
      <rect>
@@ -1649,8 +1620,6 @@ border:2px solid #ffce00;</string>
      <bool>false</bool>
     </property>
    </widget>
-   
-   <!-- Maintenance Recommendation -->
    <widget class="QFrame" name="frame_maintenance_recommendation">
     <property name="geometry">
      <rect>
@@ -1667,16 +1636,15 @@ border:2px solid #28a745;
 padding: 5px;</string>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
-    
     <widget class="QLabel" name="label_maintenance_recommendation">
      <property name="geometry">
       <rect>
        <x>8</x>
        <y>5</y>
        <width>304</width>
-       <height>42</height>
+       <height>51</height>
       </rect>
      </property>
      <property name="font">
@@ -1691,14 +1659,13 @@ padding: 5px;</string>
       <string>Selectionnez un equipement pour voir la prediction de maintenance</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeft|Qt::AlignTop</set>
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
     </widget>
    </widget>
-   
    <widget class="QLabel" name="label_prediction_time">
     <property name="geometry">
      <rect>
@@ -1722,15 +1689,13 @@ padding: 5px;</string>
     </property>
    </widget>
   </widget>
-  
-  <!-- EQUIPMENT LIFECYCLE & DEPRECIATION CALCULATOR -->
   <widget class="QGroupBox" name="groupBox_lifecycle">
    <property name="geometry">
     <rect>
-     <x>800</x>
-     <y>510</y>
+     <x>810</x>
+     <y>490</y>
      <width>740</width>
-     <height>350</height>
+     <height>361</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -1740,8 +1705,6 @@ background-color:#e3e2de;</string>
    <property name="title">
     <string/>
    </property>
-   
-   <!-- Title -->
    <widget class="QLabel" name="label_lifecycle_title">
     <property name="geometry">
      <rect>
@@ -1767,8 +1730,6 @@ border-radius: 6px;</string>
      <string>💰 Analyse du Cycle de Vie &amp; Dépréciation</string>
     </property>
    </widget>
-   
-   <!-- Equipment Selector -->
    <widget class="QLabel" name="label_select_equipment">
     <property name="geometry">
      <rect>
@@ -1791,7 +1752,6 @@ border-radius: 6px;</string>
      <string>Équipement:</string>
     </property>
    </widget>
-   
    <widget class="QComboBox" name="comboBox_lifecycle_equipment">
     <property name="geometry">
      <rect>
@@ -1810,11 +1770,10 @@ border-radius: 6px;</string>
      <string notr="true">background-color:white;
 border-radius:5px;
 border:2px solid #ffce00;
-padding:5px;</string>
+padding:5px;
+color:black;</string>
     </property>
    </widget>
-   
-   <!-- Main Display Frame -->
    <widget class="QFrame" name="frame_lifecycle_display">
     <property name="geometry">
      <rect>
@@ -1830,10 +1789,8 @@ border-radius:10px;
 border:2px solid #002157;</string>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
-    
-    <!-- Current Value Section -->
     <widget class="QLabel" name="label_current_value_title">
      <property name="geometry">
       <rect>
@@ -1856,7 +1813,6 @@ border:2px solid #002157;</string>
       <string>💵 Valeur Actuelle:</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_current_value">
      <property name="geometry">
       <rect>
@@ -1880,8 +1836,6 @@ text-shadow: 1px 1px 3px rgba(0,0,0,0.15);</string>
       <string>0 TND</string>
      </property>
     </widget>
-    
-    <!-- Original Cost -->
     <widget class="QLabel" name="label_original_cost_title">
      <property name="geometry">
       <rect>
@@ -1903,7 +1857,6 @@ text-shadow: 1px 1px 3px rgba(0,0,0,0.15);</string>
       <string>Coût d'origine:</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_original_cost">
      <property name="geometry">
       <rect>
@@ -1926,8 +1879,6 @@ text-shadow: 1px 1px 3px rgba(0,0,0,0.15);</string>
       <string>0 TND</string>
      </property>
     </widget>
-    
-    <!-- Depreciation Amount -->
     <widget class="QLabel" name="label_depreciation_title">
      <property name="geometry">
       <rect>
@@ -1949,7 +1900,6 @@ text-shadow: 1px 1px 3px rgba(0,0,0,0.15);</string>
       <string>Dépréciation:</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_depreciation_amount">
      <property name="geometry">
       <rect>
@@ -1972,8 +1922,6 @@ text-shadow: 1px 1px 3px rgba(0,0,0,0.15);</string>
       <string>0 TND</string>
      </property>
     </widget>
-    
-    <!-- Lifecycle Stage -->
     <widget class="QFrame" name="frame_lifecycle_stage">
      <property name="geometry">
       <rect>
@@ -1989,9 +1937,8 @@ border-radius:8px;
 border:2px solid #dee2e6;</string>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
-     
      <widget class="QLabel" name="label_stage_title">
       <property name="geometry">
        <rect>
@@ -2014,7 +1961,6 @@ border:2px solid #dee2e6;</string>
        <string>📊 Stade du Cycle:</string>
       </property>
      </widget>
-     
      <widget class="QLabel" name="label_lifecycle_stage">
       <property name="geometry">
        <rect>
@@ -2037,7 +1983,6 @@ border:2px solid #dee2e6;</string>
        <string>🟢 Nouveau</string>
       </property>
      </widget>
-     
      <widget class="QLabel" name="label_age_info">
       <property name="geometry">
        <rect>
@@ -2059,7 +2004,6 @@ border:2px solid #dee2e6;</string>
        <string>Âge: 0 ans, 0 mois</string>
       </property>
      </widget>
-     
      <widget class="QLabel" name="label_useful_life">
       <property name="geometry">
        <rect>
@@ -2082,8 +2026,6 @@ border:2px solid #dee2e6;</string>
       </property>
      </widget>
     </widget>
-    
-    <!-- Replacement Info -->
     <widget class="QFrame" name="frame_replacement">
      <property name="geometry">
       <rect>
@@ -2099,9 +2041,8 @@ border-radius:8px;
 border:2px solid #ffc107;</string>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
-     
      <widget class="QLabel" name="label_replacement_title">
       <property name="geometry">
        <rect>
@@ -2124,7 +2065,6 @@ border:2px solid #ffc107;</string>
        <string>🔄 Remplacement:</string>
       </property>
      </widget>
-     
      <widget class="QLabel" name="label_replacement_year">
       <property name="geometry">
        <rect>
@@ -2147,7 +2087,6 @@ border:2px solid #ffc107;</string>
        <string>Estimé en: -</string>
       </property>
      </widget>
-     
      <widget class="QLabel" name="label_replacement_recommendation">
       <property name="geometry">
        <rect>
@@ -2173,8 +2112,6 @@ border:2px solid #ffc107;</string>
       </property>
      </widget>
     </widget>
-    
-    <!-- Depreciation Progress Bar -->
     <widget class="QLabel" name="label_depreciation_progress_title">
      <property name="geometry">
       <rect>
@@ -2184,14 +2121,14 @@ border:2px solid #ffc107;</string>
        <height>25</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>10</pointsize>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#002157</string>
@@ -2200,7 +2137,6 @@ border:2px solid #ffc107;</string>
       <string>📉 Progression Dépréciation:</string>
      </property>
     </widget>
-    
     <widget class="QProgressBar" name="progressBar_depreciation">
      <property name="geometry">
       <rect>
@@ -2232,8 +2168,6 @@ QProgressBar::chunk {
       <string>%p%</string>
      </property>
     </widget>
-    
-    <!-- Financial Summary - Hidden for compact layout -->
     <widget class="QLabel" name="label_financial_summary_title">
      <property name="geometry">
       <rect>
@@ -2243,14 +2177,14 @@ QProgressBar::chunk {
        <height>25</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>10</pointsize>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#002157</string>
@@ -2259,7 +2193,6 @@ QProgressBar::chunk {
       <string>💼 Résumé Financier:</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_annual_depreciation_title">
      <property name="geometry">
       <rect>
@@ -2269,13 +2202,13 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#666</string>
@@ -2284,7 +2217,6 @@ QProgressBar::chunk {
       <string>• Dépréciation annuelle:</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_annual_depreciation">
      <property name="geometry">
       <rect>
@@ -2294,14 +2226,14 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#002157</string>
@@ -2310,7 +2242,6 @@ QProgressBar::chunk {
       <string>0 TND/an</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_monthly_depreciation_title">
      <property name="geometry">
       <rect>
@@ -2320,13 +2251,13 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#666</string>
@@ -2335,7 +2266,6 @@ QProgressBar::chunk {
       <string>• Dépréciation mensuelle:</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_monthly_depreciation">
      <property name="geometry">
       <rect>
@@ -2345,14 +2275,14 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#002157</string>
@@ -2361,7 +2291,6 @@ QProgressBar::chunk {
       <string>0 TND/mois</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_residual_value_title">
      <property name="geometry">
       <rect>
@@ -2371,13 +2300,13 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#666</string>
@@ -2386,7 +2315,6 @@ QProgressBar::chunk {
       <string>• Valeur résiduelle (fin vie):</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_residual_value">
      <property name="geometry">
       <rect>
@@ -2396,14 +2324,14 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#28a745</string>
@@ -2412,7 +2340,6 @@ QProgressBar::chunk {
       <string>0 TND</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_depreciation_method_title">
      <property name="geometry">
       <rect>
@@ -2422,13 +2349,13 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#666</string>
@@ -2437,7 +2364,6 @@ QProgressBar::chunk {
       <string>• Méthode de calcul:</string>
      </property>
     </widget>
-    
     <widget class="QLabel" name="label_depreciation_method">
      <property name="geometry">
       <rect>
@@ -2447,14 +2373,14 @@ QProgressBar::chunk {
        <height>22</height>
       </rect>
      </property>
-     <property name="visible">
-      <bool>false</bool>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
        <italic>true</italic>
       </font>
+     </property>
+     <property name="visible">
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color:#666</string>
@@ -2465,8 +2391,6 @@ QProgressBar::chunk {
     </widget>
    </widget>
   </widget>
-  
-  <!-- NAVIGATION BAR (Top) -->
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>

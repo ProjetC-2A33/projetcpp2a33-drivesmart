@@ -11,8 +11,6 @@ debug/planning.o
 debug/gestion_equipement.o
 debug/connection.o
 debug/qrcodegen.o
-debug/arduino.o
-debug/cin_access_control.o
 debug/qrc_resources.o
 debug/moc_logindialog.o
 debug/moc_mainwindow.o
@@ -23,5 +21,3 @@ debug/moc_vehicule.o
 debug/moc_examen.o
 debug/moc_planning.o
 debug/moc_gestion_equipement.o
-debug/moc_arduino.o
-debug/moc_cin_access_control.o

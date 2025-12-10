@@ -54,12 +54,12 @@ static void populateCandidateCINs(QComboBox *combo)
     QSqlQuery q;
     // essayer quelques variantes courantes de table/colonnes (CIN + NOM)
     const QStringList attempts = {
+        "SELECT CIN_CONDIDAT, NOM FROM CANDIDAT",
+        "SELECT CIN_CONDIDAT, NOM_CONDIDAT FROM CANDIDAT",
         "SELECT CIN_CONDIDAT, NOM FROM CONDIDAT",
-        "SELECT CIN_CONDIDAT, NOM FROM CONDIDAT",
-        "SELECT CIN_CONDIDAT, NOM FROM CONDIDAT",
-        "SELECT CIN_CONDIDAT, NOM FROM CONDIDAT",
-        "SELECT CIN_CONDIDAT, NOM FROM CONDIDAT",
-        "SELECT CIN_CONDIDAT, NOM FROM CONDIDAT"
+        "SELECT CIN_CONDIDAT, NOM_CONDIDAT FROM CONDIDAT",
+        "SELECT CIN, NOM FROM CANDIDAT",
+        "SELECT CIN, NOM_CONDIDAT FROM CANDIDAT"
     };
 
     bool anyOk = false;

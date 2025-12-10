@@ -40,29 +40,17 @@ QSqlQueryModel* Employes::afficher()
     QSqlQueryModel *model = new QSqlQueryModel();
     qDebug() << "Chargement des données de la table EMPLOYEE...";
 
-    QSqlQuery query;
-    query.prepare(
-        "SELECT CIN_EMPLOYEE, NOM, PRENOM, DISPONIBILITE, SALAIRE, TELEPHONE, EMAIL, POSTE "
+    model->setQuery(
+        "SELECT CIN_EMPLOYEE, NOM, PRENOM, "
+        "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
+        "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE ORDER BY CIN_EMPLOYEE"
         );
-    
-    if (!query.exec()) {
-        qDebug() << "Erreur SQL :" << query.lastError().text();
-        delete model;
-        return nullptr;
-    }
-    
-    model->setQuery(std::move(query));
-    
+
     if (model->lastError().isValid()) {
-        qDebug() << "Erreur modèle SQL :" << model->lastError().text();
+        qDebug() << "Erreur SQL :" << model->lastError().text();
         delete model;
         return nullptr;
-    }
-    
-    // Force data fetch
-    while (model->canFetchMore()) {
-        model->fetchMore();
     }
 
     // En-têtes
@@ -92,7 +80,7 @@ bool Employes::ajouter()
     query.bindValue(":cin", cin_employee);
     query.bindValue(":nom", nom);
     query.bindValue(":prenom", prenom);
-    query.bindValue(":dispo", disponibilite ? "Disponible" : "Non disponible");
+    query.bindValue(":dispo", disponibilite ? 1 : 0);
     query.bindValue(":salaire", salaire);
     query.bindValue(":tel", telephone);
     query.bindValue(":email", email);
@@ -127,7 +115,7 @@ bool Employes::modifier()
     query.bindValue(":cin", cin_employee);
     query.bindValue(":nom", nom);
     query.bindValue(":prenom", prenom);
-    query.bindValue(":dispo", disponibilite ? "Disponible" : "Non disponible");
+    query.bindValue(":dispo", disponibilite ? 1 : 0);
     query.bindValue(":salaire", salaire);
     query.bindValue(":tel", telephone);
     query.bindValue(":email", email);
@@ -135,33 +123,6 @@ bool Employes::modifier()
     query.bindValue(":mdp", mdp);
 
     return query.exec();
-}
-
-// Overloaded modifier to support CIN change
-bool Employes::modifier(const QString &originalCIN)
-{
-    QSqlQuery query;
-    query.prepare(
-        "UPDATE EMPLOYEE SET CIN_EMPLOYEE=:newcin, NOM=:nom, PRENOM=:prenom, DISPONIBILITE=:dispo, "
-        "SALAIRE=:salaire, TELEPHONE=:tel, EMAIL=:email, POSTE=:poste, MDP=:mdp "
-        "WHERE CIN_EMPLOYEE=:oldcin"
-        );
-    query.bindValue(":newcin", cin_employee);
-    query.bindValue(":oldcin", originalCIN);
-    query.bindValue(":nom", nom);
-    query.bindValue(":prenom", prenom);
-    query.bindValue(":dispo", disponibilite ? "Disponible" : "Non disponible");
-    query.bindValue(":salaire", salaire);
-    query.bindValue(":tel", telephone);
-    query.bindValue(":email", email);
-    query.bindValue(":poste", poste);
-    query.bindValue(":mdp", mdp);
-
-    if (!query.exec()) {
-        qDebug() << "Error modifying employee:" << query.lastError().text();
-        return false;
-    }
-    return true;
 }
 
 // === Vérifier unicité CIN ===
@@ -197,7 +158,7 @@ QSqlQueryModel* Employes::rechercherMulti(const QString &query)
     QSqlQuery sqlQuery;
     sqlQuery.prepare(
         "SELECT CIN_EMPLOYEE, NOM, PRENOM, "
-        "DISPONIBILITE, "
+        "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE "
         "WHERE UPPER(CIN_EMPLOYEE) LIKE UPPER(:query) "
@@ -212,7 +173,7 @@ QSqlQueryModel* Employes::rechercherMulti(const QString &query)
         return nullptr;
     }
 
-    model->setQuery(std::move(sqlQuery));
+    model->setQuery(sqlQuery);
 
     // En-têtes
     model->setHeaderData(0, Qt::Horizontal, "CIN");
@@ -235,31 +196,18 @@ QSqlQueryModel* Employes::trierParNomCroissant()
     QSqlQueryModel *model = new QSqlQueryModel();
     qDebug() << "Tri des employés par nom (ordre croissant)...";
 
-    QSqlQuery query;
-    query.prepare(
+    model->setQuery(
         "SELECT CIN_EMPLOYEE, NOM, PRENOM, "
-        "DISPONIBILITE, "
+        "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE "
         "ORDER BY NOM ASC"
         );
-    
-    if (!query.exec()) {
-        qDebug() << "Erreur tri nom:" << query.lastError().text();
-        delete model;
-        return nullptr;
-    }
-    
-    model->setQuery(std::move(query));
-    
+
     if (model->lastError().isValid()) {
-        qDebug() << "Erreur modèle tri nom:" << model->lastError().text();
+        qDebug() << "Erreur tri nom:" << model->lastError().text();
         delete model;
         return nullptr;
-    }
-    
-    while (model->canFetchMore()) {
-        model->fetchMore();
     }
 
     // En-têtes
@@ -281,31 +229,18 @@ QSqlQueryModel* Employes::trierParPrenomAlphabetique()
     QSqlQueryModel *model = new QSqlQueryModel();
     qDebug() << "Tri des employés par prénom (ordre alphabétique)...";
 
-    QSqlQuery query;
-    query.prepare(
+    model->setQuery(
         "SELECT CIN_EMPLOYEE, NOM, PRENOM, "
-        "DISPONIBILITE, "
+        "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE "
         "ORDER BY PRENOM ASC"
         );
-    
-    if (!query.exec()) {
-        qDebug() << "Erreur tri prénom:" << query.lastError().text();
-        delete model;
-        return nullptr;
-    }
-    
-    model->setQuery(std::move(query));
-    
+
     if (model->lastError().isValid()) {
-        qDebug() << "Erreur modèle tri prénom:" << model->lastError().text();
+        qDebug() << "Erreur tri prénom:" << model->lastError().text();
         delete model;
         return nullptr;
-    }
-    
-    while (model->canFetchMore()) {
-        model->fetchMore();
     }
 
     // En-têtes
@@ -327,31 +262,18 @@ QSqlQueryModel* Employes::trierParSalaire()
     QSqlQueryModel *model = new QSqlQueryModel();
     qDebug() << "Tri des employés par salaire...";
 
-    QSqlQuery query;
-    query.prepare(
+    model->setQuery(
         "SELECT CIN_EMPLOYEE, NOM, PRENOM, "
-        "DISPONIBILITE, "
+        "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE "
         "ORDER BY SALAIRE ASC"
         );
-    
-    if (!query.exec()) {
-        qDebug() << "Erreur tri salaire:" << query.lastError().text();
-        delete model;
-        return nullptr;
-    }
-    
-    model->setQuery(std::move(query));
-    
+
     if (model->lastError().isValid()) {
-        qDebug() << "Erreur modèle tri salaire:" << model->lastError().text();
+        qDebug() << "Erreur tri salaire:" << model->lastError().text();
         delete model;
         return nullptr;
-    }
-    
-    while (model->canFetchMore()) {
-        model->fetchMore();
     }
 
     // En-têtes
@@ -382,10 +304,10 @@ QMap<QString, QVariant> Employes::getStatistiquesDisponibilite()
 
     if (query.exec()) {
         while (query.next()) {
-            QString dispoStr = query.value(0).toString();
+            bool dispo = query.value(0).toBool();
             int count = query.value(1).toInt();
 
-            if (dispoStr == "Disponible") {
+            if (dispo) {
                 disponibles = count;
             } else {
                 nonDisponibles = count;

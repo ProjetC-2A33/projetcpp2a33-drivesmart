@@ -38,13 +38,13 @@
 #include <QPen>
 #include <cmath>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QtMultimedia/QAudioSource>
-#include <QtMultimedia/QAudioDevice>
-#include <QtMultimedia/QMediaDevices>
+#include <QAudioSource>
+#include <QAudioDevice>
+#include <QMediaDevices>
 #else
-#include <QtMultimedia/QAudioInput>
-#include <QtMultimedia/QAudioFormat>
-#include <QtMultimedia/QAudioDeviceInfo>
+#include <QAudioInput>
+#include <QAudioFormat>
+#include <QAudioDeviceInfo>
 #endif
 #include <QIODevice>
 #include <QNetworkAccessManager>
@@ -194,8 +194,8 @@ void Condidat::on_btn_ajout_clicked()
         QMessageBox::warning(this, "Erreur", "CIN doit contenir exactement 8 chiffres.");
         return;
     }
-    QString cin = cinStr;
-    if (cin.isEmpty())
+    int cin = cinStr.toInt(&ok);
+    if (!ok)
     {
         QMessageBox::warning(this, "Erreur", "CIN invalide.");
         return;
@@ -246,8 +246,8 @@ void Condidat::on_btn_ajout_clicked()
 
     if (isEditMode)
     {
-        QString originalCin = !currentEditingCin.isEmpty() ? currentEditingCin : selectedCinFromTable();
-        if (originalCin.isEmpty())
+        int originalCin = currentEditingCin != -1 ? currentEditingCin : selectedCinFromTable();
+        if (originalCin == -1)
         {
             QMessageBox::warning(this, "Modification", "Sélectionnez une ligne.");
             return;
@@ -313,7 +313,7 @@ void Condidat::on_btn_reset_clicked()
 QSqlQueryModel *Condidat::afficher()
 {
     QSqlQueryModel *model = new QSqlQueryModel();
-model->setQuery("SELECT CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL, TYPE_PERMIS_VISE FROM CONDIDAT");
+    model->setQuery("SELECT CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL, TYPE_PERMIS_VISE FROM CONDIDAT");
 
     if (model->lastError().isValid())
     {
@@ -386,7 +386,7 @@ bool Condidat::ajouter()
     return true;
 }
 
-bool Condidat::supprimer(QString cin)
+bool Condidat::supprimer(int cin)
 {
     QSqlQuery query;
     query.prepare("DELETE FROM CONDIDAT WHERE CIN_CONDIDAT = :cin");
@@ -411,7 +411,7 @@ bool Condidat::supprimer(QString cin)
     return true;
 }
 
-bool Condidat::modifier(QString originalCin, QString newCin, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
+bool Condidat::modifier(int originalCin, int newCin, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
 {
     QSqlQuery query;
     query.prepare("UPDATE CONDIDAT SET CIN_CONDIDAT = :newcin, NOM = :nom, PRENOM = :prenom, SEXE = :sexe, DATE_NAISSANCE = :date, TEL = :tel, TYPE_PERMIS_VISE = :type "
@@ -451,16 +451,13 @@ bool Condidat::modifier(QString originalCin, QString newCin, QString nom, QStrin
 
 void Condidat::refreshTable()
 {
-
-        qDebug() << "=== REFRESH TABLE START ===";
-        refreshTableWithFilter(currentFilter);
-        qDebug() << "=== REFRESH TABLE END ===";
-
+    refreshTableWithFilter(currentFilter);
 }
 
 void Condidat::refreshTableWithFilter(const QString &filter)
 {
-QString queryStr = "SELECT CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL, TYPE_PERMIS_VISE FROM CONDIDAT";
+    QString queryStr = "SELECT CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL, TYPE_PERMIS_VISE FROM CONDIDAT";
+    
     // Add filter if exists
     if (!filter.isEmpty())
     {
@@ -514,8 +511,9 @@ QString queryStr = "SELECT CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL,
             ui->tab->setItem(rows, c, new QTableWidgetItem(v.toString()));
         }
         // Add actions cell with Edit/Supp buttons
-        QString cin = query.value(0).toString();
-        ui->tab->setCellWidget(rows, cols, createActionsCell(rows, !cin.isEmpty() ? cin : ""));
+        bool ok = false;
+        int cin = query.value(0).toInt(&ok);
+        ui->tab->setCellWidget(rows, cols, createActionsCell(rows, ok ? cin : -1));
         rows++;
     }
 }
@@ -527,14 +525,16 @@ void Condidat::refreshTableWithSort(const QString &sortColumn, Qt::SortOrder ord
     refreshTableWithFilter(currentFilter);
 }
 
-QString Condidat::selectedCinFromTable() const
+int Condidat::selectedCinFromTable() const
 {
     QList<QTableWidgetItem *> items = ui->tab->selectedItems();
     if (items.isEmpty())
-        return "";
+        return -1;
     int row = items.first()->row();
     QTableWidgetItem *cinItem = ui->tab->item(row, 0);
-    return cinItem ? cinItem->text() : "";
+    bool ok = false;
+    int cin = cinItem ? cinItem->text().toInt(&ok) : -1;
+    return ok ? cin : -1;
 }
 
 void Condidat::setEditMode(bool enabled)
@@ -548,15 +548,15 @@ void Condidat::setEditMode(bool enabled)
     else
     {
         ui->btn_ajout->setText("Ajouter");
-        currentEditingCin = "";
+        currentEditingCin = -1;
         ui->cin->setReadOnly(false);
     }
 }
 
 void Condidat::on_supp_clicked()
 {
-    QString cin = selectedCinFromTable();
-    if (cin.isEmpty())
+    int cin = selectedCinFromTable();
+    if (cin == -1)
     {
         QMessageBox::warning(this, "Suppression", "Sélectionnez une ligne.");
         return;
@@ -575,8 +575,8 @@ void Condidat::on_supp_clicked()
 
 void Condidat::on_edit_clicked()
 {
-    QString originalCin = !currentEditingCin.isEmpty() ? currentEditingCin : selectedCinFromTable();
-    if (originalCin.isEmpty())
+    int originalCin = currentEditingCin != -1 ? currentEditingCin : selectedCinFromTable();
+    if (originalCin == -1)
     {
         QMessageBox::warning(this, "Modification", "Sélectionnez une ligne.");
         return;
@@ -589,8 +589,8 @@ void Condidat::on_edit_clicked()
         QMessageBox::warning(this, "Erreur", "CIN doit contenir exactement 8 chiffres.");
         return;
     }
-    QString newCin = cinStr;
-    if (newCin.isEmpty())
+    int newCin = cinStr.toInt(&ok);
+    if (!ok)
     {
         QMessageBox::warning(this, "Erreur", "CIN invalide.");
         return;
@@ -642,7 +642,7 @@ void Condidat::on_edit_clicked()
     {
         QMessageBox::information(this, "Modification", "Candidat modifié.");
         refreshTable();
-        currentEditingCin = "";
+        currentEditingCin = -1;
     }
     else
     {
@@ -674,7 +674,7 @@ void Condidat::setFormFromRow(int row)
         ui->type->setCurrentIndex(typeIndex);
 }
 
-QWidget *Condidat::createActionsCell(int row, QString cin)
+QWidget *Condidat::createActionsCell(int row, int cin)
 {
     QWidget *container = new QWidget(ui->tab);
     QHBoxLayout *layout = new QHBoxLayout(container);
@@ -700,7 +700,7 @@ QWidget *Condidat::createActionsCell(int row, QString cin)
     // Delete action
     QObject::connect(btnDel, &QPushButton::clicked, this, [=]()
                      {
-        if (cin.isEmpty()) return;
+        if (cin == -1) return;
         if (QMessageBox::question(this, "Suppression", "Supprimer ce candidat ?") == QMessageBox::Yes) {
             if (supprimer(cin)) {
                 QMessageBox::information(this, "Suppression", "Condidat supprimé.");
@@ -1009,7 +1009,7 @@ void Condidat::exportToExcel()
     // Get ALL data directly from database (ignore filters and search)
     QSqlQuery query;
     QString queryStr = "SELECT CIN_CONDIDAT, NOM, PRENOM, SEXE, DATE_NAISSANCE, TEL, TYPE_PERMIS_VISE FROM CONDIDAT ORDER BY NOM, PRENOM";
-
+    
     query.prepare(queryStr);
     
     if (!query.exec())
@@ -2005,7 +2005,7 @@ bool Condidat::eventFilter(QObject *obj, QEvent *event)
 void Condidat::populateCandidateComboBox()
 {
     ui->cin_condidat->clear();
-    ui->cin_condidat->addItem("Sélectionner un candidat", "");
+    ui->cin_condidat->addItem("Sélectionner un candidat", -1);
     
     // Check database connection
     QSqlDatabase db = QSqlDatabase::database();
@@ -2027,7 +2027,7 @@ void Condidat::populateCandidateComboBox()
         int count = 0;
         while (query.next())
         {
-            QString cin = query.value(0).toString();
+            int cin = query.value(0).toInt();
             QString nom = query.value(1).toString();
             QString prenom = query.value(2).toString();
             // Display only name and first name (without CIN)
@@ -2158,7 +2158,7 @@ void Condidat::updatePrediction(int age, QString sexe, QString type_permis)
 }
 
 // Constructeur avec paramètres (nécessaire mais non utilisé dans l'UI actuelle)
-Condidat::Condidat(QString cin_condidat, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
+Condidat::Condidat(int cin_condidat, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
     : cin_condidat(cin_condidat), tel(tel), nom(nom), prenom(prenom), type_permis(type_permis), sexe(sexe), date_naissance(date_naissance),
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
       audioSource(nullptr),

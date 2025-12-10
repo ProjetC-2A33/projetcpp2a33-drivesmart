@@ -1,15 +1,18 @@
-QT += core gui widgets sql network printsupport charts serialport multimedia
+QT += core gui widgets sql network printsupport charts multimedia serialport
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17 console
 CONFIG -= c++1z
 CONFIG += qt
-
+CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++17
 
 TARGET = DriveSmart
 TEMPLATE = app
 
 HEADERS += \
+    ../push metier avancee/qrcodegen.h \
+    arduino-integ.h \
     employes.h \
     logindialog.h \
     mainwindow.h \
@@ -24,11 +27,10 @@ HEADERS += \
     gestion_equipement.h\
     connection.h \
     navigation_constants.h \
-    vendor/qrcodegen.hpp \
-    arduino.h \
-    cin_access_control.h
+    vendor/qrcodegen.hpp
 
 SOURCES += \
+    arduino-integ.cpp \
     employes.cpp \
     logindialog.cpp \
     main.cpp \
@@ -41,9 +43,7 @@ SOURCES += \
     planning.cpp \
     gestion_equipement.cpp\
     connection.cpp \
-    vendor/qrcodegen.cpp \
-    arduino.cpp \
-    cin_access_control.cpp
+    vendor/qrcodegen.cpp
 
 FORMS += \
     Dialog.ui \

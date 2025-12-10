@@ -1,5 +1,6 @@
-#include "vehicule.h"
+﻿#include "vehicule.h"
 #include "ui_vehicule.h"
+#include <QStatusBar>
 #include "connection.h"
 #include "navigation_constants.h"
 #include <QMainWindow>
@@ -79,6 +80,8 @@ Vehicule::Vehicule(QWidget *parent) :
     httpPort(0)
 {
     ui->setupUi(this);
+
+
 
     db = QSqlDatabase::database();
     if (!db.isOpen()) {
@@ -1680,14 +1683,16 @@ QString Vehicule::predirePanne(const QString& matricule, int kilometrage, const 
     // Formater le message de prédiction (sans caractères spéciaux pour éviter les problèmes d'encodage)
     QString message = QString(
                           "PREDICTION DU SYSTEME:\n\n"
-                          "Base sur l'historique, ce vehicule risque une %1 dans %2 jours.\n\n"
+                          "Vehicule: %1\n"
+                          "Base sur l'historique, ce vehicule risque une %2 dans %3 jours.\n\n"
                           "Facteurs analyses:\n"
-                          "- Kilometrage: %3 km\n"
-                          "- Etat maintenance: %4\n"
-                          "- Derniere maintenance: %5 jours\n"
-                          "- Type d'energie: %6\n\n"
+                          "- Kilometrage: %4 km\n"
+                          "- Etat maintenance: %5\n"
+                          "- Derniere maintenance: %6 jours\n"
+                          "- Type d'energie: %7\n\n"
                           "Recommandation: Planifier une maintenance preventive."
                           )
+                          .arg(matricule)
                           .arg(typePanne)
                           .arg(joursJusquaPanne)
                           .arg(kilometrage)
@@ -1974,6 +1979,7 @@ void Vehicule::on_pushButton_18_clicked()
     // Ajouter un résumé
     html += "<div class='info'>";
     html += "<p><strong>Total des véhicules :</strong> " + QString::number(totalVehicules) + "</p>";
+    html += "<p><strong>Véhicules disponibles :</strong> " + QString::number(vehiculesDisponibles) + "</p>";
 
     if (totalVehicules > 0) {
         // Statistiques par type d'énergie
@@ -2032,3 +2038,4 @@ void Vehicule::on_pushButton_18_clicked()
                              "Veuillez vérifier les permissions d'écriture.");
     }
 }
+

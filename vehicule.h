@@ -1,5 +1,6 @@
 #ifndef VEHICULE_H
 #define VEHICULE_H
+#include "arduino-integ.h"
 
 #include <QWidget>
 #include <QSqlDatabase>
@@ -42,10 +43,12 @@ public:
     ~Vehicule();
 
 private:
+    ArduinoInteg arduino;
     // Classe pour générer des QR codes simples
     class QRCodeGenerator {
     public:
         static QImage generateQRCode(const QString &data, int size) {
+            Q_UNUSED(data);
             // Créer une image vide
             QImage qrImage(size, size, QImage::Format_RGB32);
             qrImage.fill(Qt::white);
