@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1257</width>
+    <height>671</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QStackedWidget" name="stackedWidget">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>-10</y>
+     <width>1231</width>
+     <height>631</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="page">
+    <widget class="QLineEdit" name="emailInput_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>300</y>
+       <width>1076</width>
+       <height>49</height>
+      </rect>
+     </property>
+     <property name="placeholderText">
+      <string>Enter your email</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="orLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>519</y>
+       <width>1081</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgba(255, 215, 0, 0.7); font-size: 12px;</string>
+     </property>
+     <property name="text">
+      <string>or</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="emailLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>265</y>
+       <width>1076</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #FFD700; font-size: 12px; font-weight: bold; padding-left: 20px;</string>
+     </property>
+     <property name="text">
+      <string>EMAIL</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="signInButton_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>455</y>
+       <width>1076</width>
+       <height>49</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Sign In</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="titleLabel">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>20</y>
+       <width>1136</width>
+       <height>66</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 700 italic 25pt &quot;Segoe UI&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Welcome Back</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="passwordLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>360</y>
+       <width>1076</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #FFD700; font-size: 12px; font-weight: bold; padding-left: 20px;</string>
+     </property>
+     <property name="text">
+      <string>PASSWORD</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="logoLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>41</x>
+       <y>-12</y>
+       <width>80</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>80</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>60</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>../../../Downloads/employer-CRUD/images/logo.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="forgotpButton_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>550</y>
+       <width>1076</width>
+       <height>39</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Forgot Password?</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="subtitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>51</x>
+       <y>178</y>
+       <width>1136</width>
+       <height>39</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Sign in to continue your journey</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="passwordInput_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>391</y>
+       <width>1076</width>
+       <height>49</height>
+      </rect>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::EchoMode::Normal</enum>
+     </property>
+     <property name="placeholderText">
+      <string>Enter your password</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_2">
+    <widget class="QPushButton" name="sendBtn">
+     <property name="geometry">
+      <rect>
+       <x>573</x>
+       <y>429</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Continue</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>493</x>
+       <y>159</y>
+       <width>261</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 30px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>Reset password</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>444</x>
+       <y>350</y>
+       <width>70</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 16px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>Email </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>393</x>
+       <y>249</y>
+       <width>481</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 16px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Enter your email associated with your account and&lt;br/&gt;we'll send an emal to reset your password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="rcpt">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>350</y>
+       <width>261</width>
+       <height>36</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="backToLogin1">
+     <property name="geometry">
+      <rect>
+       <x>730</x>
+       <y>430</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Back to login</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_3">
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>220</y>
+       <width>481</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 16px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Please enter the 4 digit code that send to your email adresse&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="verify_pb">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>390</y>
+       <width>211</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Verify and Proceed</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>120</y>
+       <width>191</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 30px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>Verification</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="codebt">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>310</y>
+       <width>281</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="backToLogin2">
+     <property name="geometry">
+      <rect>
+       <x>770</x>
+       <y>390</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Back to login</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_4">
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>240</y>
+       <width>131</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 15px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>New Password</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="cont_pb">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>380</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Continue</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="pas2">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>320</y>
+       <width>231</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::EchoMode::Password</enum>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="pas1">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>250</y>
+       <width>231</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>390</x>
+       <y>320</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 15px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>Retype Password</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>150</y>
+       <width>341</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: black; /* Text color for labels */
+    font-size: 30px; /* Adjust font size as needed */
+    font-weight: bold; /* Make the text bold if desired */
+    margin: 5px; /* Adjust margin as needed */
+}</string>
+     </property>
+     <property name="text">
+      <string>Enter New Password</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="backToLogin3">
+     <property name="geometry">
+      <rect>
+       <x>760</x>
+       <y>380</y>
+       <width>131</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Back to login</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
