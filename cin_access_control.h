@@ -29,6 +29,7 @@ private:
     bool verifyCINInDatabase(const QString &cin);
     void logAccess(const QString &cin, const QString &status);
     void sendResponseToPython(const QString &response);
+    bool updateEmployeeAvailability(const QString &cin, bool available);
 
 private slots:
     void onPythonOutputReady();

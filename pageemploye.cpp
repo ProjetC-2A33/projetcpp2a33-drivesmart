@@ -40,17 +40,9 @@ pageemploye::pageemploye(QWidget *parent)
 
     afficherEmployes();
 
-    // Connexions
+    // Connexions - Note: Slots following the on_<widgetname>_<signal> naming convention 
+    // are auto-connected by Qt, so no manual connect() needed for those
     connect(ui->tab_em, &QTableWidget::cellClicked, this, &pageemploye::on_tab_em_cellClicked);
-    connect(ui->btn_ajout_E, &QPushButton::clicked, this, &pageemploye::on_btn_ajout_E_clicked);
-    connect(ui->btn_reset_E, &QPushButton::clicked, this, &pageemploye::on_btn_reset_E_clicked);
-    connect(ui->modif_E, &QPushButton::clicked, this, &pageemploye::on_modif_E_clicked);
-    connect(ui->sup_E, &QPushButton::clicked, this, &pageemploye::on_sup_E_clicked);
-    connect(ui->btn_c, &QPushButton::clicked, this, &pageemploye::on_btn_c_clicked);
-    connect(ui->trier_c, &QPushButton::clicked, this, &pageemploye::on_trier_c_clicked);
-    connect(ui->pdf_c, &QPushButton::clicked, this, &pageemploye::on_pdf_c_clicked);
-    connect(ui->stat_c, &QPushButton::clicked, this, &pageemploye::on_stat_c_clicked);
-    connect(ui->recherche_c, &QLineEdit::textChanged, this, &pageemploye::on_recherche_c_textChanged);
 
     updateButtonStates();
 
@@ -81,6 +73,7 @@ void pageemploye::afficherEmployes()
     qDebug() << "Modèle chargé, nombre de lignes:" << model->rowCount();
     qDebug() << "Modèle colonnes:" << model->columnCount();
 
+    // Clear existing rows
     ui->tab_em->setRowCount(0);
     ui->tab_em->setColumnCount(8);
     QStringList headers = {"CIN", "Nom", "Prénom", "Disponibilité", "Salaire", "Téléphone", "Email", "Poste"};
@@ -89,23 +82,27 @@ void pageemploye::afficherEmployes()
     int totalRows = model->rowCount();
     if (totalRows == 0) {
         qDebug() << "Aucune donnée d'employé trouvée dans la base de données.";
+        delete model;
+        return;
     }
     
+    // Copy all data from model to table widget items BEFORE deleting model
     for (int row = 0; row < totalRows; ++row) {
         ui->tab_em->insertRow(row);
         for (int col = 0; col < 8; ++col) {
-            QVariant data = model->data(model->index(row, col));
-            QString text = data.toString();
+            // Copy data value immediately to avoid accessing deleted model
+            QString text = model->data(model->index(row, col)).toString();
             QTableWidgetItem *item = new QTableWidgetItem(text);
             item->setFlags(item->flags() & ~Qt::ItemIsEditable);
             ui->tab_em->setItem(row, col, item);
         }
     }
 
+    // Now safe to delete model after all data is copied
+    delete model;
+
     ui->tab_em->resizeColumnsToContents();
     qDebug() << "Affiché :" << totalRows << "employés";
-
-    delete model;
 }
 
 
@@ -290,7 +287,14 @@ void pageemploye::on_btn_ajout_E_clicked()
 
     // === Création et ajout ===
     double salaire = salaireStr.toDouble();
-    bool dispo = (dispoText == "Disponible");
+    
+    // Handle both "Disponible"/"Non disponible" and "0"/"1" formats
+    bool dispo = false;
+    if (dispoText == "Disponible" || dispoText == "1") {
+        dispo = true;
+    } else if (dispoText == "Non disponible" || dispoText == "0") {
+        dispo = false;
+    }
 
     Employes emp;
     emp.setCinEmployee(cin);
@@ -354,8 +358,13 @@ void pageemploye::on_tab_em_cellClicked(int row, int column)
     ui->email_E->setText(email);
     ui->mdp_E->clear();  // Sécurité : ne pas afficher le MDP
 
-    // ComboBox Disponibilité
-    int dispoIndex = (dispoText == "Disponible") ? 0 : 1;
+    // ComboBox Disponibilité - now using "Disponible" / "Non disponible"
+    int dispoIndex = 0; // Default to Disponible
+    if (dispoText == "Disponible") {
+        dispoIndex = 0;
+    } else if (dispoText == "Non disponible") {
+        dispoIndex = 1;
+    }
     ui->dispo_E->setCurrentIndex(dispoIndex);
 
     // ComboBox Poste
@@ -443,7 +452,14 @@ void pageemploye::on_modif_E_clicked()
 
     // === Objet Employes ===
     double salaire = salaireStr.toDouble();
-    bool dispo = (dispoText == "Disponible");
+    
+    // Handle both "Disponible"/"Non disponible" and "0"/"1" formats
+    bool dispo = false;
+    if (dispoText == "Disponible" || dispoText == "1") {
+        dispo = true;
+    } else if (dispoText == "Non disponible" || dispoText == "0") {
+        dispo = false;
+    }
 
     // Check if CIN was modified
     QString cinToUpdate = originalCIN.isEmpty() ? cin : originalCIN;
@@ -571,7 +587,8 @@ void pageemploye::lancerRecherche(const QString &recherche)
     ui->tab_em->setHorizontalHeaderLabels(headers);
 
     // Remplir le tableau avec les résultats
-    for (int row = 0; row < model->rowCount(); ++row) {
+    int totalRows = model->rowCount();
+    for (int row = 0; row < totalRows; ++row) {
         ui->tab_em->insertRow(row);
         for (int col = 0; col < 8; ++col) {
             QString text = model->data(model->index(row, col)).toString();
@@ -581,10 +598,11 @@ void pageemploye::lancerRecherche(const QString &recherche)
         }
     }
 
-    ui->tab_em->resizeColumnsToContents();
-    qDebug() << "Recherche multi effectuée :" << model->rowCount() << "résultats";
-
+    // Delete model after data is copied
     delete model;
+
+    ui->tab_em->resizeColumnsToContents();
+    qDebug() << "Recherche multi effectuée :" << totalRows << "résultats";
 }
 
 void pageemploye::on_trier_c_clicked()
@@ -650,7 +668,8 @@ void pageemploye::on_trier_c_clicked()
     QStringList headers = {"CIN", "Nom", "Prénom", "Disponibilité", "Salaire", "Téléphone", "Email", "Poste"};
     ui->tab_em->setHorizontalHeaderLabels(headers);
 
-    for (int row = 0; row < model->rowCount(); ++row) {
+    int totalRows = model->rowCount();
+    for (int row = 0; row < totalRows; ++row) {
         ui->tab_em->insertRow(row);
         for (int col = 0; col < 8; ++col) {
             QString text = model->data(model->index(row, col)).toString();
@@ -660,11 +679,13 @@ void pageemploye::on_trier_c_clicked()
         }
     }
 
-    ui->tab_em->resizeColumnsToContents();
-    qDebug() << "Tri effectué avec succès :" << model->rowCount() << "employés triés par" << triType;
-
-    QMessageBox::information(this, "Tri réussi", QString("Liste triée par %1.\n%2 employés affichés.").arg(triType).arg(model->rowCount()));
+    // Delete model after data is copied
     delete model;
+
+    ui->tab_em->resizeColumnsToContents();
+    qDebug() << "Tri effectué avec succès :" << totalRows << "employés triés par" << triType;
+
+    QMessageBox::information(this, "Tri réussi", QString("Liste triée par %1.\n%2 employés affichés.").arg(triType).arg(totalRows));
 }
 void pageemploye::on_pdf_c_clicked()
 {

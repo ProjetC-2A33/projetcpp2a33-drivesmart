@@ -26,6 +26,8 @@
 #include <QBuffer>
 #include <QPushButton>
 #include <QKeyEvent>
+// Audio features disabled - Qt Multimedia not available
+/*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QAudioSource>
 #include <QAudioDevice>
@@ -35,6 +37,7 @@
 #include <QAudioFormat>
 #include <QAudioDeviceInfo>
 #endif
+*/
 #ifdef USE_VOSK
 #include <vosk_api.h>
 #endif
@@ -111,11 +114,14 @@ private:
     QString currentSortColumn;
     Qt::SortOrder currentSortOrder;
 
+// Audio features disabled - Qt Multimedia not available
+/*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QAudioSource *audioSource;
 #else
     QAudioInput *audioInput;
 #endif
+*/
     QBuffer *audioBuffer;
     QNetworkAccessManager *networkManager;
     QTimer *recordingTimer;

@@ -37,6 +37,8 @@
 #include <QBrush>
 #include <QPen>
 #include <cmath>
+// Audio features disabled - Qt Multimedia not available
+/*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QAudioSource>
 #include <QAudioDevice>
@@ -46,6 +48,7 @@
 #include <QAudioFormat>
 #include <QAudioDeviceInfo>
 #endif
+*/
 #include <QIODevice>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -68,11 +71,13 @@
 #include <QKeyEvent>
 
 Condidat::Condidat(QWidget *parent) : QWidget(parent),
+/*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                                       audioSource(nullptr),
 #else
                                       audioInput(nullptr),
 #endif
+*/
                                       audioBuffer(nullptr),
                                       networkManager(nullptr),
                                       recordingTimer(nullptr),
@@ -1343,6 +1348,11 @@ void Condidat::on_btn_vocal_clicked()
 
 void Condidat::startVoiceRecording()
 {
+    // Audio features disabled - Qt Multimedia not available
+    QMessageBox::information(this, "Non disponible", "Les fonctionnalités audio ne sont pas disponibles dans cette version.");
+    return;
+    
+/*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QMediaDevices devices;
     QAudioDevice device = devices.defaultAudioInput();
@@ -1450,6 +1460,7 @@ void Condidat::startVoiceRecording()
     voiceButton->setEnabled(true);
     recordingTimer->start(10000);
     voiceButton->setToolTip("Enregistrement en cours... Cliquez pour arrêter");
+*/
 }
 
 void Condidat::stopVoiceRecording()
@@ -1457,6 +1468,7 @@ void Condidat::stopVoiceRecording()
     isRecording = false;
     if (recordingTimer)
         recordingTimer->stop();
+/*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     if (audioSource)
         audioSource->stop();
@@ -1464,6 +1476,7 @@ void Condidat::stopVoiceRecording()
     if (audioInput)
         audioInput->stop();
 #endif
+*/
     QByteArray pcmData;
     if (audioBuffer)
     {
@@ -2160,11 +2173,13 @@ void Condidat::updatePrediction(int age, QString sexe, QString type_permis)
 // Constructeur avec paramètres (nécessaire mais non utilisé dans l'UI actuelle)
 Condidat::Condidat(int cin_condidat, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
     : cin_condidat(cin_condidat), tel(tel), nom(nom), prenom(prenom), type_permis(type_permis), sexe(sexe), date_naissance(date_naissance),
+/*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
       audioSource(nullptr),
 #else
       audioInput(nullptr),
 #endif
+*/
       audioBuffer(nullptr), networkManager(nullptr), recordingTimer(nullptr), isRecording(false), ui(new Ui::Condidat)
 {
     ui->setupUi(this);

@@ -9,6 +9,8 @@ class Connection
 public:
     Connection();
     bool createconnect();
+    bool opendb();
+    int getSessionHoursToday(int cin);
 };
 
 #endif // CONNECTION_H

@@ -122,6 +122,13 @@ void CINAccessControl::onPythonOutputReady()
                     qDebug() << ">>> Access GRANTED <<<";
                     sendResponseToPython("AUTHORIZED");
                     logAccess(cin, "AUTHORIZED");
+                    
+                    // Update employee availability to Non disponible when they pass through
+                    if (updateEmployeeAvailability(cin, false)) {
+                        qDebug() << "Employee CIN" << cin << "marked as Non disponible";
+                    } else {
+                        qDebug() << "Warning: Failed to update availability for CIN" << cin;
+                    }
                 } else {
                     qDebug() << ">>> Access DENIED <<<";
                     sendResponseToPython("DENIED");
@@ -217,4 +224,33 @@ void CINAccessControl::logAccess(const QString &cin, const QString &status)
     } else {
         qDebug() << "Access logged for CIN:" << cin << "Status:" << status;
     }
+}
+
+bool CINAccessControl::updateEmployeeAvailability(const QString &cin, bool available)
+{
+    QString availabilityStatus = available ? "Disponible" : "Non disponible";
+    
+    QSqlQuery query;
+    // Try EMPLOYEE table first (uppercase)
+    query.prepare("UPDATE EMPLOYEE SET DISPONIBILITE = :status WHERE CIN_EMPLOYEE = :cin");
+    query.bindValue(":status", availabilityStatus);
+    query.bindValue(":cin", cin);
+    
+    if (query.exec() && query.numRowsAffected() > 0) {
+        qDebug() << "Employee CIN" << cin << "availability updated to:" << availabilityStatus << "in EMPLOYEE table";
+        return true;
+    }
+    
+    // Try alternative table: employes (lowercase)
+    query.prepare("UPDATE employes SET DISPONIBILITE = :status WHERE CIN_employes = :cin");
+    query.bindValue(":status", availabilityStatus);
+    query.bindValue(":cin", cin);
+    
+    if (query.exec() && query.numRowsAffected() > 0) {
+        qDebug() << "Employee CIN" << cin << "availability updated to:" << availabilityStatus << "in employes table";
+        return true;
+    }
+    
+    qDebug() << "Failed to update availability for CIN" << cin << ":" << query.lastError().text();
+    return false;
 }

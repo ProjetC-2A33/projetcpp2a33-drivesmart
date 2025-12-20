@@ -82,7 +82,11 @@ bool ArduinoReader::openArduino() {
     }
 
     qDebug() << "Arduino connecté sur" << serial->portName();
+    
+    // Connect both slots for dual functionality
     connect(serial, &QSerialPort::readyRead, this, &ArduinoReader::readData);
+    connect(serial, &QSerialPort::readyRead, this, &ArduinoReader::readSerialData);
+    
     return true;
 }
 void ArduinoReader::readData() {
@@ -123,7 +127,7 @@ void ArduinoReader::readData() {
                     QString cin = query.value(0).toString();
 
                     // RAPIDE: Pas de logs détaillés, juste le traitement
-                    int heures = dbConn.getSessionHoursToday(cin);
+                    int heures = dbConn.getSessionHoursToday(cin.toInt());
 
                     // ENVOYER DIRECTEMENT LA COMMANDE
                     sendLEDCommand(heures);
@@ -162,4 +166,54 @@ void ArduinoReader::sendLEDCommand(int hours) {
     serial->waitForBytesWritten(1000);
     
     qDebug() << "Commande envoyée à l'Arduino:" << command.trimmed();
+}
+
+// ========== WEBCAM/ULTRASONIC SYSTEM METHODS ==========
+
+// Read serial data for webcam system (detects REQUEST_CIN)
+void ArduinoReader::readSerialData()
+{
+    if (!serial->isReadable()) return;
+    
+    QByteArray receivedData = serial->readAll();
+    QString dataString = QString::fromUtf8(receivedData).trimmed();
+    
+    if (!dataString.isEmpty()) {
+        qDebug() << "[Webcam System] Received from Arduino:" << dataString;
+        emit dataReceived(dataString);
+        
+        // If Arduino requests CIN verification
+        if (dataString == "REQUEST_CIN") {
+            qDebug() << "[Webcam System] CIN capture requested by Arduino";
+            emit cinCaptureRequested();
+        }
+    }
+}
+
+// Send authorization signal to Arduino for webcam system
+void ArduinoReader::sendAuthorizationSignal(bool authorized)
+{
+    if (!serial || !serial->isOpen()) {
+        qDebug() << "[Webcam System] Port série non ouvert";
+        return;
+    }
+    
+    QString command;
+    if (authorized) {
+        command = "AUTHORIZED\n";
+        qDebug() << "[Webcam System] Authorization GRANTED sent to Arduino";
+    } else {
+        command = "DENIED\n";
+        qDebug() << "[Webcam System] Authorization DENIED sent to Arduino";
+    }
+    
+    serial->write(command.toUtf8());
+    serial->waitForBytesWritten(1000);
+}
+
+// Request CIN capture from Python script
+void ArduinoReader::requestCINCapture()
+{
+    qDebug() << "[Webcam System] Requesting CIN capture...";
+    emit cinCaptureRequested();
 }

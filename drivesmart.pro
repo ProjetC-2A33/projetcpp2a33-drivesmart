@@ -1,4 +1,5 @@
 QT += core gui widgets sql network printsupport charts serialport
+# QT += multimedia  # Commented out - not available in this Qt installation
 
 CONFIG += c++17 console
 CONFIG -= c++1z
@@ -26,7 +27,10 @@ HEADERS += \
     navigation_constants.h \
     vendor/qrcodegen.hpp \
     arduino.h \
-    cin_access_control.h
+    cin_access_control.h \
+    google_calendar_service.h \
+    openstreetmap_service.h \
+    local_calendar.h
 
 SOURCES += \
     employes.cpp \
@@ -43,7 +47,10 @@ SOURCES += \
     connection.cpp \
     vendor/qrcodegen.cpp \
     arduino.cpp \
-    cin_access_control.cpp
+    cin_access_control.cpp \
+    google_calendar_service.cpp \
+    openstreetmap_service.cpp \
+    local_calendar.cpp
 
 FORMS += \
     Dialog.ui \

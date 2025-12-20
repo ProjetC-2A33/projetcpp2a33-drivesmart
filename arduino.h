@@ -15,9 +15,16 @@ public:
 signals:
     void uidDetected(const QString &uid);
     void candidateDetected(const QString &nom, const QString &prenom, int hours);
+    void dataReceived(QString data);  // For webcam system
+    void cinCaptureRequested();       // For webcam system
+
+public slots:
+    void sendAuthorizationSignal(bool authorized);  // For webcam system
+    void requestCINCapture();                        // For webcam system
 
 private slots:
     void readData();
+    void readSerialData();  // For webcam system
 
 private:
     QSerialPort *serial;

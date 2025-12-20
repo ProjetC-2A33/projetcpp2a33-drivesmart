@@ -327,12 +327,12 @@ border:2px solid #ffce00;
      </property>
      <item>
       <property name="text">
-       <string>0</string>
+       <string>Disponible</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>1</string>
+       <string>Non disponible</string>
       </property>
      </item>
     </widget>

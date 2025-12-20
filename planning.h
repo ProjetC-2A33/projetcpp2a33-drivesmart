@@ -9,6 +9,11 @@
 #include <QSqlQueryModel>
 #include <QVariant>
 #include <QComboBox>
+#include <QLabel>
+#include <QPixmap>
+#include "google_calendar_service.h"
+#include "openstreetmap_service.h"
+#include "local_calendar.h"
 
 namespace Ui
 {
@@ -38,11 +43,33 @@ private slots:
     void navigateToVehicule();
     void navigateToExamen();
     void navigateToEquipement();
+    
+    // Search, Sort, Export functionality
+    void on_recherche_3_textChanged();
+    void on_tri_3_currentIndexChanged(int index);
+    void on_pushButton_8_clicked(); // Export PDF
+    
+    // Statistics functionality
+    void on_pushButton_10_clicked(); // Show statistics
+    void afficherStatistiquesPlanning();
+    
+    // Map-related slots
+    void onMapLocationSelected(double latitude, double longitude);
+    void onGeocodeCompleted(double latitude, double longitude, const QString &formattedAddress);
+    void onStaticMapReady(const QPixmap &mapImage);
+    void onMapsError(const QString &error);
+    
+    // Calendar-related slots
+    void onCalendarDateClicked(const QDate &date);
+    void highlightDatesWithEvents();
+    void refreshCalendarView();
+    void onSearchLocationClicked();
 
 
 
 private:
     void refreshTable();
+    void refreshTableWithFilters(); // New method for filtered/sorted display
     int selectedIdFromTable() const;
     void setFormFromRow(int row);
     QWidget *createActionsCell(int row, int id);
@@ -51,9 +78,28 @@ private:
     void loadVehicules();
     void loadCondidats();
     QComboBox *getCondidatCombo(); // Fonction helper pour obtenir le champ condidat
+    QString getCircuitAddress(const QString &circuitName); // Map circuit name to address
 
     int currentEditingId = -1;
     bool isEditMode = false;
+    
+    // Search and sort state
+    QString currentSearchText;
+    int currentSortIndex = 0;
+
+    // Google Calendar integration
+    GoogleCalendarService *calendarService;
+    QMap<int, QString> eventIdMap; // Map planning ID to calendar event ID
+
+    // OpenStreetMap integration (FREE - No API key needed!)
+    OpenStreetMapService *mapService;
+    LocalCalendar *localCalendar; // Local calendar service
+    double currentLatitude;
+    double currentLongitude;
+    QString currentFormattedAddress;
+    QLabel *mapDisplayLabel; // Label to display the static map image
+    
+    int pendingPlanningId; // Temporarily store planning ID while waiting for Calendar event creation
 
     // Planning data members
     QDate date_seance;
