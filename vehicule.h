@@ -45,7 +45,7 @@ private:
     // Classe pour générer des QR codes simples
     class QRCodeGenerator {
     public:
-        static QImage generateQRCode(const QString &data, int size [[maybe_unused]]) {
+        static QImage generateQRCode(const QString &data, int size) {
             // Créer une image vide
             QImage qrImage(size, size, QImage::Format_RGB32);
             qrImage.fill(Qt::white);
@@ -161,7 +161,7 @@ private:
 
     // Fonctions pour la génération de QR code
     QString genererTexteQRCode(const QString& matricule);
-    QString predirePanne(const QString& matricule [[maybe_unused]], int kilometrage, const QDate& dateMaintenance, const QString& etatMaintenance, const QString& typeEnergie);
+    QString predirePanne(const QString& matricule, int kilometrage, const QDate& dateMaintenance, const QString& etatMaintenance, const QString& typeEnergie);
     QString genererFichierHTML(const QString& matricule, const QString& modele, int kilometrage, const QString& disponibilite, const QString& typeEnergie, const QString& etatMaintenance, const QDate& dateMaintenance, const QString& prediction);
 
     // Fonction utilitaire pour ajouter une ligne d'information dans la boîte de dialogue

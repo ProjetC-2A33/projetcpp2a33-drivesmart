@@ -1601,7 +1601,7 @@ QString Vehicule::selectBestLanIp()
     }
     return QString();
 }
-QString Vehicule::predirePanne(const QString& matricule [[maybe_unused]], int kilometrage, const QDate& dateMaintenance, const QString& etatMaintenance, const QString& typeEnergie)
+QString Vehicule::predirePanne(const QString& matricule, int kilometrage, const QDate& dateMaintenance, const QString& etatMaintenance, const QString& typeEnergie)
 {
     QDate aujourdhui = QDate::currentDate();
     int joursDepuisMaintenance = dateMaintenance.daysTo(aujourdhui);

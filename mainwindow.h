@@ -2,19 +2,19 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QStackedWidget>
+#include "pageemploye.h"
+namespace Ui
+{
+    class MainWindow;
+}
 
-// Forward declarations
 class Condidat;
+class pageemploye;
 class Vehicule;
 class Examen;
 class Planning;
 class Gestion_Equipement;
-class QWidget;
-
-namespace Ui {
-class MainWindow;
-}
+class QStackedWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -24,25 +24,27 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-public slots:
+private slots:
     void showCandidat();
     void showVehicule();
     void showExamen();
     void showPlanning();
-    void showEmployee();
+    void showemployes();
     void showEquipement();
+    void on_btn_ajout_E_clicked();
+    void on_btn_reset_E_clicked();
+
+
 
 private:
     Ui::MainWindow *ui;
     QStackedWidget *stackedWidget;
-    
-    // Pointers to our views
     Condidat *condidatView;
+    pageemploye *employesView;
     Vehicule *vehiculeView;
     Examen *examenView;
     Planning *planningView;
     Gestion_Equipement *equipementView;
-    QWidget *employeeView;
 };
 
 #endif // MAINWINDOW_H

@@ -8,6 +8,7 @@
 #include <QSqlError>
 #include <QDebug>
 #include <QMessageBox>
+#include <QtSerialPort/QSerialPort>
 
 class CINAccessControl : public QObject
 {
@@ -20,16 +21,18 @@ public:
     bool initializeSystem(); // Initialize and start Python
     void startPythonScript(); // Start Python webcam script
     void stopPythonScript(); // Stop Python script
+    void setArduinoSerial(QSerialPort *serial); // Lien avec Arduino pour servo
     
 private:
     QProcess *pythonProcess;
     QString capturedCIN;
     QString responseFilePath;
+    QSerialPort *arduinoSerial; // Lien vers Arduino pour contrôle servo
     
     bool verifyCINInDatabase(const QString &cin);
     void logAccess(const QString &cin, const QString &status);
     void sendResponseToPython(const QString &response);
-    bool updateEmployeeAvailability(const QString &cin, bool available);
+    void sendServoCommand(bool open); // Envoyer commande au servo
 
 private slots:
     void onPythonOutputReady();

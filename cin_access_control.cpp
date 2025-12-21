@@ -7,13 +7,19 @@ CINAccessControl::CINAccessControl(QObject *parent)
     : QObject(parent),
       pythonProcess(nullptr),
       capturedCIN(""),
-      responseFilePath("qt_response.txt")
+      responseFilePath("qt_response.txt"),
+      arduinoSerial(nullptr)
 {
     pythonProcess = new QProcess(this);
     
     // Connect Python process signals
     connect(pythonProcess, &QProcess::readyReadStandardOutput, this, &CINAccessControl::onPythonOutputReady);
     connect(pythonProcess, &QProcess::readyReadStandardError, this, &CINAccessControl::onPythonError);
+}
+
+void CINAccessControl::setArduinoSerial(QSerialPort *serial) {
+    arduinoSerial = serial;
+    qDebug() << "Arduino serial lié au système CIN";
 }
 
 CINAccessControl::~CINAccessControl()
@@ -122,13 +128,6 @@ void CINAccessControl::onPythonOutputReady()
                     qDebug() << ">>> Access GRANTED <<<";
                     sendResponseToPython("AUTHORIZED");
                     logAccess(cin, "AUTHORIZED");
-                    
-                    // Update employee availability to Non disponible when they pass through
-                    if (updateEmployeeAvailability(cin, false)) {
-                        qDebug() << "Employee CIN" << cin << "marked as Non disponible";
-                    } else {
-                        qDebug() << "Warning: Failed to update availability for CIN" << cin;
-                    }
                 } else {
                     qDebug() << ">>> Access DENIED <<<";
                     sendResponseToPython("DENIED");
@@ -197,10 +196,18 @@ bool CINAccessControl::verifyCINInDatabase(const QString &cin)
         if (disponibilite == "Disponible" || disponibilite == "disponible" || 
             disponibilite == "1" || disponibilite.toInt() == 1) {
             qDebug() << "Employee is available - Access GRANTED";
+            
+            // Ouvrir le servo
+            sendServoCommand(true);
+            
             emit accessGranted(cin, nom, prenom);
             return true;
         } else {
             qDebug() << "Employee found but not available (Disponibilite:" << disponibilite << ")";
+            
+            // Garder le servo fermé
+            sendServoCommand(false);
+            
             emit accessDenied("Employee not available");
             return false;
         }
@@ -208,6 +215,10 @@ bool CINAccessControl::verifyCINInDatabase(const QString &cin)
     
     qDebug() << "CIN" << cin << "not found in database";
     qDebug() << "Last query error:" << query.lastError().text();
+    
+    // CIN non trouvé, garder le servo fermé
+    sendServoCommand(false);
+    
     return false;
 }
 
@@ -226,31 +237,13 @@ void CINAccessControl::logAccess(const QString &cin, const QString &status)
     }
 }
 
-bool CINAccessControl::updateEmployeeAvailability(const QString &cin, bool available)
-{
-    QString availabilityStatus = available ? "Disponible" : "Non disponible";
-    
-    QSqlQuery query;
-    // Try EMPLOYEE table first (uppercase)
-    query.prepare("UPDATE EMPLOYEE SET DISPONIBILITE = :status WHERE CIN_EMPLOYEE = :cin");
-    query.bindValue(":status", availabilityStatus);
-    query.bindValue(":cin", cin);
-    
-    if (query.exec() && query.numRowsAffected() > 0) {
-        qDebug() << "Employee CIN" << cin << "availability updated to:" << availabilityStatus << "in EMPLOYEE table";
-        return true;
+void CINAccessControl::sendServoCommand(bool open) {
+    if (!arduinoSerial || !arduinoSerial->isOpen()) {
+        qDebug() << "Arduino serial not available for servo control";
+        return;
     }
     
-    // Try alternative table: employes (lowercase)
-    query.prepare("UPDATE employes SET DISPONIBILITE = :status WHERE CIN_employes = :cin");
-    query.bindValue(":status", availabilityStatus);
-    query.bindValue(":cin", cin);
-    
-    if (query.exec() && query.numRowsAffected() > 0) {
-        qDebug() << "Employee CIN" << cin << "availability updated to:" << availabilityStatus << "in employes table";
-        return true;
-    }
-    
-    qDebug() << "Failed to update availability for CIN" << cin << ":" << query.lastError().text();
-    return false;
+    QString command = open ? "OPEN\n" : "CLOSE\n";
+    arduinoSerial->write(command.toUtf8());
+    qDebug() << "Servo command sent:" << command.trimmed();
 }
