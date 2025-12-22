@@ -26,6 +26,34 @@
     <string/>
    </property>
    <widget class="QTableWidget" name="tab">
+    <property name="styleSheet">
+     <string notr="true">QTableWidget {
+  background-color: white;
+  alternate-background-color: #f8f9fa;
+  selection-background-color: #002157;
+  selection-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  gridline-color: #e9ecef;
+}
+QTableWidget::item {
+  padding: 8px;
+}
+QTableWidget::item:hover {
+  background-color: #e7f3ff;
+}
+QHeaderView::section {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #002157, stop:1 #004589);
+  color: white;
+  padding: 10px;
+  border: none;
+  font-weight: bold;
+  font-size: 11px;
+}
+QHeaderView::section:hover {
+  background: #003d7a;
+}</string>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -188,13 +216,31 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:#002157</string>
+     <string notr="true">QGroupBox {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid #dee2e6;
+}</string>
     </property>
     <property name="text">
      <string>Tri par : </string>
     </property>
    </widget>
    <widget class="QComboBox" name="tri">
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid #ffce00;
+  padding: 5px 10px;
+}
+QComboBox:hover {
+  border-color: #002157;
+}
+QComboBox:focus {
+  border: 2px solid #002157;
+}</string>
+    </property>
     <property name="geometry">
      <rect>
       <x>95</x>
@@ -334,8 +380,11 @@ border-radius:10px;</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-radius:50px;
-background-color:#e3e2de;</string>
+    <string notr="true">QGroupBox {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid #dee2e6;
+}</string>
    </property>
    <property name="title">
     <string/>
@@ -636,6 +685,20 @@ border:2px solid #ffce00;</string>
     </property>
    </widget>
    <widget class="QComboBox" name="type">
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid #ffce00;
+  padding: 5px 10px;
+}
+QComboBox:hover {
+  border-color: #002157;
+}
+QComboBox:focus {
+  border: 2px solid #002157;
+}</string>
+    </property>
     <property name="geometry">
      <rect>
       <x>200</x>
@@ -783,8 +846,11 @@ border-radius:10px;</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color:#e3e2de;
-border-radius:10px;</string>
+    <string notr="true">QGroupBox {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid #dee2e6;
+}</string>
    </property>
    <property name="title">
     <string/>
@@ -963,13 +1029,31 @@ border-radius:10px;</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:#002157</string>
+     <string notr="true">QGroupBox {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid #dee2e6;
+}</string>
     </property>
     <property name="text">
      <string>Statistique par :</string>
     </property>
    </widget>
    <widget class="QComboBox" name="tri_2">
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid #ffce00;
+  padding: 5px 10px;
+}
+QComboBox:hover {
+  border-color: #002157;
+}
+QComboBox:focus {
+  border: 2px solid #002157;
+}</string>
+    </property>
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -1071,13 +1155,31 @@ border:2px solid #ffce00;
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:#002157</string>
+     <string notr="true">QGroupBox {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid #dee2e6;
+}</string>
     </property>
     <property name="text">
      <string>prédiction heures</string>
     </property>
    </widget>
    <widget class="QComboBox" name="cin_condidat">
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid #ffce00;
+  padding: 5px 10px;
+}
+QComboBox:hover {
+  border-color: #002157;
+}
+QComboBox:focus {
+  border: 2px solid #002157;
+}</string>
+    </property>
     <property name="geometry">
      <rect>
       <x>230</x>
