@@ -486,12 +486,16 @@ color:black;
        <x>450</x>
        <y>10</y>
        <width>1041</width>
-       <height>41</height>
+       <height>55</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color:#e3e2de;
-border-radius:10px;</string>
+      <string notr="true">QGroupBox {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #002157, stop:1 #004589);
+  border-radius: 15px;
+  border: 2px solid #001533;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}</string>
      </property>
      <property name="title">
       <string/>
@@ -500,89 +504,237 @@ border-radius:10px;</string>
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>3</y>
+        <y>7</y>
         <width>1021</width>
-        <height>38</height>
+        <height>42</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <property name="spacing">
+        <number>8</number>
+       </property>
        <item>
         <widget class="QPushButton" name="candidat_7">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>12</pointsize>
            <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;</string>
+          <string notr="true">QPushButton {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+}
+QPushButton:hover {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+}
+QPushButton:pressed {
+  background: #ffb700;
+  padding-top: 10px;
+}
+QPushButton:checked {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+  border: 2px solid white;
+}</string>
          </property>
          <property name="text">
-          <string>Candidat</string>
+          <string>👤 Candidat</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="planning_7">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>12</pointsize>
            <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;</string>
+          <string notr="true">QPushButton {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+}
+QPushButton:hover {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+}
+QPushButton:pressed {
+  background: #ffb700;
+  padding-top: 10px;
+}
+QPushButton:checked {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+  border: 2px solid white;
+}</string>
          </property>
          <property name="text">
-          <string>planning</string>
+          <string>📅 Planning</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="pageemploye">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>12</pointsize>
            <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;</string>
+          <string notr="true">QPushButton {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+}
+QPushButton:hover {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+}
+QPushButton:pressed {
+  background: #ffb700;
+  padding-top: 10px;
+}
+QPushButton:checked {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+  border: 2px solid white;
+}</string>
          </property>
          <property name="text">
-          <string>Employee</string>
+          <string>👥 Employé</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="vehicule_7">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>12</pointsize>
            <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;</string>
+          <string notr="true">QPushButton {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+}
+QPushButton:hover {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+}
+QPushButton:pressed {
+  background: #ffb700;
+  padding-top: 10px;
+}
+QPushButton:checked {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+  border: 2px solid white;
+}</string>
          </property>
          <property name="text">
-          <string>vehicule</string>
+          <string>🚗 Véhicule</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="examen_7">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>12</pointsize>
            <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#e3e2de;</string>
+          <string notr="true">QPushButton {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+}
+QPushButton:hover {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+}
+QPushButton:pressed {
+  background: #ffb700;
+  padding-top: 10px;
+}
+QPushButton:checked {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffce00, stop:1 #e6b800);
+  color: #002157;
+  border: 2px solid white;
+}</string>
          </property>
          <property name="text">
-          <string>Examen</string>
+          <string>📝 Examen</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -592,11 +744,18 @@ border-radius:10px;</string>
     <widget class="QGroupBox" name="groupBox_18">
      <property name="geometry">
       <rect>
-       <x>460</x>
-       <y>50</y>
+       <x>450</x>
+       <y>75</y>
        <width>1041</width>
-       <height>801</height>
+       <height>786</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid #dee2e6;
+}</string>
      </property>
      <property name="title">
       <string/>
