@@ -37,6 +37,7 @@
 #include <QBrush>
 #include <QPen>
 #include <cmath>
+#ifdef QT_MULTIMEDIA_LIB
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QAudioSource>
 #include <QAudioDevice>
@@ -45,6 +46,7 @@
 #include <QAudioInput>
 #include <QAudioFormat>
 #include <QAudioDeviceInfo>
+#endif
 #endif
 #include <QIODevice>
 #include <QNetworkAccessManager>
@@ -68,10 +70,12 @@
 #include <QKeyEvent>
 
 Condidat::Condidat(QWidget *parent) : QWidget(parent),
+#ifdef QT_MULTIMEDIA_LIB
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                                       audioSource(nullptr),
 #else
                                       audioInput(nullptr),
+#endif
 #endif
                                       audioBuffer(nullptr),
                                       networkManager(nullptr),
@@ -1343,6 +1347,7 @@ void Condidat::on_btn_vocal_clicked()
 
 void Condidat::startVoiceRecording()
 {
+#ifdef QT_MULTIMEDIA_LIB
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QMediaDevices devices;
     QAudioDevice device = devices.defaultAudioInput();
@@ -1389,6 +1394,10 @@ void Condidat::startVoiceRecording()
     audioSource->start(audioBuffer);
 #else
     audioInput->start(audioBuffer);
+#endif
+#else
+    QMessageBox::warning(this, "Erreur", "Fonctionnalité audio non disponible - module multimedia non installé.");
+    return;
 #endif
 
 #ifdef USE_VOSK
@@ -1457,12 +1466,14 @@ void Condidat::stopVoiceRecording()
     isRecording = false;
     if (recordingTimer)
         recordingTimer->stop();
+#ifdef QT_MULTIMEDIA_LIB
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     if (audioSource)
         audioSource->stop();
 #else
     if (audioInput)
         audioInput->stop();
+#endif
 #endif
     QByteArray pcmData;
     if (audioBuffer)
@@ -2160,10 +2171,12 @@ void Condidat::updatePrediction(int age, QString sexe, QString type_permis)
 // Constructeur avec paramètres (nécessaire mais non utilisé dans l'UI actuelle)
 Condidat::Condidat(int cin_condidat, QString nom, QString prenom, QString sexe, QDate date_naissance, int tel, QString type_permis)
     : cin_condidat(cin_condidat), tel(tel), nom(nom), prenom(prenom), type_permis(type_permis), sexe(sexe), date_naissance(date_naissance),
+#ifdef QT_MULTIMEDIA_LIB
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
       audioSource(nullptr),
 #else
       audioInput(nullptr),
+#endif
 #endif
       audioBuffer(nullptr), networkManager(nullptr), recordingTimer(nullptr), isRecording(false), ui(new Ui::Condidat)
 {

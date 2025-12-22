@@ -44,7 +44,8 @@ QSqlQueryModel* Employes::afficher()
         "SELECT CIN_EMPLOYEE, NOM, PRENOM, "
         "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
-        "FROM EMPLOYEE ORDER BY CIN_EMPLOYEE"
+        "FROM EMPLOYEE ORDER BY CIN_EMPLOYEE",
+        QSqlDatabase::database()
         );
 
     if (model->lastError().isValid()) {
@@ -173,7 +174,7 @@ QSqlQueryModel* Employes::rechercherMulti(const QString &query)
         return nullptr;
     }
 
-    model->setQuery(sqlQuery);
+    model->setQuery(std::move(sqlQuery));
 
     // En-têtes
     model->setHeaderData(0, Qt::Horizontal, "CIN");
@@ -201,7 +202,8 @@ QSqlQueryModel* Employes::trierParNomCroissant()
         "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE "
-        "ORDER BY NOM ASC"
+        "ORDER BY NOM ASC",
+        QSqlDatabase::database()
         );
 
     if (model->lastError().isValid()) {
@@ -234,7 +236,8 @@ QSqlQueryModel* Employes::trierParPrenomAlphabetique()
         "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE "
-        "ORDER BY PRENOM ASC"
+        "ORDER BY PRENOM ASC",
+        QSqlDatabase::database()
         );
 
     if (model->lastError().isValid()) {
@@ -267,7 +270,8 @@ QSqlQueryModel* Employes::trierParSalaire()
         "CASE WHEN DISPONIBILITE = 1 THEN 'Disponible' ELSE 'Non disponible' END AS DISPONIBILITE, "
         "SALAIRE, TELEPHONE, EMAIL, POSTE "
         "FROM EMPLOYEE "
-        "ORDER BY SALAIRE ASC"
+        "ORDER BY SALAIRE ASC",
+        QSqlDatabase::database()
         );
 
     if (model->lastError().isValid()) {

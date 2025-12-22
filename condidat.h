@@ -26,6 +26,7 @@
 #include <QBuffer>
 #include <QPushButton>
 #include <QKeyEvent>
+#ifdef QT_MULTIMEDIA_LIB
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QAudioSource>
 #include <QAudioDevice>
@@ -34,6 +35,7 @@
 #include <QAudioInput>
 #include <QAudioFormat>
 #include <QAudioDeviceInfo>
+#endif
 #endif
 #ifdef USE_VOSK
 #include <vosk_api.h>
@@ -111,10 +113,12 @@ private:
     QString currentSortColumn;
     Qt::SortOrder currentSortOrder;
 
+#ifdef QT_MULTIMEDIA_LIB
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QAudioSource *audioSource;
 #else
     QAudioInput *audioInput;
+#endif
 #endif
     QBuffer *audioBuffer;
     QNetworkAccessManager *networkManager;
